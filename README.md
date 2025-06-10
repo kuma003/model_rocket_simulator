@@ -17,24 +17,31 @@
 - React router v7
 
 ## サーバーを立てるには
-まず初めにdockerを起動します：
+1. コードをすべてgithubからクローンします：
+```{bash}
+git clone https://github.com/kuma003/model_rocket_simulator
+cd model_rocket_simulator
+```
+
+2. dockerを起動します：
 ```{bash}
 docker-compose up --build
 ```
 このとき、docker desktopが起動していないと失敗します。
 
-次に、LAN内でアクセスできるように適切なポートを開放します。
+3. 次に、LAN内でアクセスできるように適切なポートを開放します。
 なお、ポート開放には管理者権限がいるため、必要に応じて権限を昇格します。
 ```{bash}
 open_ports
 ```
 
 
-終了する際は `Ctrl + C`でDockerは停止します。
+4. 終了する際は `Ctrl + C`でDockerは停止します。
 ポートを閉じるには以下のコマンドを実行します：
 ```{bash}
 close_ports
 ```
+
 
 また、何らかの事情でdockerをリセット (再ビルド) するときには、`Ctrl + C`で停止させた後に以下のコマンドを実行します。
 ```{bash}
@@ -44,7 +51,7 @@ docker-compose up
 ```
 
 ## 諸注意
-- Github Actionによってmainブランチにプッシュされた変更は自動でgithub pagesにデプロイされます。  
-github pagesには制限がある + 時間がかかるので、開発時はブランチを切って作業するのを推奨します。
+- Github Actionsによってmainブランチにプッシュされた変更は自動でgithub pagesにデプロイされます。  
+github pagesには制限がある[^1] + 時間がかかるので、開発時はブランチを切って作業するのを推奨します。
 
-
+[^1]: 2000~3000 min/month です (参照：[GitHub Actions の課金について](https://docs.github.com/ja/billing/managing-billing-for-your-products/managing-billing-for-github-actions/about-billing-for-github-actions))。変な使い方をしない限り超えないとは思います。
