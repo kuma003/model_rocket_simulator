@@ -1,3 +1,4 @@
+import Top from "~/components/Top";
 import type { Route } from "./+types/_index";
 
 export const meta: Route.MetaFunction = () => [
@@ -7,5 +8,5 @@ export const meta: Route.MetaFunction = () => [
 
 
 export default function Home() {
-  return <></>;
+  return <Top/>;
 }
