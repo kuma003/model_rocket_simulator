@@ -15,6 +15,8 @@
 ## 開発環境
 - Docker (Docker Desktop)
 - React router v7
+- Storybook
+- Mantine
 
 ## サーバーを立てるには
 1. コードをすべてgithubからクローンします：
@@ -48,6 +50,14 @@ close_ports
 docker-compose down
 docker-compose build frontend
 docker-compose up
+```
+
+## Storyboookを起動するには
+storybookを起動するには以下のコマンドを実行します
+```{bash}
+cd frontend
+npm install (まだなら)
+npm run storybook
 ```
 
 ## 諸注意
