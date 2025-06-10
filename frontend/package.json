@@ -1,6 +1,7 @@
 {
-  "name": "frontend",
+  "name": "model_rocket_simulator",
   "private": true,
+  "homepage": "https://kuma003.github.io/model_rocket_simulator",
   "type": "module",
   "scripts": {
     "build": "react-router build",
@@ -9,6 +10,7 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
+    "@react-router/fs-routes": "^7.6.2",
     "@react-router/node": "^7.5.3",
     "@react-router/serve": "^7.5.3",
     "isbot": "^5.1.27",
@@ -22,6 +24,7 @@
     "@types/node": "^20",
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.6",
+    "gh-pages": "^6.3.0",
     "tailwindcss": "^4.1.4",
     "typescript": "^5.8.3",
     "vite": "^6.3.3",

@@ -1,7 +1,9 @@
-import type { Config } from "@react-router/dev/config";
+  import type { Config } from "@react-router/dev/config";
+
+import { copyFile } from "node:fs/promises";
+import path from "node:path";
 
 export default {
-  // Config options...
-  // Server-side render by default, to enable SPA mode set this to `false`
-  ssr: true,
+  basename: import.meta.env.PROD ? "/model_rocket_simulator/" : "/",
+  ssr: false,
 } satisfies Config;
