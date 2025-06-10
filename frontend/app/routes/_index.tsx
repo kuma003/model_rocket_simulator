@@ -1,12 +1,11 @@
 import type { Route } from "./+types/_index";
-import { Welcome } from "../welcome/welcome";
 
 export const meta: Route.MetaFunction = () => [
-  { title: "New React Router App" },
-  { name: "description", content: "Welcome to React Router!" },
+  { title: "Model Rocket Simulator" },
+  { name: "description", content: "model rocket simulator" },
 ];
 
 
 export default function Home() {
-  return <Welcome />;
+  return <></>;
 }
