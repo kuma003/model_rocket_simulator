@@ -10,7 +10,7 @@
 }
 
 .menuButton { 
-  border-radius: 15px;
+  --button-radius: 15px;
   background: linear-gradient(to right, rgba(249, 115, 22, 0.2), rgba(219, 39, 119, 0.2));
   justify-content: center;
   align-items: center;
@@ -20,11 +20,24 @@
   font-weight: 600;
   cursor: pointer;
   border: none;
+  color: white;
+
+  :global(.mantine-Button-section) {
+    fill: white;
+    transform: translatey(1px);
+    width:25px;
+    padding: 0;
+  }
   
   animation: slideIn 0.5s ease-out forwards;
   
   &:hover {
     transform: scale(1.01);
+    color: whitesmoke;
+
+    :global(.mantine-Button-section) {
+      fill: whitesmoke;
+    }
 
     .glowEffect {
       opacity: 1;
@@ -39,6 +52,7 @@
   box-shadow: 0 25px 25px -25px rgba(0, 0, 0, 0.25);
 
   &:hover {
+    background: linear-gradient(to right, rgb(248, 119, 27), rgb(222, 47, 126));
     box-shadow: 0 25px 25px -25px rgba(249, 115, 22, 0.25);
   }
   
@@ -55,7 +69,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.125);
   }
   
   .glowEffect {
