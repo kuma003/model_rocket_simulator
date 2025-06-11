@@ -1,0 +1,75 @@
+.stack {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 500px;
+  height: 100vh;
+  margin: 0 auto;
+}
+
+.menuButton { 
+  border-radius: 15px;
+  background: linear-gradient(to right, rgba(249, 115, 22, 0.2), rgba(219, 39, 119, 0.2));
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  height: 70px;
+  width: 350px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  
+  animation: slideIn 0.5s ease-out forwards;
+  
+  &:hover {
+    transform: scale(1.01);
+
+    .glowEffect {
+      opacity: 1;
+    }
+  }
+}
+
+.primary {
+  background: linear-gradient(to right, rgb(249, 115, 22), rgb(219, 39, 119));
+  border: none;
+  color: white;
+  box-shadow: 0 25px 25px -25px rgba(0, 0, 0, 0.25);
+
+  &:hover {
+    box-shadow: 0 25px 25px -25px rgba(249, 115, 22, 0.25);
+  }
+  
+  .glowEffect {
+    background: linear-gradient(to right, rgba(249, 115, 22, 0.2), rgba(219, 39, 119, 0.2));
+  }
+
+}
+
+.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  .glowEffect {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0; 
+    transform: translateX(-20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateX(0); 
+  }
+}
