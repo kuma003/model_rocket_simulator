@@ -25,20 +25,27 @@ git clone https://github.com/kuma003/model_rocket_simulator
 cd model_rocket_simulator
 ```
 
-2. dockerを起動します：
+2. DB用のパスワード等を設定します。
+   下記の例ではコンソールでやっていますが、任意の方法で構いません。
+```{bash}
+cp .env.example .env
+# .envファイルの書き換え (適宜)
+```
+
+3. dockerを起動します：
 ```{bash}
 docker-compose up --build
 ```
 このとき、docker desktopが起動していないと失敗します。
 
-3. 次に、LAN内でアクセスできるように適切なポートを開放します。
+4. 次に、LAN内でアクセスできるように適切なポートを開放します。
 なお、ポート開放には管理者権限がいるため、必要に応じて権限を昇格します。
 ```{bash}
 open_ports
 ```
 
 
-4. 終了する際は `Ctrl + C`でDockerは停止します。
+5. 終了する際は `Ctrl + C`でDockerは停止します。
 ポートを閉じるには以下のコマンドを実行します：
 ```{bash}
 close_ports
@@ -52,7 +59,25 @@ docker-compose build frontend
 docker-compose up
 ```
 
+## コードを編集するには
+node.jsが入っていることが前提です。  
+フロントエンドの依存関係をインストールします。
+```{bash}
+cd frontend
+npm install
+```
+
+バックエンドも同様です。
+```{bash}
+cd backend
+npm install
+```
+
+
 ## Storyboookを起動するには
+Storybookはウェブ上でコンポーネント単体でチェックできるツールです。
+作成したコンポーネントは適宜AIにでも投げて、storybookを作っておくと見た目を確認できるので何かと便利です。
+
 storybookを起動するには以下のコマンドを実行します
 ```{bash}
 cd frontend
