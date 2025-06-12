@@ -1,7 +1,7 @@
 import React from "react";
 import { type StrokeIconProps } from "./types";
 
-const SimpleRocket: React.FC<StrokeIconProps> = ({
+const Info: React.FC<StrokeIconProps> = ({
   className,
   size = undefined,
   color = "currentColor",
@@ -19,13 +19,14 @@ const SimpleRocket: React.FC<StrokeIconProps> = ({
       stroke-linecap="round"
       stroke-linejoin="round"
       className={className}
+      transform="rotate(180)" // ! to i (adhoc)
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M4 13a8 8 0 0 1 7 7a6 6 0 0 0 3 -5a9 9 0 0 0 6 -8a3 3 0 0 0 -3 -3a9 9 0 0 0 -8 6a6 6 0 0 0 -5 3" />
-      <path d="M7 14a6 6 0 0 0 -3 6a6 6 0 0 0 6 -3" />
-      <path d="M15 9m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+      <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+      <path d="M12 8v4" />
+      <path d="M12 16h.01" />
     </svg>
   );
 };
 
-export default SimpleRocket;
+export default Info;

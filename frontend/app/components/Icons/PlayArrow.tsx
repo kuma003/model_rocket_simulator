@@ -3,9 +3,9 @@ import { type StrokeIconProps } from "./types";
 
 const PlayArrow: React.FC<StrokeIconProps> = ({
   className,
-  size = 24,
+  size = undefined,
   color = "currentColor",
-  strokeWidth = 3,
+  strokeWidth = 2,
 }) => {
   return (
     <svg

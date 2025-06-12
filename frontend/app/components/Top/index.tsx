@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./toppage.module.scss";
 import MenuButton from "../MenuButton";
-import { PlayArrow, SimpleRocket, Settings } from "../Icons";
+import { PlayArrow, SimpleRocket, Settings, Info } from "../Icons";
 
 const Top: React.FC = () => {
   return (
@@ -10,16 +10,20 @@ const Top: React.FC = () => {
         buttons={[
           {
             label: "プレイ",
-            leftIcon: <PlayArrow color="white" />,
+            leftIcon: <PlayArrow />,
             onClick: () => console.log("Home button clicked"),
           },
           {
             label: "設定",
-            leftIcon: <Settings color="white" />,
+            leftIcon: <Settings />,
           },
           {
             label: "ランキング",
-            leftIcon: <SimpleRocket color="white" />,
+            leftIcon: <SimpleRocket />,
+          },
+          {
+            label: "インフォ",
+            leftIcon: <Info />,
           },
         ]}
       />

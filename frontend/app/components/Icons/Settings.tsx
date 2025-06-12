@@ -3,9 +3,9 @@ import { type StrokeIconProps } from "./types";
 
 const Settings: React.FC<StrokeIconProps> = ({
   className,
-  size = 24,
+  size = undefined,
   color = "currentColor",
-  strokeWidth = 2,
+  strokeWidth = 1.5,
 }) => {
   return (
     <svg

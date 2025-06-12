@@ -9,12 +9,16 @@
   margin: 0 auto;
 }
 
-.menuButton { 
+.menuButton {
   --button-radius: 15px;
-  background: linear-gradient(to right, rgba(249, 115, 22, 0.2), rgba(219, 39, 119, 0.2));
+  background: linear-gradient(
+    to right,
+    rgba(249, 115, 22, 0.2),
+    rgba(219, 39, 119, 0.2)
+  );
   justify-content: center;
   align-items: center;
-  font-size: 24px;
+  font-size: 30px;
   height: 70px;
   width: 350px;
   font-weight: 600;
@@ -25,12 +29,13 @@
   :global(.mantine-Button-section) {
     fill: white;
     transform: translatey(1px);
-    width:25px;
+    height: 50px;
+    width: 50px;
     padding: 0;
   }
-  
+
   animation: slideIn 0.5s ease-out forwards;
-  
+
   &:hover {
     transform: scale(1.01);
     color: whitesmoke;
@@ -55,11 +60,14 @@
     background: linear-gradient(to right, rgb(248, 119, 27), rgb(222, 47, 126));
     box-shadow: 0 25px 25px -25px rgba(249, 115, 22, 0.25);
   }
-  
-  .glowEffect {
-    background: linear-gradient(to right, rgba(249, 115, 22, 0.2), rgba(219, 39, 119, 0.2));
-  }
 
+  .glowEffect {
+    background: linear-gradient(
+      to right,
+      rgba(249, 115, 22, 0.2),
+      rgba(219, 39, 119, 0.2)
+    );
+  }
 }
 
 .secondary {
@@ -67,23 +75,23 @@
   backdrop-filter: blur(8px);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  
+
   &:hover {
     background: rgba(255, 255, 255, 0.125);
   }
-  
+
   .glowEffect {
     background: rgba(255, 255, 255, 0.05);
   }
 }
 
 @keyframes slideIn {
-  from { 
-    opacity: 0; 
-    transform: translateX(-20px); 
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
   }
-  to { 
-    opacity: 1; 
-    transform: translateX(0); 
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }

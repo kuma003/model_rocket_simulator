@@ -1,6 +1,3 @@
-import React from "react";
-import styles from "./types.module.scss";
-
 export interface IconProps {
   className?: string;
   size?: number;
