@@ -1,12 +1,12 @@
 .stack {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 
-  width: 500px;
-  height: 100vh;
+  width: 100%;
+  height: auto;
   margin: 0 auto;
+  padding-top: 10px;
 }
 
 .menuButton {
