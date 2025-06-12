@@ -1,6 +1,6 @@
 import PlayArrow from "./PlayArrow";
 import Settings from "./Settings";
-import Score from "./Score";
+import SimpleRocket from "./SimpleRocket";
 
-export { PlayArrow, Settings, Score };
-export type { IconProps } from './types';
+export { PlayArrow, Settings, SimpleRocket };
+export type { IconProps } from "./types";
