@@ -28,7 +28,7 @@ const Top: React.FC = () => {
               leftIcon: <SimpleRocket />,
             },
             {
-              label: "インフォ",
+              label: "情報",
               leftIcon: <Info />,
             },
           ]}
