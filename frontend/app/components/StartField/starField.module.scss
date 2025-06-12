@@ -1,0 +1,22 @@
+.starField {
+  position: absolute;
+  inset: 0;
+}
+
+.star {
+  position: absolute;
+  background-color: white;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+  opacity: 0.3;
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+}

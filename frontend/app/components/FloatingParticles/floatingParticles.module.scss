@@ -1,0 +1,11 @@
+.particleContainer {
+  position: absolute;
+  inset: 0;
+}
+
+.particle {
+  position: absolute;
+  background-color: rgb(147, 197, 253);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(147, 197, 253, 0.5);
+}
