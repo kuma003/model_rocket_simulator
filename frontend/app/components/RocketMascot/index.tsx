@@ -49,7 +49,6 @@ export const RocketMascot: React.FC<RocketMascotProps> = ({
           </div>
         </div>
       ) : (
-        // This will be replaced with actual mascot image
         <img 
           src="/path/to/mascot-image.png" 
           alt="Rocket Mascot" 

@@ -8,137 +8,316 @@
   z-index: 1;
 }
 
-.spaceObject {
+// Orange Planet - Bottom Left
+.orangePlanet {
   position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), transparent 50%);
-  box-shadow: inset -5px -5px 20px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease;
+  bottom: 40px;
+  left: 40px;
+}
+
+.orangePlanetBody {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #fb923c, #ef4444);
+  border-radius: 45% 60% 55% 40% / 40% 70% 60% 50%;
+  position: relative;
+  animation: spin 10s linear infinite;
   
-  &:hover {
-    transform: scale(1.1);
+  .crater1 {
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    width: 16px;
+    height: 16px;
+    background: #ea580c;
+    border-radius: 50%;
+  }
+  
+  .crater2 {
+    position: absolute;
+    bottom: 12px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background: #dc2626;
+    border-radius: 50%;
   }
 }
 
-.small {
-  width: 20px;
-  height: 20px;
+// Green Moon - Top Left
+.greenMoon {
+  position: absolute;
+  top: 33%;
+  left: 80px;
 }
 
-.medium {
-  width: 35px;
-  height: 35px;
-}
-
-.large {
-  width: 50px;
-  height: 50px;
-}
-
-.planet {
+.greenMoonBody {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #4ade80, #10b981);
+  border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
   position: relative;
+  animation: pulse 3s ease-in-out infinite;
   
-  .planetRings {
+  .moonCrater {
+    position: absolute;
+    top: 4px;
+    left: 8px;
+    width: 12px;
+    height: 12px;
+    background: #16a34a;
+    border-radius: 50%;
+  }
+}
+
+// Purple Planet - Bottom Right
+.purplePlanet {
+  position: absolute;
+  bottom: 80px;
+  right: 128px;
+}
+
+.purplePlanetBody {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+  border-radius: 30% 70% 60% 40% / 60% 30% 70% 40%;
+  position: relative;
+  animation: bounce 4s ease-in-out infinite;
+  
+  .purpleCrater1 {
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    width: 24px;
+    height: 24px;
+    background: #9333ea;
+    border-radius: 50%;
+  }
+  
+  .purpleCrater2 {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    width: 12px;
+    height: 12px;
+    background: #db2777;
+    border-radius: 50%;
+  }
+  
+  .purpleCrater3 {
+    position: absolute;
+    top: 32px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background: #7c3aed;
+    border-radius: 50%;
+  }
+}
+
+// Blue Planet - Top Right
+.bluePlanet {
+  position: absolute;
+  top: 80px;
+  right: 80px;
+}
+
+.bluePlanetBody {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #60a5fa, #06b6d4);
+  border-radius: 40% 60% 70% 30% / 60% 40% 30% 70%;
+  position: relative;
+  animation: pulse 3s ease-in-out infinite;
+  
+  .blueCrater1 {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 16px;
+    height: 16px;
+    background: #2563eb;
+    border-radius: 50%;
+  }
+  
+  .blueCrater2 {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 8px;
+    height: 8px;
+    background: #0891b2;
+    border-radius: 50%;
+  }
+  
+  .planetRing {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 120%;
-    height: 120%;
+    width: 80px;
+    height: 80px;
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
-    
-    &::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 140%;
-      height: 140%;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-    }
+    animation: spin 8s linear infinite;
   }
 }
 
-.moon {
-  background: linear-gradient(135deg, #e6e6e6, #b3b3b3);
-  box-shadow: 
-    inset -3px -3px 10px rgba(0, 0, 0, 0.3),
-    0 0 10px rgba(230, 230, 230, 0.3);
+// Yellow Asteroid - Middle Left
+.yellowAsteroid {
+  position: absolute;
+  top: 50%;
+  left: 40px;
 }
 
-.asteroid {
-  border-radius: 40% 60% 60% 40% / 60% 30% 70% 40%;
-  background: linear-gradient(135deg, #8b4513, #654321);
+.yellowAsteroidBody {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #facc15, #d97706);
+  border-radius: 30% 70% 60% 40% / 40% 30% 70% 60%;
+  transform: rotate(45deg);
+  position: relative;
+  animation: spin 6s linear infinite;
   
-  .asteroidCraters {
+  .yellowCrater1 {
     position: absolute;
-    top: 20%;
-    left: 30%;
-    width: 20%;
-    height: 20%;
-    background: rgba(0, 0, 0, 0.3);
+    top: 4px;
+    left: 4px;
+    width: 8px;
+    height: 8px;
+    background: #b45309;
     border-radius: 50%;
-    
-    &::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      right: -10px;
-      width: 15%;
-      height: 15%;
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 50%;
-    }
-    
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -5px;
-      left: -8px;
-      width: 12%;
-      height: 12%;
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 50%;
-    }
+  }
+  
+  .yellowCrater2 {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 4px;
+    height: 4px;
+    background: #a16207;
+    border-radius: 50%;
   }
 }
 
-.floating {
-  animation: floatUpDown 8s ease-in-out infinite;
+// Small Pink Moon - Top Center
+.pinkMoon {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-@keyframes floatUpDown {
+.pinkMoonBody {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #fda4af, #f472b6);
+  border-radius: 70% 30% 40% 60% / 30% 70% 60% 40%;
+  position: relative;
+  animation: bounce 5s ease-in-out infinite;
+  
+  .pinkCrater {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 8px;
+    height: 8px;
+    background: #ec4899;
+    border-radius: 50%;
+  }
+}
+
+// Teal Planet - Middle Right
+.tealPlanet {
+  position: absolute;
+  top: 50%;
+  right: 64px;
+}
+
+.tealPlanetBody {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #2dd4bf, #10b981);
+  border-radius: 50% 30% 60% 40% / 40% 60% 50% 30%;
+  position: relative;
+  animation: pulse 4s ease-in-out infinite;
+  
+  .tealCrater1 {
+    position: absolute;
+    top: 4px;
+    left: 8px;
+    width: 12px;
+    height: 12px;
+    background: #0d9488;
+    border-radius: 50%;
+  }
+  
+  .tealCrater2 {
+    position: absolute;
+    bottom: 8px;
+    right: 4px;
+    width: 4px;
+    height: 4px;
+    background: #059669;
+    border-radius: 50%;
+  }
+}
+
+// Small Red Asteroid - Bottom Center
+.redAsteroid {
+  position: absolute;
+  bottom: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.redAsteroidBody {
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #f87171, #fb923c);
+  border-radius: 20% 80% 30% 70% / 60% 20% 80% 40%;
+  transform: rotate(12deg);
+  position: relative;
+  animation: spin 7s linear infinite;
+  
+  .redCrater {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 4px;
+    height: 4px;
+    background: #dc2626;
+    border-radius: 50%;
+  }
+}
+
+// Animations
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
   0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  25% {
-    transform: translateY(-20px) rotate(90deg);
+    transform: scale(1);
+    opacity: 1;
   }
   50% {
-    transform: translateY(-10px) rotate(180deg);
-  }
-  75% {
-    transform: translateY(-15px) rotate(270deg);
+    transform: scale(1.05);
+    opacity: 0.8;
   }
 }
 
-// Add some twinkling effect for planets
-.planet.floating {
-  animation: floatUpDown 8s ease-in-out infinite, twinkle 4s ease-in-out infinite;
-}
-
-@keyframes twinkle {
+@keyframes bounce {
   0%, 100% {
-    box-shadow: 
-      inset -5px -5px 20px rgba(0, 0, 0, 0.3),
-      0 0 5px rgba(255, 255, 255, 0.2);
+    transform: translateY(0);
   }
   50% {
-    box-shadow: 
-      inset -5px -5px 20px rgba(0, 0, 0, 0.3),
-      0 0 15px rgba(255, 255, 255, 0.5);
+    transform: translateY(-20px);
   }
 }

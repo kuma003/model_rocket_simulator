@@ -14,7 +14,7 @@ export const Top: React.FC = () => {
       <FloatingSpaceObjects count={12} />
       <Title />
       <div style={{ position: 'absolute', top: '20px', right: '20px' }}>
-        <RocketMascot size="medium" animated={true} position="right" />
+        <RocketMascot size="small" animated={true} position="right" />
         <MascotSpeech 
           message="宇宙へようこそ！🚀" 
           visible={true} 

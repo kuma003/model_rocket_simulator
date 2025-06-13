@@ -1,50 +1,6 @@
 import React from 'react';
 import styles from './spaceObjects.module.scss';
 
-interface SpaceObjectProps {
-  type: 'planet' | 'moon' | 'asteroid';
-  size?: 'small' | 'medium' | 'large';
-  color?: string;
-  className?: string;
-  style?: React.CSSProperties;
-}
-
-export const SpaceObject: React.FC<SpaceObjectProps> = ({
-  type,
-  size = 'medium',
-  color,
-  className,
-  style,
-}) => {
-  const getClassNames = () => {
-    let classes = [styles.spaceObject, styles[type], styles[size]];
-    if (className) classes.push(className);
-    return classes.join(' ');
-  };
-
-  const getStyle = () => {
-    const baseStyle = { ...style };
-    if (color) {
-      baseStyle.backgroundColor = color;
-    }
-    return baseStyle;
-  };
-
-  return (
-    <div 
-      className={getClassNames()}
-      style={getStyle()}
-    >
-      {type === 'planet' && (
-        <div className={styles.planetRings}></div>
-      )}
-      {type === 'asteroid' && (
-        <div className={styles.asteroidCraters}></div>
-      )}
-    </div>
-  );
-};
-
 interface FloatingSpaceObjectsProps {
   count?: number;
   className?: string;
@@ -54,38 +10,70 @@ export const FloatingSpaceObjects: React.FC<FloatingSpaceObjectsProps> = ({
   count = 8,
   className,
 }) => {
-  const objects = Array.from({ length: count }, (_, i) => {
-    const types: ('planet' | 'moon' | 'asteroid')[] = ['planet', 'moon', 'asteroid'];
-    const sizes: ('small' | 'medium' | 'large')[] = ['small', 'medium', 'large'];
-    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b', '#eb4d4b', '#6c5ce7', '#a29bfe'];
-    
-    return {
-      id: i,
-      type: types[Math.floor(Math.random() * types.length)],
-      size: sizes[Math.floor(Math.random() * sizes.length)],
-      color: colors[Math.floor(Math.random() * colors.length)],
-      left: Math.random() * 90,
-      top: Math.random() * 90,
-      delay: Math.random() * 10,
-    };
-  });
-
   return (
     <div className={`${styles.floatingContainer} ${className || ''}`}>
-      {objects.map((obj) => (
-        <SpaceObject
-          key={obj.id}
-          type={obj.type}
-          size={obj.size}
-          color={obj.color}
-          className={styles.floating}
-          style={{
-            left: `${obj.left}%`,
-            top: `${obj.top}%`,
-            animationDelay: `${obj.delay}s`,
-          }}
-        />
-      ))}
+      {/* Orange Planet - Bottom Left */}
+      <div className={styles.orangePlanet}>
+        <div className={styles.orangePlanetBody}>
+          <div className={styles.crater1}></div>
+          <div className={styles.crater2}></div>
+        </div>
+      </div>
+
+      {/* Green Moon - Top Left */}
+      <div className={styles.greenMoon}>
+        <div className={styles.greenMoonBody}>
+          <div className={styles.moonCrater}></div>
+        </div>
+      </div>
+
+      {/* Purple Planet - Bottom Right */}
+      <div className={styles.purplePlanet}>
+        <div className={styles.purplePlanetBody}>
+          <div className={styles.purpleCrater1}></div>
+          <div className={styles.purpleCrater2}></div>
+          <div className={styles.purpleCrater3}></div>
+        </div>
+      </div>
+
+      {/* Blue Planet - Top Right */}
+      <div className={styles.bluePlanet}>
+        <div className={styles.bluePlanetBody}>
+          <div className={styles.blueCrater1}></div>
+          <div className={styles.blueCrater2}></div>
+          <div className={styles.planetRing}></div>
+        </div>
+      </div>
+
+      {/* Yellow Asteroid - Middle Left */}
+      <div className={styles.yellowAsteroid}>
+        <div className={styles.yellowAsteroidBody}>
+          <div className={styles.yellowCrater1}></div>
+          <div className={styles.yellowCrater2}></div>
+        </div>
+      </div>
+
+      {/* Small Pink Moon - Top Center */}
+      <div className={styles.pinkMoon}>
+        <div className={styles.pinkMoonBody}>
+          <div className={styles.pinkCrater}></div>
+        </div>
+      </div>
+
+      {/* Teal Planet - Middle Right */}
+      <div className={styles.tealPlanet}>
+        <div className={styles.tealPlanetBody}>
+          <div className={styles.tealCrater1}></div>
+          <div className={styles.tealCrater2}></div>
+        </div>
+      </div>
+
+      {/* Small Red Asteroid - Bottom Center */}
+      <div className={styles.redAsteroid}>
+        <div className={styles.redAsteroidBody}>
+          <div className={styles.redCrater}></div>
+        </div>
+      </div>
     </div>
   );
 };
