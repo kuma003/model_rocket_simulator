@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import MenuButton from "./index";
+import { MenuButton } from "./index";
 import { PlayArrow } from "../Icons";
 
 const meta = {

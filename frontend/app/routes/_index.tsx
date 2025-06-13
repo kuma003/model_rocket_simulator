@@ -1,4 +1,4 @@
-import Top from "~/components/Top";
+import { Top } from "~/components/Top";
 import type { Route } from "./+types/_index";
 
 export const meta: Route.MetaFunction = () => [

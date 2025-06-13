@@ -1,11 +1,17 @@
 @import '../../styles/shared.scss';
 
-.particleContainer {
+.container {
   @include absolute-fill;
 }
 
-.particle {
+.floatingParticle {
   @include particle-base;
   background-color: $particle-blue;
   box-shadow: 0 0 10px $particle-glow;
+}
+
+.starParticle {
+  @include particle-base;
+  background-color: $white;
+  @include pulse-animation;
 }

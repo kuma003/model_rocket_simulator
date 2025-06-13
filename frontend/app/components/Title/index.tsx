@@ -1,8 +1,8 @@
-import React from "react";
-import { Rocket } from "../Icons";
-import styles from "./title.module.scss";
+import React from 'react';
+import { Rocket } from '../Icons';
+import styles from './title.module.scss';
 
-const Title: React.FC = () => {
+export const Title: React.FC = () => {
   return (
     <div className={styles.title}>
       <Rocket className={styles.icon} />
@@ -15,5 +15,3 @@ const Title: React.FC = () => {
     </div>
   );
 };
-
-export default Title;

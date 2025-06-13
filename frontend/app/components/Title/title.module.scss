@@ -1,52 +1,31 @@
+@import '../../styles/shared.scss';
+
 .title {
   display: flex;
   height: 60vh;
   margin: 0;
-  font-size: 24px;
+  font-size: $font-size-large;
   font-weight: bold;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end; /* Aligns items to bottom */
-  gap: 15px;
-  padding-bottom: 10px; /* Adds some space from the bottom edge */
+  justify-content: flex-end;
+  gap: $spacing-md;
+  padding-bottom: $spacing-sm;
 
   .icon {
-    height: 250px;
-    width: 250px;
-    margin-right: 8px;
-    color: #ff981b; // orange
-    transition: transform 0.1s ease-in-out;
-
-    &:hover {
-      transform: scale(1.05);
-      transition: transform 0.15s ease-in-out;
-    }
-
-    // animation: bounce 2s infinite ease-in-out;
-
-    // @keyframes bounce {
-    //   0%,
-    //   100% {
-    //     transform: translateY(0);
-    //   }
-    //   50% {
-    //     transform: translateY(15px);
-    //   }
-    // }
+    height: $icon-size-large;
+    width: $icon-size-large;
+    margin-right: $spacing-xs;
+    color: $primary-orange;
+    @include smooth-transition;
+    @include hover-scale;
   }
 
   h1 {
-    margin: 10px;
-    font-size: 3rem; // text-6xl equivalent
+    margin: $spacing-sm;
+    font-size: $font-size-title;
     font-weight: bold;
-    background: linear-gradient(
-      to right,
-      #f6ad55,
-      #ed64a6,
-      #c492fa
-    ); // orange, pink
-    background-clip: text;
-    color: transparent;
+    @include gradient-text;
     letter-spacing: 0.025em;
     line-height: 1;
     text-align: center;
@@ -54,12 +33,12 @@
 
   h2 {
     margin: 0;
-    margin-bottom: 10px;
-    font-size: 2rem; // text-2xl equivalent
+    margin-bottom: $spacing-sm;
+    font-size: $font-size-subtitle;
     font-weight: 500;
-    color: rgb(97, 120, 160); // gray-700
+    color: $gray-700;
     text-align: center;
-    max-width: 600px; // max width for better readability
+    max-width: 600px;
     line-height: 1.5;
     letter-spacing: 0.05em;
   }

@@ -1,47 +1,45 @@
-.stack {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+@import '../../styles/shared.scss';
 
+.stack {
+  @include flex-column-center;
   width: 100%;
   height: auto;
   margin: 0 auto;
-  padding-top: 10px;
+  padding-top: $spacing-sm;
 }
 
 .menuButton {
-  --button-radius: 999px;
+  --button-radius: #{$button-radius};
   background: linear-gradient(
     to right,
-    rgba(249, 115, 22, 0.2),
-    rgba(219, 39, 119, 0.2)
+    rgba($button-primary-start, 0.2),
+    rgba($button-primary-end, 0.2)
   );
-  justify-content: center;
-  align-items: center;
-  font-size: 30px;
-  height: 70px;
-  width: 350px;
+  @include flex-center;
+  font-size: $font-size-button;
+  height: $button-height;
+  width: $button-width;
   font-weight: 600;
   cursor: pointer;
   border: none;
-  color: white;
+  color: $white;
 
   :global(.mantine-Button-section) {
-    fill: white;
+    fill: $white;
     transform: translatey(1px);
-    height: 50px;
-    width: 50px;
+    height: $icon-size-medium;
+    width: $icon-size-medium;
     padding: 0;
   }
 
-  animation: slideIn 0.5s ease-out forwards;
+  @include slide-in-animation;
 
   &:hover {
     transform: scale(1.01);
-    color: whitesmoke;
+    color: $whitesmoke;
 
     :global(.mantine-Button-section) {
-      fill: whitesmoke;
+      fill: $whitesmoke;
     }
 
     .glowEffect {
@@ -51,30 +49,28 @@
 }
 
 .primary {
-  background: linear-gradient(to right, rgb(249, 115, 22), rgb(219, 39, 119));
+  background: $button-gradient;
   border: none;
-  color: white;
-  box-shadow: 0 25px 25px -25px rgba(0, 0, 0, 0.25);
+  color: $white;
+  box-shadow: 0 $spacing-lg $spacing-lg -$spacing-lg rgba(0, 0, 0, 0.25);
 
   &:hover {
-    background: linear-gradient(to right, rgb(248, 119, 27), rgb(222, 47, 126));
-    box-shadow: 0 25px 25px -25px rgba(249, 115, 22, 0.25);
+    background: $button-gradient-hover;
+    box-shadow: 0 $spacing-lg $spacing-lg -$spacing-lg rgba($button-primary-start, 0.25);
   }
 
   .glowEffect {
     background: linear-gradient(
       to right,
-      rgba(249, 115, 22, 0.2),
-      rgba(219, 39, 119, 0.2)
+      rgba($button-primary-start, 0.2),
+      rgba($button-primary-end, 0.2)
     );
   }
 }
 
 .secondary {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(8px);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  @include glass-effect;
+  color: $white;
 
   &:hover {
     background: rgba(255, 255, 255, 0.125);
@@ -82,16 +78,5 @@
 
   .glowEffect {
     background: rgba(255, 255, 255, 0.05);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
   }
 }
