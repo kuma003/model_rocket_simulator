@@ -6,7 +6,13 @@
       "Bash(npm run typecheck:*)",
       "Bash(npx tsc:*)",
       "Bash(git add:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(mv:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm ci:*)",
+      "Bash(npm install)",
+      "Bash(npx vite build:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }

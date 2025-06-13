@@ -1,31 +1,52 @@
-@use "../../styles/shared";
-
 .title {
   display: flex;
   height: 60vh;
   margin: 0;
-  font-size: shared.$font-size-large;
+  font-size: 24px;
   font-weight: bold;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
-  gap: shared.$spacing-md;
-  padding-bottom: shared.$spacing-sm;
+  justify-content: flex-end; /* Aligns items to bottom */
+  gap: 15px;
+  padding-bottom: 10px; /* Adds some space from the bottom edge */
 
   .icon {
-    height: shared.$icon-size-large;
-    width: shared.$icon-size-large;
-    margin-right: shared.$spacing-xs;
-    color: shared.$primary-orange;
-    @include shared.smooth-transition;
-    @include shared.hover-scale;
+    height: 250px;
+    width: 250px;
+    margin-right: 8px;
+    color: #ff981b; // orange
+    transition: transform 0.1s ease-in-out;
+
+    &:hover {
+      transform: scale(1.05);
+      transition: transform 0.15s ease-in-out;
+    }
+
+    // animation: bounce 2s infinite ease-in-out;
+
+    // @keyframes bounce {
+    //   0%,
+    //   100% {
+    //     transform: translateY(0);
+    //   }
+    //   50% {
+    //     transform: translateY(15px);
+    //   }
+    // }
   }
 
   h1 {
-    margin: shared.$spacing-sm;
-    font-size: shared.$font-size-title;
+    margin: 10px;
+    font-size: 3rem; // text-6xl equivalent
     font-weight: bold;
-    @include shared.gradient-text;
+    background: linear-gradient(
+      to right,
+      #f6ad55,
+      #ed64a6,
+      #c492fa
+    ); // orange, pink
+    background-clip: text;
+    color: transparent;
     letter-spacing: 0.025em;
     line-height: 1;
     text-align: center;
@@ -33,12 +54,12 @@
 
   h2 {
     margin: 0;
-    margin-bottom: shared.$spacing-sm;
-    font-size: shared.$font-size-subtitle;
+    margin-bottom: 10px;
+    font-size: 2rem; // text-2xl equivalent
     font-weight: 500;
-    color: shared.$gray-700;
+    color: rgb(97, 120, 160); // gray-700
     text-align: center;
-    max-width: 600px;
+    max-width: 600px; // max width for better readability
     line-height: 1.5;
     letter-spacing: 0.05em;
   }

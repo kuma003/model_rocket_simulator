@@ -10,7 +10,7 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
-import "./app.css";
+import "./app.scss";
 import { MantineProvider } from '@mantine/core';
 
 export const links: Route.LinksFunction = () => [

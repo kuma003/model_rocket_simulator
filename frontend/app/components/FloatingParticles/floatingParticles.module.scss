@@ -1,4 +1,4 @@
-@use "../../styles/shared";
+@use "../../app.scss" as *;
 
 .particleContainer {
   @include shared.absolute-fill;

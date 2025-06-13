@@ -1,0 +1,118 @@
+// Shared SCSS variables and mixins for the model rocket simulator
+
+// Colors
+$primary-orange: #ff981b;
+$primary-pink: #ed64a6;
+$primary-purple: #c492fa;
+$gradient-start: #f6ad55;
+$gradient-end: #c492fa;
+
+$button-primary-start: rgb(249, 115, 22);
+$button-primary-end: rgb(219, 39, 119);
+$button-primary-hover-start: rgb(248, 119, 27);
+$button-primary-hover-end: rgb(222, 47, 126);
+
+$background-gradient: linear-gradient(to bottom, #5a3393, #354d8f, #403e80);
+$text-gradient: linear-gradient(to right, $gradient-start, $primary-pink, $primary-purple);
+$button-gradient: linear-gradient(to right, $button-primary-start, $button-primary-end);
+$button-gradient-hover: linear-gradient(to right, $button-primary-hover-start, $button-primary-hover-end);
+
+$particle-blue: rgb(147, 197, 253);
+$particle-glow: rgba(147, 197, 253, 0.5);
+
+$white: #ffffff;
+$whitesmoke: whitesmoke;
+$gray-700: rgb(97, 120, 160);
+
+// Sizes
+$icon-size-large: 250px;
+$icon-size-medium: 50px;
+$button-height: 70px;
+$button-width: 350px;
+$button-radius: 999px;
+
+// Spacing
+$spacing-xs: 8px;
+$spacing-sm: 10px;
+$spacing-md: 15px;
+$spacing-lg: 25px;
+
+// Typography
+$font-size-title: 3rem;
+$font-size-subtitle: 2rem;
+$font-size-button: 30px;
+$font-size-large: 24px;
+
+// Mixins
+@mixin absolute-fill {
+  position: absolute;
+  inset: 0;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin particle-base {
+  position: absolute;
+  border-radius: 50%;
+}
+
+@mixin smooth-transition($duration: 0.15s) {
+  transition: transform $duration ease-in-out;
+}
+
+@mixin hover-scale($scale: 1.05) {
+  &:hover {
+    transform: scale($scale);
+  }
+}
+
+@mixin gradient-text($gradient: $text-gradient) {
+  background: $gradient;
+  background-clip: text;
+  color: transparent;
+}
+
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@mixin slide-in-animation {
+  animation: slideIn 0.5s ease-out forwards;
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+}
+
+@mixin pulse-animation($duration: 2s) {
+  animation: pulse $duration infinite;
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+}
