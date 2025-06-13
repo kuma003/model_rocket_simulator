@@ -22,3 +22,10 @@ $font-size-large: 24px;
   background-clip: text;
   color: transparent;
 }
+
+// Japanese-friendly fun font family for child-friendly UI
+$font-family-fun: 'Comic Sans MS', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', cursive, sans-serif;
+
+@mixin fun-japanese-text {
+  font-family: $font-family-fun;
+}

@@ -7,18 +7,18 @@
 }
 
 .small {
+  width: 60px;
+  height: 75px;
+}
+
+.medium {
   width: 80px;
   height: 100px;
 }
 
-.medium {
-  width: 120px;
-  height: 150px;
-}
-
 .large {
-  width: 160px;
-  height: 200px;
+  width: 100px;
+  height: 125px;
 }
 
 .left {
@@ -152,7 +152,7 @@
 
 .placeholderText {
   text-align: center;
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Comic Sans MS', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', cursive, sans-serif;
   margin-top: 10px;
   
   span {
@@ -236,7 +236,7 @@
     margin: 0;
     font-size: 0.8rem;
     color: #2c3e50;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-family: 'Comic Sans MS', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', cursive, sans-serif;
     text-align: center;
   }
 }
