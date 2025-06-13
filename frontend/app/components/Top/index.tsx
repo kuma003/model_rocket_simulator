@@ -15,17 +15,17 @@ const Top: React.FC = () => {
         <MenuButton
           buttons={[
             {
-              label: "プレイ",
+              label: "ゲームスタート",
               leftIcon: <PlayArrow />,
               onClick: () => console.log("Home button clicked"),
             },
             {
-              label: "設定",
-              leftIcon: <Settings />,
-            },
-            {
               label: "ランキング",
               leftIcon: <SimpleRocket />,
+            },
+            {
+              label: "設定",
+              leftIcon: <Settings />,
             },
             {
               label: "情報",
