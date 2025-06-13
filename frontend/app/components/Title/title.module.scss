@@ -1,31 +1,31 @@
-@import '../../styles/shared.scss';
+@use "../../styles/shared";
 
 .title {
   display: flex;
   height: 60vh;
   margin: 0;
-  font-size: $font-size-large;
+  font-size: shared.$font-size-large;
   font-weight: bold;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  gap: $spacing-md;
-  padding-bottom: $spacing-sm;
+  gap: shared.$spacing-md;
+  padding-bottom: shared.$spacing-sm;
 
   .icon {
-    height: $icon-size-large;
-    width: $icon-size-large;
-    margin-right: $spacing-xs;
-    color: $primary-orange;
-    @include smooth-transition;
-    @include hover-scale;
+    height: shared.$icon-size-large;
+    width: shared.$icon-size-large;
+    margin-right: shared.$spacing-xs;
+    color: shared.$primary-orange;
+    @include shared.smooth-transition;
+    @include shared.hover-scale;
   }
 
   h1 {
-    margin: $spacing-sm;
-    font-size: $font-size-title;
+    margin: shared.$spacing-sm;
+    font-size: shared.$font-size-title;
     font-weight: bold;
-    @include gradient-text;
+    @include shared.gradient-text;
     letter-spacing: 0.025em;
     line-height: 1;
     text-align: center;
@@ -33,10 +33,10 @@
 
   h2 {
     margin: 0;
-    margin-bottom: $spacing-sm;
-    font-size: $font-size-subtitle;
+    margin-bottom: shared.$spacing-sm;
+    font-size: shared.$font-size-subtitle;
     font-weight: 500;
-    color: $gray-700;
+    color: shared.$gray-700;
     text-align: center;
     max-width: 600px;
     line-height: 1.5;

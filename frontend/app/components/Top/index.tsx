@@ -1,9 +1,9 @@
-import React from 'react';
-import styles from './toppage.module.scss';
-import { MenuButton } from '../MenuButton';
-import { PlayArrow, SimpleRocket, Settings, Info } from '../Icons';
-import { Title } from '../Title';
-import { StarField } from '../StartField';
+import React from "react";
+import styles from "./toppage.module.scss";
+import { MenuButton } from "../MenuButton";
+import { PlayArrow, SimpleRocket, Settings, Info } from "../Icons";
+import Title from "../Title";
+import { StarField } from "../StartField";
 
 export const Top: React.FC = () => {
   return (
@@ -13,20 +13,20 @@ export const Top: React.FC = () => {
       <MenuButton
         buttons={[
           {
-            label: 'ゲームスタート',
+            label: "ゲームスタート",
             leftIcon: <PlayArrow />,
-            onClick: () => console.log('Home button clicked'),
+            onClick: () => console.log("Home button clicked"),
           },
           {
-            label: 'ランキング',
+            label: "ランキング",
             leftIcon: <SimpleRocket />,
           },
           {
-            label: '設定',
+            label: "設定",
             leftIcon: <Settings />,
           },
           {
-            label: '情報',
+            label: "情報",
             leftIcon: <Info />,
           },
         ]}

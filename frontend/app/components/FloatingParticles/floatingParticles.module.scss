@@ -1,11 +1,11 @@
-@import '../../styles/shared.scss';
+@use "../../styles/shared";
 
 .particleContainer {
-  @include absolute-fill;
+  @include shared.absolute-fill;
 }
 
 .particle {
-  @include particle-base;
-  background-color: $particle-blue;
-  box-shadow: 0 0 10px $particle-glow;
+  @include shared.particle-base;
+  background-color: shared.$particle-blue;
+  box-shadow: 0 0 10px shared.$particle-glow;
 }

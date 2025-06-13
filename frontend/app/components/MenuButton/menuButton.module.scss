@@ -1,4 +1,4 @@
-@import '../../styles/shared.scss';
+@import "../../styles/shared.scss";
 
 .stack {
   @include flex-column-center;
@@ -52,11 +52,11 @@
   background: $button-gradient;
   border: none;
   color: $white;
-  box-shadow: 0 $spacing-lg $spacing-lg -$spacing-lg rgba(0, 0, 0, 0.25);
+  box-shadow: 0 $spacing-xs $spacing-xs -$spacing-xs rgba(0, 0, 0, 0.1);
 
   &:hover {
     background: $button-gradient-hover;
-    box-shadow: 0 $spacing-lg $spacing-lg -$spacing-lg rgba($button-primary-start, 0.25);
+    box-shadow: 0 $spacing-xs $spacing-xs -$spacing-xs rgba($button-primary-start, 0.1);
   }
 
   .glowEffect {
@@ -71,9 +71,11 @@
 .secondary {
   @include glass-effect;
   color: $white;
+  box-shadow: 0 $spacing-xs $spacing-xs -$spacing-xs rgba(0, 0, 0, 0.05);
 
   &:hover {
     background: rgba(255, 255, 255, 0.125);
+    box-shadow: 0 $spacing-xs $spacing-xs -$spacing-xs rgba(0, 0, 0, 0.1);
   }
 
   .glowEffect {
