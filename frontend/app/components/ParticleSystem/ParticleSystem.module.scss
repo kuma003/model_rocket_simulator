@@ -1,17 +1,27 @@
-@import '../../app.scss';
-
 .container {
-  @include absolute-fill;
+  position: absolute;
+  inset: 0;
 }
 
 .floatingParticle {
-  @include particle-base;
-  background-color: $particle-blue;
-  box-shadow: 0 0 10px $particle-glow;
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgb(147, 197, 253);
+  box-shadow: 0 0 10px rgba(147, 197, 253, 0.5);
 }
 
 .starParticle {
-  @include particle-base;
-  background-color: $white;
-  @include pulse-animation;
+  position: absolute;
+  border-radius: 50%;
+  background-color: #ffffff;
+  animation: pulse 2s infinite;
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
 }

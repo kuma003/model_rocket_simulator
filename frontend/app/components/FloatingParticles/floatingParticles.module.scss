@@ -1,11 +1,11 @@
-@use "../../app.scss" as *;
-
 .particleContainer {
-  @include shared.absolute-fill;
+  position: absolute;
+  inset: 0;
 }
 
 .particle {
-  @include shared.particle-base;
-  background-color: shared.$particle-blue;
-  box-shadow: 0 0 10px shared.$particle-glow;
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgb(147, 197, 253);
+  box-shadow: 0 0 10px rgba(147, 197, 253, 0.5);
 }

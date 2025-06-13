@@ -11,56 +11,79 @@
   padding-bottom: 10px; /* Adds some space from the bottom edge */
 
   .icon {
-    height: 250px;
-    width: 250px;
+    height: 280px;
+    width: 280px;
     margin-right: 8px;
-    color: #ff981b; // orange
-    transition: transform 0.1s ease-in-out;
+    color: #ff6b6b;
+    transition: transform 0.3s ease-in-out;
+    filter: drop-shadow(0 8px 16px rgba(255, 107, 107, 0.3));
+    animation: rocketFloat 3s ease-in-out infinite;
 
     &:hover {
-      transform: scale(1.05);
-      transition: transform 0.15s ease-in-out;
+      transform: scale(1.1) rotate(5deg);
+      transition: transform 0.3s ease-in-out;
+      filter: drop-shadow(0 12px 24px rgba(255, 107, 107, 0.5));
     }
+  }
 
-    // animation: bounce 2s infinite ease-in-out;
-
-    // @keyframes bounce {
-    //   0%,
-    //   100% {
-    //     transform: translateY(0);
-    //   }
-    //   50% {
-    //     transform: translateY(15px);
-    //   }
-    // }
+  @keyframes rocketFloat {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-15px) rotate(2deg);
+    }
   }
 
   h1 {
     margin: 10px;
-    font-size: 3rem; // text-6xl equivalent
+    font-size: 3.5rem;
     font-weight: bold;
-    background: linear-gradient(
-      to right,
-      #f6ad55,
-      #ed64a6,
-      #c492fa
-    ); // orange, pink
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24, #6c5ce7);
+    background-size: 300% 300%;
     background-clip: text;
     color: transparent;
     letter-spacing: 0.025em;
     line-height: 1;
     text-align: center;
+    animation: titleRainbow 4s ease infinite;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  @keyframes titleRainbow {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 
   h2 {
     margin: 0;
     margin-bottom: 10px;
-    font-size: 2rem; // text-2xl equivalent
-    font-weight: 500;
-    color: rgb(97, 120, 160); // gray-700
+    font-size: 2.2rem;
+    font-weight: 600;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    color: #fff;
     text-align: center;
-    max-width: 600px; // max width for better readability
+    max-width: 600px;
     line-height: 1.5;
     letter-spacing: 0.05em;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    animation: subtitleGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes subtitleGlow {
+    0%, 100% {
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    50% {
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.3);
+    }
   }
 }

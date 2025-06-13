@@ -1,45 +1,62 @@
-@import "../../app.scss";
-
 .stack {
-  @include flex-column-center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: auto;
   margin: 0 auto;
-  padding-top: $spacing-sm;
+  padding-top: 10px;
 }
 
 .menuButton {
-  --button-radius: #{$button-radius};
-  background: linear-gradient(
-    to right,
-    rgba($button-primary-start, 0.2),
-    rgba($button-primary-end, 0.2)
-  );
-  @include flex-center;
-  font-size: $font-size-button;
-  height: $button-height;
-  width: $button-width;
-  font-weight: 600;
+  --button-radius: 999px;
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24);
+  background-size: 300% 300%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  height: 80px;
+  width: 380px;
+  font-weight: 700;
   cursor: pointer;
-  border: none;
-  color: $white;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.5s ease-out forwards, rainbowShift 4s ease infinite;
+  margin: 8px 0;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
 
   :global(.mantine-Button-section) {
-    fill: $white;
+    fill: #ffffff;
     transform: translatey(1px);
-    height: $icon-size-medium;
-    width: $icon-size-medium;
+    height: 50px;
+    width: 50px;
     padding: 0;
   }
 
-  @include slide-in-animation;
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
 
   &:hover {
-    transform: scale(1.01);
-    color: $whitesmoke;
+    transform: scale(1.05) translateY(-3px);
+    color: #fff;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    animation-duration: 2s;
 
     :global(.mantine-Button-section) {
-      fill: $whitesmoke;
+      fill: #fff;
+      transform: translatey(1px) scale(1.1);
     }
 
     .glowEffect {
@@ -49,36 +66,57 @@
 }
 
 .primary {
-  background: $button-gradient;
+  background: linear-gradient(to right, rgb(249, 115, 22), rgb(219, 39, 119));
   border: none;
-  color: $white;
-  box-shadow: 0 $spacing-xs $spacing-xs -$spacing-xs rgba(0, 0, 0, 0.1);
+  color: #ffffff;
+  box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    background: $button-gradient-hover;
-    box-shadow: 0 $spacing-xs $spacing-xs -$spacing-xs rgba($button-primary-start, 0.1);
+    background: linear-gradient(to right, rgb(248, 119, 27), rgb(222, 47, 126));
+    box-shadow: 0 8px 8px -8px rgba(249, 115, 22, 0.1);
   }
 
   .glowEffect {
     background: linear-gradient(
       to right,
-      rgba($button-primary-start, 0.2),
-      rgba($button-primary-end, 0.2)
+      rgba(249, 115, 22, 0.2),
+      rgba(219, 39, 119, 0.2)
     );
   }
 }
 
 .secondary {
-  @include glass-effect;
-  color: $white;
-  box-shadow: 0 $spacing-xs $spacing-xs -$spacing-xs rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.05);
 
   &:hover {
     background: rgba(255, 255, 255, 0.125);
-    box-shadow: 0 $spacing-xs $spacing-xs -$spacing-xs rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.1);
   }
 
   .glowEffect {
     background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+// Add rainbow animation
+@keyframes rainbowShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }

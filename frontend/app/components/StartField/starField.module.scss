@@ -1,11 +1,21 @@
-@import '../../app.scss';
-
 .starField {
-  @include absolute-fill;
+  position: absolute;
+  inset: 0;
 }
 
 .star {
-  @include particle-base;
-  background-color: $white;
-  @include pulse-animation;
+  position: absolute;
+  border-radius: 50%;
+  background-color: #ffffff;
+  animation: pulse 2s infinite;
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
 }
