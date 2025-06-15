@@ -12,7 +12,10 @@
       "Bash(npm ci:*)",
       "Bash(npm install)",
       "Bash(npx vite build:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(sudo rm:*)",
+      "Bash(npm ls:*)",
+      "Bash(npm update)"
     ],
     "deny": []
   }
