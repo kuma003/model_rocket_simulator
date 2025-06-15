@@ -1,18 +1,18 @@
 /**
  * Motor Data Extraction System
- * 
+ *
  * This module extracts and processes rocket motor data from RASP .eng files.
  * All physical quantities are converted to and stored in SI (International System of Units).
- * 
+ *
  * SI Base Units Used:
  * - Length: meter (m)
- * - Mass: kilogram (kg) 
+ * - Mass: kilogram (kg)
  * - Time: second (s)
- * 
+ *
  * SI Derived Units Used:
  * - Force: Newton (N = kg⋅m⋅s⁻²)
  * - Impulse: Newton-second (N⋅s = kg⋅m⋅s⁻¹)
- * 
+ *
  * Unit Conversions from RASP Format:
  * - Diameter: millimeters → meters (×0.001)
  * - Length: millimeters → meters (×0.001)
@@ -29,42 +29,47 @@ import { useState, useCallback } from "react";
 const UnitConversions = {
   /** Convert millimeters to meters */
   mmToM: (mm: number): number => mm * 0.001,
-  
+
   /** Convert meters to millimeters (for display purposes) */
   mToMm: (m: number): number => m * 1000,
-  
+
   /** Validate that a value is a positive number */
   validatePositive: (value: number, name: string): void => {
     if (isNaN(value) || value < 0) {
-      throw new Error(`Invalid ${name}: must be a positive number, got ${value}`);
+      throw new Error(
+        `Invalid ${name}: must be a positive number, got ${value}`
+      );
     }
   },
-  
+
   /** Validate that a value is non-negative */
   validateNonNegative: (value: number, name: string): void => {
     if (isNaN(value) || value < 0) {
       throw new Error(`Invalid ${name}: must be non-negative, got ${value}`);
     }
   },
-  
+
   /** Parse delay string into array of numbers (e.g., "0-3-5-7" → [0, 3, 5, 7]) */
   parseDelays: (delayString: string): number[] => {
-    if (!delayString || delayString.trim() === '') {
+    if (!delayString || delayString.trim() === "") {
       return [];
     }
-    
+
     return delayString
-      .split('-')
-      .map(delay => {
-        const parsed = parseFloat(delay.trim());
+      .split("-")
+      .map((delay) => {
+        const trimmed = delay.trim();
+        const parsed = trimmed == "P" ? Infinity : parseFloat(trimmed); // P means no ejection.
         if (isNaN(parsed)) {
-          throw new Error(`Invalid delay value: "${delay}" in delay string "${delayString}"`);
+          throw new Error(
+            `Invalid delay value: "${delay}" in delay string "${delayString}"`
+          );
         }
         UnitConversions.validateNonNegative(parsed, `delay "${delay}"`);
         return parsed;
       })
       .sort((a, b) => a - b); // Sort delays in ascending order
-  }
+  },
 } as const;
 
 /**
@@ -137,17 +142,17 @@ interface MotorData {
 /**
  * React hook for extracting and managing rocket motor data from .eng files.
  * Provides functionality to load, parse, and query motor specifications.
- * 
+ *
  * @returns Object containing motor data, loading state, error state, and extraction methods
- * 
+ *
  * @example
  * ```typescript
  * const { motorData, loading, error, extractAllMotors } = useMotorExtractor();
- * 
+ *
  * useEffect(() => {
  *   extractAllMotors();
  * }, []);
- * 
+ *
  * const c6Motor = getMotorByName("C6");
  * ```
  */
@@ -162,139 +167,165 @@ export const useMotorExtractor = () => {
   /**
    * Parses a RASP .eng file format and extracts motor data.
    * Converts all units to SI (International System of Units).
-   * 
+   *
    * RASP .eng format:
    * - Comment lines start with ';'
    * - Header line: Name Diameter(mm) Length(mm) Delays PropWeight(kg) DryWeight(kg) Manufacturer
    * - Data lines: Time(s) Thrust(N)
-   * 
+   *
    * Unit conversions applied:
    * - Diameter: mm → m (×0.001)
    * - Length: mm → m (×0.001)
    * - Time: s (already SI)
    * - Thrust: N (already SI)
    * - Mass: kg (already SI)
-   * 
+   *
    * @param content - Raw text content of the .eng file
    * @param filename - Name of the source file for error reporting
    * @returns Parsed motor data object with all values in SI units
    * @throws Error if file format is invalid or required data is missing
    */
-  const parseEngFile = useCallback((content: string, filename: string): MotorData => {
-    const lines: string[] = content.split("\n").map((line: string) => line.trim());
-    let headerLine: string | null = null;
-    const dataPoints: ThrustPoint[] = [];
+  const parseEngFile = useCallback(
+    (content: string, filename: string): MotorData => {
+      const lines: string[] = content
+        .split("\n")
+        .map((line: string) => line.trim());
+      let headerLine: string | null = null;
+      const dataPoints: ThrustPoint[] = [];
 
-    // Find the header line (first non-comment, non-blank line)
-    for (let i = 0; i < lines.length; i++) {
-      const line: string = lines[i];
-      if (line && !line.startsWith(";") && line.length > 0) {
-        headerLine = line;
+      // Find the header line (first non-comment, non-blank line)
+      for (let i = 0; i < lines.length; i++) {
+        const line: string = lines[i];
+        if (line && !line.startsWith(";") && line.length > 0) {
+          headerLine = line;
 
-        // Parse thrust curve data points from remaining lines
-        for (let j = i + 1; j < lines.length; j++) {
-          const dataLine: string = lines[j].trim();
-          if (dataLine && !dataLine.startsWith(";")) {
-            const parts: string[] = dataLine.split(/\s+/);
-            if (parts.length >= 2) {
-              const time: number = parseFloat(parts[0]);
-              const thrust: number = parseFloat(parts[1]);
-              if (!isNaN(time) && !isNaN(thrust)) {
-                dataPoints.push({ time, thrust });
+          // Parse thrust curve data points from remaining lines
+          for (let j = i + 1; j < lines.length; j++) {
+            const dataLine: string = lines[j].trim();
+            if (dataLine && !dataLine.startsWith(";")) {
+              const parts: string[] = dataLine.split(/\s+/);
+              if (parts.length >= 2) {
+                const time: number = parseFloat(parts[0]);
+                const thrust: number = parseFloat(parts[1]);
+                if (!isNaN(time) && !isNaN(thrust)) {
+                  dataPoints.push({ time, thrust });
+                }
               }
             }
           }
+          break;
         }
-        break;
       }
-    }
 
-    if (!headerLine) {
-      throw new Error(`No header line found in ${filename}`);
-    }
+      if (!headerLine) {
+        throw new Error(`No header line found in ${filename}`);
+      }
 
-    // Parse header: Name Diameter(mm) Length(mm) Delays PropWeight(kg) DryWeight(kg) Manufacturer
-    const headerParts: string[] = headerLine.split(/\s+/);
-    if (headerParts.length < 7) {
-      throw new Error(
-        `Invalid header format in ${filename}. Expected 7 fields`
-      );
-    }
+      // Parse header: Name Diameter(mm) Length(mm) Delays PropWeight(kg) DryWeight(kg) Manufacturer
+      const headerParts: string[] = headerLine.split(/\s+/);
+      if (headerParts.length < 7) {
+        throw new Error(
+          `Invalid header format in ${filename}. Expected 7 fields`
+        );
+      }
 
-    const [
-      name,
-      diameterMm,
-      lengthMm,
-      delays,
-      propellantWeightKg,
-      dryWeightKg,
-      manufacturer,
-    ]: string[] = headerParts;
-
-    // Convert RASP units to SI units with validation
-    const diameterMmValue: number = parseFloat(diameterMm);
-    const lengthMmValue: number = parseFloat(lengthMm);
-    const propellantWeightValue: number = parseFloat(propellantWeightKg);
-    const dryWeightValue: number = parseFloat(dryWeightKg);
-    
-    // Validate parsed values
-    UnitConversions.validatePositive(diameterMmValue, `diameter in ${filename}`);
-    UnitConversions.validatePositive(lengthMmValue, `length in ${filename}`);
-    UnitConversions.validateNonNegative(propellantWeightValue, `propellant weight in ${filename}`);
-    UnitConversions.validateNonNegative(dryWeightValue, `dry weight in ${filename}`);
-    
-    // Apply unit conversions and parse delays
-    const diameterM: number = UnitConversions.mmToM(diameterMmValue); // mm → m
-    const lengthM: number = UnitConversions.mmToM(lengthMmValue); // mm → m
-    const propellantWeightSI: number = propellantWeightValue; // kg (already SI)
-    const dryWeightSI: number = dryWeightValue; // kg (already SI)
-    const delaysList: number[] = UnitConversions.parseDelays(delays); // parse "-" delimited delays
-    // Time and thrust data points are already in SI units (s, N)
-
-    // Calculate derived performance values (all in SI units)
-    const totalWeight: number = propellantWeightSI + dryWeightSI; // kg
-    const burnTime: number =
-      dataPoints.length > 0 ? Math.max(...dataPoints.map((p: ThrustPoint) => p.time)) : 0; // s
-    const maxThrust: number =
-      dataPoints.length > 0 ? Math.max(...dataPoints.map((p: ThrustPoint) => p.thrust)) : 0; // N
-
-    // Calculate total impulse using trapezoidal integration (area under thrust curve)
-    const totalImpulse: number = dataPoints.reduce((impulse: number, point: ThrustPoint, i: number, arr: ThrustPoint[]) => {
-      if (i === 0) return 0;
-      const prevPoint: ThrustPoint = arr[i - 1];
-      const timeInterval: number = point.time - prevPoint.time; // s
-      const avgThrust: number = (point.thrust + prevPoint.thrust) / 2; // N
-      return impulse + avgThrust * timeInterval; // N⋅s
-    }, 0);
-
-    const averageThrust: number = burnTime > 0 ? totalImpulse / burnTime : 0; // N
-
-    return {
-      filename,
-      header: {
+      const [
         name,
-        diameter: diameterM, // m (SI)
-        length: lengthM, // m (SI)
-        delays: delaysList, // s (SI, parsed from string)
-        propellantWeight: propellantWeightSI, // kg (SI)
-        dryWeight: dryWeightSI, // kg (SI)
+        diameterMm,
+        lengthMm,
+        delays,
+        propellantWeightKg,
+        dryWeightKg,
         manufacturer,
-      },
-      specifications: {
-        totalWeight, // kg (SI)
-        burnTime, // s (SI)
-        maxThrust, // N (SI)
-        averageThrust, // N (SI)
-        totalImpulse, // N⋅s (SI)
-      },
-      thrustCurve: dataPoints, // time: s, thrust: N (SI)
-    };
-  }, []);
+      ]: string[] = headerParts;
+
+      // Convert RASP units to SI units with validation
+      const diameterMmValue: number = parseFloat(diameterMm);
+      const lengthMmValue: number = parseFloat(lengthMm);
+      const propellantWeightValue: number = parseFloat(propellantWeightKg);
+      const dryWeightValue: number = parseFloat(dryWeightKg);
+
+      // Validate parsed values
+      UnitConversions.validatePositive(
+        diameterMmValue,
+        `diameter in ${filename}`
+      );
+      UnitConversions.validatePositive(lengthMmValue, `length in ${filename}`);
+      UnitConversions.validateNonNegative(
+        propellantWeightValue,
+        `propellant weight in ${filename}`
+      );
+      UnitConversions.validateNonNegative(
+        dryWeightValue,
+        `dry weight in ${filename}`
+      );
+
+      // Apply unit conversions and parse delays
+      const diameterM: number = UnitConversions.mmToM(diameterMmValue); // mm → m
+      const lengthM: number = UnitConversions.mmToM(lengthMmValue); // mm → m
+      const propellantWeightSI: number = propellantWeightValue; // kg (already SI)
+      const dryWeightSI: number = dryWeightValue; // kg (already SI)
+      const delaysList: number[] = UnitConversions.parseDelays(delays); // parse "-" delimited delays.
+      // Time and thrust data points are already in SI units (s, N)
+
+      // Calculate derived performance values (all in SI units)
+      const totalWeight: number = propellantWeightSI + dryWeightSI; // kg
+      const burnTime: number =
+        dataPoints.length > 0
+          ? Math.max(...dataPoints.map((p: ThrustPoint) => p.time))
+          : 0; // s
+      const maxThrust: number =
+        dataPoints.length > 0
+          ? Math.max(...dataPoints.map((p: ThrustPoint) => p.thrust))
+          : 0; // N
+
+      // Calculate total impulse using trapezoidal integration (area under thrust curve)
+      const totalImpulse: number = dataPoints.reduce(
+        (
+          impulse: number,
+          point: ThrustPoint,
+          i: number,
+          arr: ThrustPoint[]
+        ) => {
+          if (i === 0) return 0;
+          const prevPoint: ThrustPoint = arr[i - 1];
+          const timeInterval: number = point.time - prevPoint.time; // s
+          const avgThrust: number = (point.thrust + prevPoint.thrust) / 2; // N
+          return impulse + avgThrust * timeInterval; // N⋅s
+        },
+        0
+      );
+
+      const averageThrust: number = burnTime > 0 ? totalImpulse / burnTime : 0; // N
+
+      return {
+        filename,
+        header: {
+          name,
+          diameter: diameterM, // m (SI)
+          length: lengthM, // m (SI)
+          delays: delaysList, // s (SI, parsed from string)
+          propellantWeight: propellantWeightSI, // kg (SI)
+          dryWeight: dryWeightSI, // kg (SI)
+          manufacturer,
+        },
+        specifications: {
+          totalWeight, // kg (SI)
+          burnTime, // s (SI)
+          maxThrust, // N (SI)
+          averageThrust, // N (SI)
+          totalImpulse, // N⋅s (SI)
+        },
+        thrustCurve: dataPoints, // time: s, thrust: N (SI)
+      };
+    },
+    []
+  );
 
   /**
    * Discovers available motor .eng files in the motors directory.
    * First attempts to load a manifest file, then falls back to checking common motor names.
-   * 
+   *
    * @returns Promise resolving to array of available .eng filenames
    */
   const discoverMotorFiles = useCallback(async (): Promise<string[]> => {
@@ -303,10 +334,16 @@ export const useMotorExtractor = () => {
       const basePath: string = "/motors"; // Always use /motors from public directory
 
       // Try to load motors manifest first (preferred method)
-      console.log("Trying to load manifest from:", `${basePath}/motors-manifest.json`);
-      const manifestResponse: Response = await fetch(`${basePath}/motors-manifest.json`);
+      console.log(
+        "Trying to load manifest from:",
+        `${basePath}/motors-manifest.json`
+      );
+      const manifestResponse: Response = await fetch(
+        `${basePath}/motors-manifest.json`
+      );
       if (manifestResponse.ok) {
-        const manifest: { files: string[]; generated: string; count: number } = await manifestResponse.json();
+        const manifest: { files: string[]; generated: string; count: number } =
+          await manifestResponse.json();
         console.log("Loaded manifest:", manifest);
         return manifest.files || [];
       } else {
@@ -354,7 +391,7 @@ export const useMotorExtractor = () => {
   /**
    * Extracts and parses all available motor files from the motors directory.
    * Discovers files, downloads their content, parses the data, and updates the motorData state.
-   * 
+   *
    * @returns Promise resolving to array of successfully parsed motor data
    */
   const extractAllMotors = useCallback(async (): Promise<MotorData[]> => {
@@ -400,7 +437,8 @@ export const useMotorExtractor = () => {
       setMotorData(motors);
       return motors;
     } catch (err: unknown) {
-      const errorMessage: string = err instanceof Error ? err.message : String(err);
+      const errorMessage: string =
+        err instanceof Error ? err.message : String(err);
       setError(errorMessage);
       return [];
     } finally {
@@ -410,7 +448,7 @@ export const useMotorExtractor = () => {
 
   /**
    * Extracts and parses a single motor file by filename.
-   * 
+   *
    * @param filename - Name of the .eng file to extract
    * @returns Promise resolving to parsed motor data or null on error
    */
@@ -433,7 +471,8 @@ export const useMotorExtractor = () => {
 
         return motorData;
       } catch (err: unknown) {
-        const errorMessage: string = err instanceof Error ? err.message : String(err);
+        const errorMessage: string =
+          err instanceof Error ? err.message : String(err);
         setError(errorMessage);
         return null;
       } finally {
@@ -446,7 +485,7 @@ export const useMotorExtractor = () => {
   /**
    * Extracts motor data from raw file content without fetching from server.
    * Useful for processing uploaded files or content from other sources.
-   * 
+   *
    * @param content - Raw text content of the .eng file
    * @param filename - Filename for error reporting
    * @returns Parsed motor data or null on error
@@ -457,7 +496,8 @@ export const useMotorExtractor = () => {
         setError("");
         return parseEngFile(content, filename);
       } catch (err: unknown) {
-        const errorMessage: string = err instanceof Error ? err.message : String(err);
+        const errorMessage: string =
+          err instanceof Error ? err.message : String(err);
         setError(errorMessage);
         return null;
       }
@@ -467,7 +507,7 @@ export const useMotorExtractor = () => {
 
   /**
    * Finds a motor by its designation name.
-   * 
+   *
    * @param name - Motor designation (e.g., "C6", "A10T")
    * @returns Motor data if found, undefined otherwise
    */
@@ -480,7 +520,7 @@ export const useMotorExtractor = () => {
 
   /**
    * Filters motors by manufacturer name (case-insensitive).
-   * 
+   *
    * @param manufacturer - Manufacturer name (e.g., "Estes", "AeroTech")
    * @returns Array of motors from the specified manufacturer
    */
@@ -497,7 +537,7 @@ export const useMotorExtractor = () => {
   /**
    * Filters motors by NAR impulse classification (A, B, C, D, etc.).
    * Each class represents a range of total impulse values in Newton-seconds (SI units).
-   * 
+   *
    * @param impulseClass - Single letter impulse class (A-O)
    * @returns Array of motors in the specified impulse class
    */
@@ -575,12 +615,15 @@ export const MotorFileUtils = {
   /**
    * Generates a manifest file listing all .eng files in a directory.
    * Used by build scripts to create file indexes for runtime discovery.
-   * 
+   *
    * @param motorsDir - Path to directory containing .eng files
    * @param outputPath - Path where manifest JSON file should be written
    * @returns Generated manifest object
    */
-  generateManifest: (motorsDir: string, outputPath: string): { files: string[]; generated: string; count: number } => {
+  generateManifest: (
+    motorsDir: string,
+    outputPath: string
+  ): { files: string[]; generated: string; count: number } => {
     const fs = require("fs");
     const path = require("path");
 
@@ -606,7 +649,7 @@ export const MotorFileUtils = {
   /**
    * Copies all .eng files from source directory to target directory.
    * Used by build scripts to copy motor files to public/build directories.
-   * 
+   *
    * @param sourceDir - Source directory containing .eng files
    * @param targetDir - Destination directory for copied files
    * @returns Array of copied filenames
