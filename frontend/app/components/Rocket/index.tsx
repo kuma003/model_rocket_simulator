@@ -1,46 +1,7 @@
 import react, { useEffect } from "react";
 import useMotorExtractor from "./motors";
-
-interface RocketBaseParam {
-  length: number;
-  diameter: number;
-  thickness: number;
-  material: "plastic" | "balsa" | "cardboard";
-  color: string;
-}
-
-interface RocektParams {
-  nose: RocketBaseParam & {
-    type: "conical" | "ogive" | "elliptical";
-  };
-  body: RocketBaseParam;
-  fins: Omit<RocketBaseParam, "length" | "diameter"> & {
-    count: number;
-  } & (
-      | {
-          type: "trapozoidal";
-          rootChord: number;
-          tipChord: number;
-          sweepLength: number;
-          height: number;
-        }
-      | {
-          type: "elliptical";
-          rootChord: number;
-          height: number;
-        }
-      | {
-          type: "freedom";
-          points: {
-            x: number;
-            y: number;
-          }[];
-        }
-    );
-  engine: {
-    name: string;
-  };
-}
+import type { RocketParams } from "./types";
+import RocketPanel from "../RocketPanel";
 
 const Rocket = () => {
   const { motorData, loading, error, extractAllMotors, getMotorByName } =
@@ -56,7 +17,7 @@ const Rocket = () => {
       motorCount: motorData.length,
       loading,
       error,
-      motors: motorData.map(m => m.header.name)
+      motors: motorData.map((m) => m.header.name),
     });
   }, [motorData, loading, error]);
 

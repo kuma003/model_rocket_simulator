@@ -1,11 +1,7 @@
 import type { Route } from "./+types/_index";
 import Rocket from "../components/Rocket";
+import Design from "~/components/Design";
 
 export default function Home() {
-  return (
-    <div>
-      hoge
-      <Rocket></Rocket>
-    </div>
-  );
+  return <Design />;
 }
