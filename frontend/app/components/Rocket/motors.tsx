@@ -1,62 +1,126 @@
 import { useState, useCallback } from "react";
 
-// TypeScript interfaces
+/**
+ * Represents a single data point in a motor's thrust curve.
+ * Each point defines the thrust output at a specific time during motor burn.
+ */
 interface ThrustPoint {
+  /** Time in seconds from motor ignition */
   time: number;
+  /** Thrust force in Newtons */
   thrust: number;
 }
 
+/**
+ * Motor header information parsed from RASP .eng file format.
+ * Contains basic physical specifications and metadata about the motor.
+ */
 interface MotorHeader {
+  /** Motor designation (e.g., "C6", "A10T", "D12") */
   name: string;
+  /** Motor diameter in millimeters */
   diameter: number;
+  /** Motor length in millimeters */
   length: number;
+  /** Available delay times as string (e.g., "0-3-5-7", "3-100") */
   delays: string;
+  /** Mass of propellant in kilograms */
   propellantWeight: number;
+  /** Mass of empty motor casing in kilograms */
   dryWeight: number;
+  /** Motor manufacturer name (e.g., "Estes", "AeroTech") */
   manufacturer: string;
 }
 
+/**
+ * Calculated motor performance specifications derived from thrust curve data.
+ * These values are computed during parsing and used for simulation calculations.
+ */
 interface MotorSpecifications {
+  /** Combined mass of propellant and motor casing in kilograms */
   totalWeight: number;
+  /** Duration of motor burn in seconds */
   burnTime: number;
+  /** Peak thrust force achieved during burn in Newtons */
   maxThrust: number;
+  /** Mean thrust force over entire burn duration in Newtons */
   averageThrust: number;
+  /** Total impulse (area under thrust curve) in Newton-seconds */
   totalImpulse: number;
 }
 
+/**
+ * Complete motor data structure containing all parsed information from a .eng file.
+ * This is the main data structure returned by the motor extraction system.
+ */
 interface MotorData {
+  /** Original filename of the .eng file */
   filename: string;
+  /** Basic motor specifications from file header */
   header: MotorHeader;
+  /** Calculated performance characteristics */
   specifications: MotorSpecifications;
+  /** Array of thrust vs time data points */
   thrustCurve: ThrustPoint[];
 }
 
-// Motor data extraction hook
+/**
+ * React hook for extracting and managing rocket motor data from .eng files.
+ * Provides functionality to load, parse, and query motor specifications.
+ * 
+ * @returns Object containing motor data, loading state, error state, and extraction methods
+ * 
+ * @example
+ * ```typescript
+ * const { motorData, loading, error, extractAllMotors } = useMotorExtractor();
+ * 
+ * useEffect(() => {
+ *   extractAllMotors();
+ * }, []);
+ * 
+ * const c6Motor = getMotorByName("C6");
+ * ```
+ */
 export const useMotorExtractor = () => {
+  /** Array of successfully parsed motor data */
   const [motorData, setMotorData] = useState<MotorData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  /** Loading state for async motor extraction operations */
+  const [loading, setLoading] = useState<boolean>(false);
+  /** Error message from last failed operation, empty string if no error */
+  const [error, setError] = useState<string>("");
 
-  // Parse RASP .eng file format
-  const parseEngFile = useCallback((content: string, filename: any) => {
-    const lines = content.split("\n").map((line) => line.trim());
-    let headerLine = null;
-    let dataPoints = [];
+  /**
+   * Parses a RASP .eng file format and extracts motor data.
+   * 
+   * RASP .eng format:
+   * - Comment lines start with ';'
+   * - Header line: Name Diameter Length Delays PropWeight DryWeight Manufacturer
+   * - Data lines: Time(s) Thrust(N)
+   * 
+   * @param content - Raw text content of the .eng file
+   * @param filename - Name of the source file for error reporting
+   * @returns Parsed motor data object
+   * @throws Error if file format is invalid or required data is missing
+   */
+  const parseEngFile = useCallback((content: string, filename: string): MotorData => {
+    const lines: string[] = content.split("\n").map((line: string) => line.trim());
+    let headerLine: string | null = null;
+    const dataPoints: ThrustPoint[] = [];
 
     // Find the header line (first non-comment, non-blank line)
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
+      const line: string = lines[i];
       if (line && !line.startsWith(";") && line.length > 0) {
         headerLine = line;
 
-        // Parse data points from remaining lines
+        // Parse thrust curve data points from remaining lines
         for (let j = i + 1; j < lines.length; j++) {
-          const dataLine = lines[j].trim();
+          const dataLine: string = lines[j].trim();
           if (dataLine && !dataLine.startsWith(";")) {
-            const parts = dataLine.split(/\s+/);
+            const parts: string[] = dataLine.split(/\s+/);
             if (parts.length >= 2) {
-              const time = parseFloat(parts[0]);
-              const thrust = parseFloat(parts[1]);
+              const time: number = parseFloat(parts[0]);
+              const thrust: number = parseFloat(parts[1]);
               if (!isNaN(time) && !isNaN(thrust)) {
                 dataPoints.push({ time, thrust });
               }
@@ -72,7 +136,7 @@ export const useMotorExtractor = () => {
     }
 
     // Parse header: Name Diameter Length Delays ProWeight DrWeight Manufacturer
-    const headerParts = headerLine.split(/\s+/);
+    const headerParts: string[] = headerLine.split(/\s+/);
     if (headerParts.length < 7) {
       throw new Error(
         `Invalid header format in ${filename}. Expected 7 fields`
@@ -87,25 +151,25 @@ export const useMotorExtractor = () => {
       propellantWeight,
       dryWeight,
       manufacturer,
-    ] = headerParts;
+    ]: string[] = headerParts;
 
-    // Calculate derived values
-    const totalWeight = parseFloat(propellantWeight) + parseFloat(dryWeight);
-    const burnTime =
-      dataPoints.length > 0 ? Math.max(...dataPoints.map((p) => p.time)) : 0;
-    const maxThrust =
-      dataPoints.length > 0 ? Math.max(...dataPoints.map((p) => p.thrust)) : 0;
+    // Calculate derived performance values
+    const totalWeight: number = parseFloat(propellantWeight) + parseFloat(dryWeight);
+    const burnTime: number =
+      dataPoints.length > 0 ? Math.max(...dataPoints.map((p: ThrustPoint) => p.time)) : 0;
+    const maxThrust: number =
+      dataPoints.length > 0 ? Math.max(...dataPoints.map((p: ThrustPoint) => p.thrust)) : 0;
 
-    // Calculate total impulse (area under thrust curve)
-    const totalImpulse = dataPoints.reduce((impulse, point, i, arr) => {
+    // Calculate total impulse using trapezoidal integration (area under thrust curve)
+    const totalImpulse: number = dataPoints.reduce((impulse: number, point: ThrustPoint, i: number, arr: ThrustPoint[]) => {
       if (i === 0) return 0;
-      const prevPoint = arr[i - 1];
-      const timeInterval = point.time - prevPoint.time;
-      const avgThrust = (point.thrust + prevPoint.thrust) / 2;
+      const prevPoint: ThrustPoint = arr[i - 1];
+      const timeInterval: number = point.time - prevPoint.time;
+      const avgThrust: number = (point.thrust + prevPoint.thrust) / 2;
       return impulse + avgThrust * timeInterval;
     }, 0);
 
-    const averageThrust = burnTime > 0 ? totalImpulse / burnTime : 0;
+    const averageThrust: number = burnTime > 0 ? totalImpulse / burnTime : 0;
 
     return {
       filename,
@@ -129,25 +193,30 @@ export const useMotorExtractor = () => {
     };
   }, []);
 
-  // Discover .eng files in the motors folder
-  const discoverMotorFiles = useCallback(async () => {
+  /**
+   * Discovers available motor .eng files in the motors directory.
+   * First attempts to load a manifest file, then falls back to checking common motor names.
+   * 
+   * @returns Promise resolving to array of available .eng filenames
+   */
+  const discoverMotorFiles = useCallback(async (): Promise<string[]> => {
     try {
-      const isDev = process.env.NODE_ENV === "development";
-      const basePath = "/motors"; // Always use /motors from public directory
+      const isDev: boolean = process.env.NODE_ENV === "development";
+      const basePath: string = "/motors"; // Always use /motors from public directory
 
-      // Try to load motors manifest first
+      // Try to load motors manifest first (preferred method)
       console.log("Trying to load manifest from:", `${basePath}/motors-manifest.json`);
-      const manifestResponse = await fetch(`${basePath}/motors-manifest.json`);
+      const manifestResponse: Response = await fetch(`${basePath}/motors-manifest.json`);
       if (manifestResponse.ok) {
-        const manifest = await manifestResponse.json();
+        const manifest: { files: string[]; generated: string; count: number } = await manifestResponse.json();
         console.log("Loaded manifest:", manifest);
         return manifest.files || [];
       } else {
         console.log("Manifest not found, status:", manifestResponse.status);
       }
 
-      // Fallback: try common patterns if manifest doesn't exist
-      const commonFiles = [
+      // Fallback: try common motor file patterns if manifest doesn't exist
+      const commonFiles: string[] = [
         "Estes_A3.eng",
         "Estes_A10.eng",
         "Estes_B4.eng",
@@ -161,59 +230,64 @@ export const useMotorExtractor = () => {
       ];
 
       console.log("Fallback: checking for common motor files...");
-      const existingFiles = [];
+      const existingFiles: string[] = [];
       for (const filename of commonFiles) {
         try {
-          const response = await fetch(`${basePath}/${filename}`, {
+          const response: Response = await fetch(`${basePath}/${filename}`, {
             method: "HEAD",
           });
           if (response.ok) {
             console.log(`Found motor file: ${filename}`);
             existingFiles.push(filename);
           }
-        } catch (err) {
+        } catch (err: unknown) {
           console.log(`Motor file not found: ${filename}`);
         }
       }
 
       console.log("Discovered motor files:", existingFiles);
       return existingFiles;
-    } catch (err) {
+    } catch (err: unknown) {
       console.warn("Error discovering motor files:", err);
       return [];
     }
   }, []);
 
-  // Extract all motors from the motors folder
-  const extractAllMotors = useCallback(async () => {
+  /**
+   * Extracts and parses all available motor files from the motors directory.
+   * Discovers files, downloads their content, parses the data, and updates the motorData state.
+   * 
+   * @returns Promise resolving to array of successfully parsed motor data
+   */
+  const extractAllMotors = useCallback(async (): Promise<MotorData[]> => {
     setLoading(true);
     setError("");
 
     try {
-      // Discover available files
-      const discoveredFiles = await discoverMotorFiles();
+      // Discover available motor files
+      const discoveredFiles: string[] = await discoverMotorFiles();
 
       if (discoveredFiles.length === 0) {
         throw new Error("No .eng files found in motors folder");
       }
 
-      const motors = [];
-      const basePath = "/motors"; // Always use /motors from public directory
+      const motors: MotorData[] = [];
+      const basePath: string = "/motors"; // Always use /motors from public directory
 
-      // Load and parse each file
+      // Load and parse each discovered file
       for (const filename of discoveredFiles) {
         try {
-          const response = await fetch(`${basePath}/${filename}`);
+          const response: Response = await fetch(`${basePath}/${filename}`);
 
           if (!response.ok) {
             console.warn(`Failed to load ${filename}: ${response.status}`);
             continue;
           }
 
-          const content = await response.text();
-          const motorData = parseEngFile(content, filename);
+          const content: string = await response.text();
+          const motorData: MotorData = parseEngFile(content, filename);
           motors.push(motorData);
-        } catch (err) {
+        } catch (err: unknown) {
           console.warn(
             `Error parsing ${filename}:`,
             err instanceof Error ? err.message : String(err)
@@ -227,35 +301,42 @@ export const useMotorExtractor = () => {
 
       setMotorData(motors);
       return motors;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+    } catch (err: unknown) {
+      const errorMessage: string = err instanceof Error ? err.message : String(err);
+      setError(errorMessage);
       return [];
     } finally {
       setLoading(false);
     }
   }, [discoverMotorFiles, parseEngFile]);
 
-  // Extract single motor file
+  /**
+   * Extracts and parses a single motor file by filename.
+   * 
+   * @param filename - Name of the .eng file to extract
+   * @returns Promise resolving to parsed motor data or null on error
+   */
   const extractSingleMotor = useCallback(
-    async (filename: string) => {
+    async (filename: string): Promise<MotorData | null> => {
       setLoading(true);
       setError("");
 
       try {
-        const basePath = "/motors"; // Always use /motors from public directory
+        const basePath: string = "/motors"; // Always use /motors from public directory
 
-        const response = await fetch(`${basePath}/${filename}`);
+        const response: Response = await fetch(`${basePath}/${filename}`);
 
         if (!response.ok) {
           throw new Error(`Failed to load ${filename}: ${response.status}`);
         }
 
-        const content = await response.text();
-        const motorData = parseEngFile(content, filename);
+        const content: string = await response.text();
+        const motorData: MotorData = parseEngFile(content, filename);
 
         return motorData;
-      } catch (err) {
-        setError(err instanceof Error ? err.message : String(err));
+      } catch (err: unknown) {
+        const errorMessage: string = err instanceof Error ? err.message : String(err);
+        setError(errorMessage);
         return null;
       } finally {
         setLoading(false);
@@ -264,43 +345,68 @@ export const useMotorExtractor = () => {
     [parseEngFile]
   );
 
-  // Extract motor from file content
+  /**
+   * Extracts motor data from raw file content without fetching from server.
+   * Useful for processing uploaded files or content from other sources.
+   * 
+   * @param content - Raw text content of the .eng file
+   * @param filename - Filename for error reporting
+   * @returns Parsed motor data or null on error
+   */
   const extractFromContent = useCallback(
-    (content: string, filename: any) => {
+    (content: string, filename: string): MotorData | null => {
       try {
         setError("");
         return parseEngFile(content, filename);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : String(err));
+      } catch (err: unknown) {
+        const errorMessage: string = err instanceof Error ? err.message : String(err);
+        setError(errorMessage);
         return null;
       }
     },
     [parseEngFile]
   );
 
-  // Get motor by name
+  /**
+   * Finds a motor by its designation name.
+   * 
+   * @param name - Motor designation (e.g., "C6", "A10T")
+   * @returns Motor data if found, undefined otherwise
+   */
   const getMotorByName = useCallback(
-    (name: string) => {
-      return motorData.find((motor) => motor.header.name === name);
+    (name: string): MotorData | undefined => {
+      return motorData.find((motor: MotorData) => motor.header.name === name);
     },
     [motorData]
   );
 
-  // Get motors by manufacturer
+  /**
+   * Filters motors by manufacturer name (case-insensitive).
+   * 
+   * @param manufacturer - Manufacturer name (e.g., "Estes", "AeroTech")
+   * @returns Array of motors from the specified manufacturer
+   */
   const getMotorsByManufacturer = useCallback(
-    (manufacturer: string) => {
+    (manufacturer: string): MotorData[] => {
       return motorData.filter(
-        (motor) =>
+        (motor: MotorData) =>
           motor.header.manufacturer.toLowerCase() === manufacturer.toLowerCase()
       );
     },
     [motorData]
   );
 
-  // Filter motors by impulse class
+  /**
+   * Filters motors by NAR impulse classification (A, B, C, D, etc.).
+   * Each class represents a range of total impulse values.
+   * 
+   * @param impulseClass - Single letter impulse class (A-O)
+   * @returns Array of motors in the specified impulse class
+   */
   const getMotorsByImpulseClass = useCallback(
-    (impulseClass: string) => {
-      const impulseRanges = {
+    (impulseClass: string): MotorData[] => {
+      // NAR impulse classification ranges (Newton-seconds)
+      const impulseRanges: Record<string, [number, number]> = {
         A: [1.26, 2.5],
         B: [2.51, 5.0],
         C: [5.01, 10.0],
@@ -318,12 +424,12 @@ export const useMotorExtractor = () => {
         O: [20480.01, 40960.0],
       };
 
-      const range =
-        impulseRanges[impulseClass.toUpperCase() as keyof typeof impulseRanges];
+      const range: [number, number] | undefined =
+        impulseRanges[impulseClass.toUpperCase()];
       if (!range) return [];
 
-      return motorData.filter((motor) => {
-        const impulse = motor.specifications.totalImpulse;
+      return motorData.filter((motor: MotorData) => {
+        const impulse: number = motor.specifications.totalImpulse;
         return impulse >= range[0] && impulse <= range[1];
       });
     },
@@ -331,31 +437,52 @@ export const useMotorExtractor = () => {
   );
 
   return {
-    // Data
+    // State data
+    /** Array of successfully parsed motor data */
     motorData,
+    /** Loading state for async operations */
     loading,
+    /** Error message from last failed operation */
     error,
 
     // Extraction methods
+    /** Extract and parse all available motor files */
     extractAllMotors,
+    /** Extract and parse a single motor file by name */
     extractSingleMotor,
+    /** Parse motor data from raw file content */
     extractFromContent,
+    /** Discover available motor files in directory */
     discoverMotorFiles,
 
     // Query methods
+    /** Find motor by designation name */
     getMotorByName,
+    /** Filter motors by manufacturer */
     getMotorsByManufacturer,
+    /** Filter motors by NAR impulse class */
     getMotorsByImpulseClass,
 
     // Utility
+    /** Parse RASP .eng file format */
     parseEngFile,
   };
 };
 
-// File system utilities for build scripts
+/**
+ * Utility functions for motor file operations in Node.js build scripts.
+ * These functions are used during the build process to manage motor files.
+ */
 export const MotorFileUtils = {
-  // Generate motors manifest (for Node.js build scripts)
-  generateManifest: (motorsDir: any, outputPath: any) => {
+  /**
+   * Generates a manifest file listing all .eng files in a directory.
+   * Used by build scripts to create file indexes for runtime discovery.
+   * 
+   * @param motorsDir - Path to directory containing .eng files
+   * @param outputPath - Path where manifest JSON file should be written
+   * @returns Generated manifest object
+   */
+  generateManifest: (motorsDir: string, outputPath: string): { files: string[]; generated: string; count: number } => {
     const fs = require("fs");
     const path = require("path");
 
@@ -363,7 +490,7 @@ export const MotorFileUtils = {
       throw new Error(`Motors directory not found: ${motorsDir}`);
     }
 
-    const files = fs
+    const files: string[] = fs
       .readdirSync(motorsDir)
       .filter((file: string) => file.toLowerCase().endsWith(".eng"))
       .sort();
@@ -378,8 +505,15 @@ export const MotorFileUtils = {
     return manifest;
   },
 
-  // Copy motors to public directory (for build scripts)
-  copyMotorsToPublic: (sourceDir: any, targetDir: any) => {
+  /**
+   * Copies all .eng files from source directory to target directory.
+   * Used by build scripts to copy motor files to public/build directories.
+   * 
+   * @param sourceDir - Source directory containing .eng files
+   * @param targetDir - Destination directory for copied files
+   * @returns Array of copied filenames
+   */
+  copyMotorsToPublic: (sourceDir: string, targetDir: string): string[] => {
     const fs = require("fs");
     const path = require("path");
 
@@ -387,13 +521,13 @@ export const MotorFileUtils = {
       fs.mkdirSync(targetDir, { recursive: true });
     }
 
-    const files = fs
+    const files: string[] = fs
       .readdirSync(sourceDir)
       .filter((file: string) => file.toLowerCase().endsWith(".eng"));
 
-    files.forEach((file: any) => {
-      const src = path.join(sourceDir, file);
-      const dest = path.join(targetDir, file);
+    files.forEach((file: string) => {
+      const src: string = path.join(sourceDir, file);
+      const dest: string = path.join(targetDir, file);
       fs.copyFileSync(src, dest);
     });
 
