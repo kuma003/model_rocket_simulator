@@ -8,6 +8,12 @@ export default defineConfig(({mode}) => ({
   base: mode === "production" ? "/model_rocket_simulator/" : undefined,
   plugins: [
     !isStorybook && reactRouter(), tsconfigPaths()],
+  server: {
+    fs: {
+      // Allow serving files from motors directory during development
+      allow: ['..']
+    }
+  },
   // server: {
   //   port: 5173,
   //   strictPort: true,

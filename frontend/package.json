@@ -4,7 +4,8 @@
   "homepage": "https://kuma003.github.io/model_rocket_simulator",
   "type": "module",
   "scripts": {
-    "build": "react-router build",
+    "build": "react-router build && npm run build:motors",
+    "build:motors": "node scripts/build-motors.js",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
