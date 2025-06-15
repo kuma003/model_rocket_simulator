@@ -27,7 +27,8 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
   animation: slideIn 0.5s ease-out forwards, rainbowShift 4s ease infinite;
   margin: 8px 0;
-  font-family: 'Comic Sans MS', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', cursive, sans-serif;
+  font-family: "Comic Sans MS", "Hiragino Kaku Gothic ProN", "Hiragino Sans",
+    "Meiryo", cursive, sans-serif;
 
   :global(.mantine-Button-section) {
     fill: #ffffff;
@@ -57,10 +58,6 @@
     :global(.mantine-Button-section) {
       fill: #fff;
       transform: translatey(1px) scale(1.1);
-    }
-
-    .glowEffect {
-      opacity: 1;
     }
   }
 }

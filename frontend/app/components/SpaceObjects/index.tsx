@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './spaceObjects.module.scss';
+import React from "react";
+import styles from "./spaceObjects.module.scss";
 
 interface FloatingSpaceObjectsProps {
   count?: number;
@@ -11,7 +11,7 @@ export const FloatingSpaceObjects: React.FC<FloatingSpaceObjectsProps> = ({
   className,
 }) => {
   return (
-    <div className={`${styles.floatingContainer} ${className || ''}`}>
+    <div className={`${styles.floatingContainer} ${className || ""}`}>
       {/* Orange Planet - Bottom Left */}
       <div className={styles.orangePlanet}>
         <div className={styles.orangePlanetBody}>
@@ -19,29 +19,18 @@ export const FloatingSpaceObjects: React.FC<FloatingSpaceObjectsProps> = ({
           <div className={styles.crater2}></div>
         </div>
       </div>
-
       {/* Green Moon - Top Left */}
       <div className={styles.greenMoon}>
         <div className={styles.greenMoonBody}>
           <div className={styles.moonCrater}></div>
         </div>
       </div>
-
       {/* Purple Planet - Bottom Right */}
       <div className={styles.purplePlanet}>
         <div className={styles.purplePlanetBody}>
           <div className={styles.purpleCrater1}></div>
           <div className={styles.purpleCrater2}></div>
           <div className={styles.purpleCrater3}></div>
-        </div>
-      </div>
-
-      {/* Blue Planet - Top Right */}
-      <div className={styles.bluePlanet}>
-        <div className={styles.bluePlanetBody}>
-          <div className={styles.blueCrater1}></div>
-          <div className={styles.blueCrater2}></div>
-          <div className={styles.planetRing}></div>
         </div>
       </div>
 
@@ -52,26 +41,11 @@ export const FloatingSpaceObjects: React.FC<FloatingSpaceObjectsProps> = ({
           <div className={styles.yellowCrater2}></div>
         </div>
       </div>
-
-      {/* Small Pink Moon - Top Center */}
-      <div className={styles.pinkMoon}>
-        <div className={styles.pinkMoonBody}>
-          <div className={styles.pinkCrater}></div>
-        </div>
-      </div>
-
       {/* Teal Planet - Middle Right */}
       <div className={styles.tealPlanet}>
         <div className={styles.tealPlanetBody}>
           <div className={styles.tealCrater1}></div>
           <div className={styles.tealCrater2}></div>
-        </div>
-      </div>
-
-      {/* Small Red Asteroid - Bottom Center */}
-      <div className={styles.redAsteroid}>
-        <div className={styles.redAsteroidBody}>
-          <div className={styles.redCrater}></div>
         </div>
       </div>
     </div>

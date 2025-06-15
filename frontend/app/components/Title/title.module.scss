@@ -1,6 +1,6 @@
 .title {
   display: flex;
-  height: 60vh;
+  height: 55vh;
   margin: 0;
   font-size: 24px;
   font-weight: bold;
@@ -16,22 +16,12 @@
     margin-right: 8px;
     color: #ff6b6b;
     transition: transform 0.3s ease-in-out;
-    filter: drop-shadow(0 8px 16px rgba(255, 107, 107, 0.3));
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
     animation: rocketFloat 3s ease-in-out infinite;
 
     &:hover {
-      transform: scale(1.1) rotate(5deg);
+      transform: scale(1.01) rotate(1deg);
       transition: transform 0.3s ease-in-out;
-      filter: drop-shadow(0 12px 24px rgba(255, 107, 107, 0.5));
-    }
-  }
-
-  @keyframes rocketFloat {
-    0%, 100% {
-      transform: translateY(0) rotate(0deg);
-    }
-    50% {
-      transform: translateY(-15px) rotate(2deg);
     }
   }
 
@@ -39,28 +29,16 @@
     margin: 10px;
     font-size: 2.5rem;
     font-weight: bold;
-    font-family: 'Comic Sans MS', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', cursive, sans-serif;
-    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24, #6c5ce7);
+    font-family: "Comic Sans MS", "Hiragino Kaku Gothic ProN", "Hiragino Sans",
+      "Meiryo", cursive, sans-serif;
+    background: linear-gradient(45deg, #4ecdc4, #45b7d1);
     background-size: 300% 300%;
     background-clip: text;
     color: transparent;
     letter-spacing: 0.025em;
     line-height: 1;
     text-align: center;
-    animation: titleRainbow 4s ease infinite;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  @keyframes titleRainbow {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
   }
 
   h2 {
@@ -68,7 +46,8 @@
     margin-bottom: 10px;
     font-size: 1.5rem;
     font-weight: 600;
-    font-family: 'Comic Sans MS', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', cursive, sans-serif;
+    font-family: "Comic Sans MS", "Hiragino Kaku Gothic ProN", "Hiragino Sans",
+      "Meiryo", cursive, sans-serif;
     color: #fff;
     text-align: center;
     max-width: 600px;
@@ -79,11 +58,13 @@
   }
 
   @keyframes subtitleGlow {
-    0%, 100% {
+    0%,
+    100% {
       text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
     }
     50% {
-      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.3);
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(255, 255, 255, 0.3);
     }
   }
 }

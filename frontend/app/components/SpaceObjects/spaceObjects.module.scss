@@ -19,10 +19,10 @@
   width: 64px;
   height: 64px;
   background: linear-gradient(135deg, #fb923c, #ef4444);
-  border-radius: 45% 60% 55% 40% / 40% 70% 60% 50%;
+  border-radius: 100%;
   position: relative;
   animation: spin 10s linear infinite;
-  
+
   .crater1 {
     position: absolute;
     top: 8px;
@@ -32,7 +32,7 @@
     background: #ea580c;
     border-radius: 50%;
   }
-  
+
   .crater2 {
     position: absolute;
     bottom: 12px;
@@ -40,7 +40,7 @@
     width: 8px;
     height: 8px;
     background: #dc2626;
-    border-radius: 50%;
+    border-radius: 100%;
   }
 }
 
@@ -55,10 +55,10 @@
   width: 48px;
   height: 48px;
   background: linear-gradient(135deg, #4ade80, #10b981);
-  border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
+  border-radius: 100%;
   position: relative;
   animation: pulse 3s ease-in-out infinite;
-  
+
   .moonCrater {
     position: absolute;
     top: 4px;
@@ -66,7 +66,7 @@
     width: 12px;
     height: 12px;
     background: #16a34a;
-    border-radius: 50%;
+    border-radius: 100%;
   }
 }
 
@@ -81,10 +81,10 @@
   width: 80px;
   height: 80px;
   background: linear-gradient(135deg, #a855f7, #ec4899);
-  border-radius: 30% 70% 60% 40% / 60% 30% 70% 40%;
+  border-radius: 100%;
   position: relative;
   animation: bounce 4s ease-in-out infinite;
-  
+
   .purpleCrater1 {
     position: absolute;
     top: 12px;
@@ -94,7 +94,7 @@
     background: #9333ea;
     border-radius: 50%;
   }
-  
+
   .purpleCrater2 {
     position: absolute;
     bottom: 8px;
@@ -104,11 +104,11 @@
     background: #db2777;
     border-radius: 50%;
   }
-  
+
   .purpleCrater3 {
     position: absolute;
     top: 32px;
-    right: 8px;
+    right: 80px;
     width: 8px;
     height: 8px;
     background: #7c3aed;
@@ -130,7 +130,7 @@
   border-radius: 40% 60% 70% 30% / 60% 40% 30% 70%;
   position: relative;
   animation: pulse 3s ease-in-out infinite;
-  
+
   .blueCrater1 {
     position: absolute;
     top: 8px;
@@ -140,7 +140,7 @@
     background: #2563eb;
     border-radius: 50%;
   }
-  
+
   .blueCrater2 {
     position: absolute;
     bottom: 12px;
@@ -150,7 +150,7 @@
     background: #0891b2;
     border-radius: 50%;
   }
-  
+
   .planetRing {
     position: absolute;
     top: 50%;
@@ -179,7 +179,7 @@
   transform: rotate(45deg);
   position: relative;
   animation: spin 6s linear infinite;
-  
+
   .yellowCrater1 {
     position: absolute;
     top: 4px;
@@ -189,7 +189,7 @@
     background: #b45309;
     border-radius: 50%;
   }
-  
+
   .yellowCrater2 {
     position: absolute;
     bottom: 4px;
@@ -216,7 +216,7 @@
   border-radius: 70% 30% 40% 60% / 30% 70% 60% 40%;
   position: relative;
   animation: bounce 5s ease-in-out infinite;
-  
+
   .pinkCrater {
     position: absolute;
     top: 4px;
@@ -242,7 +242,7 @@
   border-radius: 50% 30% 60% 40% / 40% 60% 50% 30%;
   position: relative;
   animation: pulse 4s ease-in-out infinite;
-  
+
   .tealCrater1 {
     position: absolute;
     top: 4px;
@@ -252,7 +252,7 @@
     background: #0d9488;
     border-radius: 50%;
   }
-  
+
   .tealCrater2 {
     position: absolute;
     bottom: 8px;
@@ -280,7 +280,7 @@
   transform: rotate(12deg);
   position: relative;
   animation: spin 7s linear infinite;
-  
+
   .redCrater {
     position: absolute;
     top: 4px;
@@ -303,7 +303,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
@@ -314,7 +315,8 @@
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {

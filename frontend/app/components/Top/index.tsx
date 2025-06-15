@@ -5,7 +5,7 @@ import { PlayArrow, SimpleRocket, Settings, Info } from "../Icons";
 import Title from "../Title";
 import { StarField } from "../StartField";
 import { FloatingSpaceObjects } from "../SpaceObjects";
-import { RocketMascot, MascotSpeech } from "../RocketMascot";
+import { Rokenyann, RokenyannSpeech } from "../Rokenyann";
 
 export const Top: React.FC = () => {
   return (
@@ -13,12 +13,8 @@ export const Top: React.FC = () => {
       <StarField count={200} />
       <FloatingSpaceObjects count={12} />
       <Title />
-      <div style={{ position: 'absolute', top: '20px', right: '20px' }}>
-        <RocketMascot size="small" animated={true} position="right" />
-        <MascotSpeech 
-          message="宇宙へようこそ！🚀" 
-          visible={true} 
-        />
+      <div style={{ position: "absolute", top: "20px", right: "20px" }}>
+        <Rokenyann size="medium" animated={true} position="right" />
       </div>
       <MenuButton
         buttons={[
