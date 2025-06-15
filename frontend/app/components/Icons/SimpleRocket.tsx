@@ -15,9 +15,9 @@ const SimpleRocket: React.FC<StrokeIconProps> = ({
       viewBox="0 0 24 24"
       fill="none"
       stroke={color}
-      stroke-width={strokeWidth}
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className={className}
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
