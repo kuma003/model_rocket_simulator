@@ -1,32 +1,101 @@
+/**
+ * Motor Data Extraction System
+ * 
+ * This module extracts and processes rocket motor data from RASP .eng files.
+ * All physical quantities are converted to and stored in SI (International System of Units).
+ * 
+ * SI Base Units Used:
+ * - Length: meter (m)
+ * - Mass: kilogram (kg) 
+ * - Time: second (s)
+ * 
+ * SI Derived Units Used:
+ * - Force: Newton (N = kg⋅m⋅s⁻²)
+ * - Impulse: Newton-second (N⋅s = kg⋅m⋅s⁻¹)
+ * 
+ * Unit Conversions from RASP Format:
+ * - Diameter: millimeters → meters (×0.001)
+ * - Length: millimeters → meters (×0.001)
+ * - Mass: kilograms (no conversion needed)
+ * - Time: seconds (no conversion needed)
+ * - Force: Newtons (no conversion needed)
+ */
+
 import { useState, useCallback } from "react";
+
+/**
+ * Unit conversion utilities for RASP to SI conversion.
+ */
+const UnitConversions = {
+  /** Convert millimeters to meters */
+  mmToM: (mm: number): number => mm * 0.001,
+  
+  /** Convert meters to millimeters (for display purposes) */
+  mToMm: (m: number): number => m * 1000,
+  
+  /** Validate that a value is a positive number */
+  validatePositive: (value: number, name: string): void => {
+    if (isNaN(value) || value < 0) {
+      throw new Error(`Invalid ${name}: must be a positive number, got ${value}`);
+    }
+  },
+  
+  /** Validate that a value is non-negative */
+  validateNonNegative: (value: number, name: string): void => {
+    if (isNaN(value) || value < 0) {
+      throw new Error(`Invalid ${name}: must be non-negative, got ${value}`);
+    }
+  },
+  
+  /** Parse delay string into array of numbers (e.g., "0-3-5-7" → [0, 3, 5, 7]) */
+  parseDelays: (delayString: string): number[] => {
+    if (!delayString || delayString.trim() === '') {
+      return [];
+    }
+    
+    return delayString
+      .split('-')
+      .map(delay => {
+        const parsed = parseFloat(delay.trim());
+        if (isNaN(parsed)) {
+          throw new Error(`Invalid delay value: "${delay}" in delay string "${delayString}"`);
+        }
+        UnitConversions.validateNonNegative(parsed, `delay "${delay}"`);
+        return parsed;
+      })
+      .sort((a, b) => a - b); // Sort delays in ascending order
+  }
+} as const;
 
 /**
  * Represents a single data point in a motor's thrust curve.
  * Each point defines the thrust output at a specific time during motor burn.
+ * All units are in SI (International System of Units).
  */
 interface ThrustPoint {
-  /** Time in seconds from motor ignition */
+  /** Time in seconds from motor ignition (SI base unit) */
   time: number;
-  /** Thrust force in Newtons */
+  /** Thrust force in Newtons (SI derived unit: kg⋅m⋅s⁻²) */
   thrust: number;
 }
 
 /**
  * Motor header information parsed from RASP .eng file format.
  * Contains basic physical specifications and metadata about the motor.
+ * All units are in SI (International System of Units).
  */
 interface MotorHeader {
   /** Motor designation (e.g., "C6", "A10T", "D12") */
   name: string;
-  /** Motor diameter in millimeters */
+  /** Motor diameter in meters (converted from mm in RASP file) */
   diameter: number;
-  /** Motor length in millimeters */
+  /** Motor length in meters (converted from mm in RASP file) */
   length: number;
-  /** Available delay times as string (e.g., "0-3-5-7", "3-100") */
-  delays: string;
-  /** Mass of propellant in kilograms */
+  /** Available delay times in seconds, parsed from "-" delimited string */
+  delays: number[];
+  /** Mass of propellant in kilograms (SI base unit) */
   propellantWeight: number;
-  /** Mass of empty motor casing in kilograms */
+  /** Mass of empty motor casing in kilograms (SI base unit) */
   dryWeight: number;
   /** Motor manufacturer name (e.g., "Estes", "AeroTech") */
   manufacturer: string;
@@ -35,17 +104,18 @@ interface MotorHeader {
 /**
  * Calculated motor performance specifications derived from thrust curve data.
  * These values are computed during parsing and used for simulation calculations.
+ * All units are in SI (International System of Units).
  */
 interface MotorSpecifications {
-  /** Combined mass of propellant and motor casing in kilograms */
+  /** Combined mass of propellant and motor casing in kilograms (SI base unit) */
   totalWeight: number;
-  /** Duration of motor burn in seconds */
+  /** Duration of motor burn in seconds (SI base unit) */
   burnTime: number;
-  /** Peak thrust force achieved during burn in Newtons */
+  /** Peak thrust force achieved during burn in Newtons (SI derived unit) */
   maxThrust: number;
-  /** Mean thrust force over entire burn duration in Newtons */
+  /** Mean thrust force over entire burn duration in Newtons (SI derived unit) */
   averageThrust: number;
-  /** Total impulse (area under thrust curve) in Newton-seconds */
+  /** Total impulse (area under thrust curve) in Newton-seconds (SI derived unit) */
   totalImpulse: number;
 }
 
@@ -91,15 +161,23 @@ export const useMotorExtractor = () => {
 
   /**
    * Parses a RASP .eng file format and extracts motor data.
+   * Converts all units to SI (International System of Units).
    * 
    * RASP .eng format:
    * - Comment lines start with ';'
-   * - Header line: Name Diameter Length Delays PropWeight DryWeight Manufacturer
+   * - Header line: Name Diameter(mm) Length(mm) Delays PropWeight(kg) DryWeight(kg) Manufacturer
    * - Data lines: Time(s) Thrust(N)
+   * 
+   * Unit conversions applied:
+   * - Diameter: mm → m (×0.001)
+   * - Length: mm → m (×0.001)
+   * - Time: s (already SI)
+   * - Thrust: N (already SI)
+   * - Mass: kg (already SI)
    * 
    * @param content - Raw text content of the .eng file
    * @param filename - Name of the source file for error reporting
-   * @returns Parsed motor data object
+   * @returns Parsed motor data object with all values in SI units
    * @throws Error if file format is invalid or required data is missing
    */
   const parseEngFile = useCallback((content: string, filename: string): MotorData => {
@@ -135,7 +213,7 @@ export const useMotorExtractor = () => {
       throw new Error(`No header line found in ${filename}`);
     }
 
-    // Parse header: Name Diameter Length Delays ProWeight DrWeight Manufacturer
+    // Parse header: Name Diameter(mm) Length(mm) Delays PropWeight(kg) DryWeight(kg) Manufacturer
     const headerParts: string[] = headerLine.split(/\s+/);
     if (headerParts.length < 7) {
       throw new Error(
@@ -145,51 +223,71 @@ export const useMotorExtractor = () => {
 
     const [
       name,
-      diameter,
-      length,
+      diameterMm,
+      lengthMm,
       delays,
-      propellantWeight,
-      dryWeight,
+      propellantWeightKg,
+      dryWeightKg,
       manufacturer,
     ]: string[] = headerParts;
 
-    // Calculate derived performance values
-    const totalWeight: number = parseFloat(propellantWeight) + parseFloat(dryWeight);
+    // Convert RASP units to SI units with validation
+    const diameterMmValue: number = parseFloat(diameterMm);
+    const lengthMmValue: number = parseFloat(lengthMm);
+    const propellantWeightValue: number = parseFloat(propellantWeightKg);
+    const dryWeightValue: number = parseFloat(dryWeightKg);
+    
+    // Validate parsed values
+    UnitConversions.validatePositive(diameterMmValue, `diameter in ${filename}`);
+    UnitConversions.validatePositive(lengthMmValue, `length in ${filename}`);
+    UnitConversions.validateNonNegative(propellantWeightValue, `propellant weight in ${filename}`);
+    UnitConversions.validateNonNegative(dryWeightValue, `dry weight in ${filename}`);
+    
+    // Apply unit conversions and parse delays
+    const diameterM: number = UnitConversions.mmToM(diameterMmValue); // mm → m
+    const lengthM: number = UnitConversions.mmToM(lengthMmValue); // mm → m
+    const propellantWeightSI: number = propellantWeightValue; // kg (already SI)
+    const dryWeightSI: number = dryWeightValue; // kg (already SI)
+    const delaysList: number[] = UnitConversions.parseDelays(delays); // parse "-" delimited delays
+    // Time and thrust data points are already in SI units (s, N)
+
+    // Calculate derived performance values (all in SI units)
+    const totalWeight: number = propellantWeightSI + dryWeightSI; // kg
     const burnTime: number =
-      dataPoints.length > 0 ? Math.max(...dataPoints.map((p: ThrustPoint) => p.time)) : 0;
+      dataPoints.length > 0 ? Math.max(...dataPoints.map((p: ThrustPoint) => p.time)) : 0; // s
     const maxThrust: number =
-      dataPoints.length > 0 ? Math.max(...dataPoints.map((p: ThrustPoint) => p.thrust)) : 0;
+      dataPoints.length > 0 ? Math.max(...dataPoints.map((p: ThrustPoint) => p.thrust)) : 0; // N
 
     // Calculate total impulse using trapezoidal integration (area under thrust curve)
     const totalImpulse: number = dataPoints.reduce((impulse: number, point: ThrustPoint, i: number, arr: ThrustPoint[]) => {
       if (i === 0) return 0;
       const prevPoint: ThrustPoint = arr[i - 1];
-      const timeInterval: number = point.time - prevPoint.time;
-      const avgThrust: number = (point.thrust + prevPoint.thrust) / 2;
-      return impulse + avgThrust * timeInterval;
+      const timeInterval: number = point.time - prevPoint.time; // s
+      const avgThrust: number = (point.thrust + prevPoint.thrust) / 2; // N
+      return impulse + avgThrust * timeInterval; // N⋅s
     }, 0);
 
-    const averageThrust: number = burnTime > 0 ? totalImpulse / burnTime : 0;
+    const averageThrust: number = burnTime > 0 ? totalImpulse / burnTime : 0; // N
 
     return {
       filename,
       header: {
         name,
-        diameter: parseFloat(diameter),
-        length: parseFloat(length),
-        delays,
-        propellantWeight: parseFloat(propellantWeight),
-        dryWeight: parseFloat(dryWeight),
+        diameter: diameterM, // m (SI)
+        length: lengthM, // m (SI)
+        delays: delaysList, // s (SI, parsed from string)
+        propellantWeight: propellantWeightSI, // kg (SI)
+        dryWeight: dryWeightSI, // kg (SI)
         manufacturer,
       },
       specifications: {
-        totalWeight,
-        burnTime,
-        maxThrust,
-        averageThrust,
-        totalImpulse,
+        totalWeight, // kg (SI)
+        burnTime, // s (SI)
+        maxThrust, // N (SI)
+        averageThrust, // N (SI)
+        totalImpulse, // N⋅s (SI)
       },
-      thrustCurve: dataPoints,
+      thrustCurve: dataPoints, // time: s, thrust: N (SI)
     };
   }, []);
 
@@ -398,7 +496,7 @@ export const useMotorExtractor = () => {
 
   /**
    * Filters motors by NAR impulse classification (A, B, C, D, etc.).
-   * Each class represents a range of total impulse values.
+   * Each class represents a range of total impulse values in Newton-seconds (SI units).
    * 
    * @param impulseClass - Single letter impulse class (A-O)
    * @returns Array of motors in the specified impulse class
