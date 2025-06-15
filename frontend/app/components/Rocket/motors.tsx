@@ -332,7 +332,6 @@ export const useMotorExtractor = () => {
     try {
       const isDev: boolean = process.env.NODE_ENV === "development";
       // Use appropriate base path for development vs production (GitHub Pages)
-      const isDev: boolean = process.env.NODE_ENV === "development";
       const basePath: string = isDev ? "/motors" : "/model_rocket_simulator/motors";
 
       // Try to load motors manifest first (preferred method)
@@ -463,8 +462,8 @@ export const useMotorExtractor = () => {
 
       try {
         // Use appropriate base path for development vs production (GitHub Pages)
-      const isDev: boolean = process.env.NODE_ENV === "development";
-      const basePath: string = isDev ? "/motors" : "/model_rocket_simulator/motors";
+        const isDev: boolean = process.env.NODE_ENV === "development";
+        const basePath: string = isDev ? "/motors" : "/model_rocket_simulator/motors";
 
         const response: Response = await fetch(`${basePath}/${filename}`);
 
