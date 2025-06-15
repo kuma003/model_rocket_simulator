@@ -330,7 +330,7 @@ export const useMotorExtractor = () => {
    */
   const discoverMotorFiles = useCallback(async (): Promise<string[]> => {
     try {
-      const isDev: boolean = process.env.NODE_ENV === "development";
+      const isDev: boolean = import.meta.env.DEV;
       // Use appropriate base path for development vs production (GitHub Pages)
       const basePath: string = isDev ? "/motors" : "/model_rocket_simulator/motors";
 
@@ -409,7 +409,7 @@ export const useMotorExtractor = () => {
 
       const motors: MotorData[] = [];
       // Use appropriate base path for development vs production (GitHub Pages)
-      const isDev: boolean = process.env.NODE_ENV === "development";
+      const isDev: boolean = import.meta.env.DEV;
       const basePath: string = isDev ? "/motors" : "/model_rocket_simulator/motors";
 
       // Load and parse each discovered file
@@ -462,7 +462,7 @@ export const useMotorExtractor = () => {
 
       try {
         // Use appropriate base path for development vs production (GitHub Pages)
-        const isDev: boolean = process.env.NODE_ENV === "development";
+        const isDev: boolean = import.meta.env.DEV;
         const basePath: string = isDev ? "/motors" : "/model_rocket_simulator/motors";
 
         const response: Response = await fetch(`${basePath}/${filename}`);
