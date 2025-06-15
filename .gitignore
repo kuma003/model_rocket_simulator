@@ -35,4 +35,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Generated motor files (copied from app/motors)
+/frontend/public/motors
+
 */node_modules
