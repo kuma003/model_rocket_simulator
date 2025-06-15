@@ -331,7 +331,9 @@ export const useMotorExtractor = () => {
   const discoverMotorFiles = useCallback(async (): Promise<string[]> => {
     try {
       const isDev: boolean = process.env.NODE_ENV === "development";
-      const basePath: string = "/motors"; // Always use /motors from public directory
+      // Use appropriate base path for development vs production (GitHub Pages)
+      const isDev: boolean = process.env.NODE_ENV === "development";
+      const basePath: string = isDev ? "/motors" : "/model_rocket_simulator/motors";
 
       // Try to load motors manifest first (preferred method)
       console.log(
@@ -407,7 +409,9 @@ export const useMotorExtractor = () => {
       }
 
       const motors: MotorData[] = [];
-      const basePath: string = "/motors"; // Always use /motors from public directory
+      // Use appropriate base path for development vs production (GitHub Pages)
+      const isDev: boolean = process.env.NODE_ENV === "development";
+      const basePath: string = isDev ? "/motors" : "/model_rocket_simulator/motors";
 
       // Load and parse each discovered file
       for (const filename of discoveredFiles) {
@@ -458,7 +462,9 @@ export const useMotorExtractor = () => {
       setError("");
 
       try {
-        const basePath: string = "/motors"; // Always use /motors from public directory
+        // Use appropriate base path for development vs production (GitHub Pages)
+      const isDev: boolean = process.env.NODE_ENV === "development";
+      const basePath: string = isDev ? "/motors" : "/model_rocket_simulator/motors";
 
         const response: Response = await fetch(`${basePath}/${filename}`);
 
