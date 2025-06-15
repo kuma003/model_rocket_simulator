@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "react-router build && npm run build:motors",
-    "build:motors": "node scripts/build-motors.js",
+    "build:motors": "node scripts/build-motors.cjs",
     "dev": "npm run dev:setup && react-router dev",
     "dev:setup": "cp -r app/motors/* public/motors/",
     "start": "react-router-serve ./build/server/index.js",
