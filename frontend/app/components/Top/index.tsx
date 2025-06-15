@@ -6,10 +6,11 @@ import Title from "../Title";
 import { StarField } from "../StartField";
 import { FloatingSpaceObjects } from "../SpaceObjects";
 import { Rokenyann, RokenyannSpeech } from "../Rokenyann";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 
 export const Top: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <div className={styles.toppage}>
@@ -33,6 +34,10 @@ export const Top: React.FC = () => {
           {
             label: "設定",
             leftIcon: <Settings />,
+            onClick: () =>
+              navigate("/", {
+                state: { showModal: "settings" },
+              }),
           },
           {
             label: "情報",

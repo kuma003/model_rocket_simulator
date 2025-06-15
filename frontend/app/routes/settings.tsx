@@ -6,7 +6,7 @@ export default function SettingsModal() {
   const navigate = useNavigate();
 
   const closeModal = () => {
-    navigate(-1);
+    navigate("/", { replace: true });
   };
 
   useEffect(() => {
