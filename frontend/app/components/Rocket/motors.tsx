@@ -133,13 +133,17 @@ export const useMotorExtractor = () => {
   const discoverMotorFiles = useCallback(async () => {
     try {
       const isDev = process.env.NODE_ENV === "development";
-      const basePath = isDev ? "/app/motors" : "/motors";
+      const basePath = "/motors"; // Always use /motors from public directory
 
       // Try to load motors manifest first
+      console.log("Trying to load manifest from:", `${basePath}/motors-manifest.json`);
       const manifestResponse = await fetch(`${basePath}/motors-manifest.json`);
       if (manifestResponse.ok) {
         const manifest = await manifestResponse.json();
+        console.log("Loaded manifest:", manifest);
         return manifest.files || [];
+      } else {
+        console.log("Manifest not found, status:", manifestResponse.status);
       }
 
       // Fallback: try common patterns if manifest doesn't exist
@@ -156,6 +160,7 @@ export const useMotorExtractor = () => {
         "Klima_E30.eng",
       ];
 
+      console.log("Fallback: checking for common motor files...");
       const existingFiles = [];
       for (const filename of commonFiles) {
         try {
@@ -163,13 +168,15 @@ export const useMotorExtractor = () => {
             method: "HEAD",
           });
           if (response.ok) {
+            console.log(`Found motor file: ${filename}`);
             existingFiles.push(filename);
           }
         } catch (err) {
-          // File doesn't exist, continue
+          console.log(`Motor file not found: ${filename}`);
         }
       }
 
+      console.log("Discovered motor files:", existingFiles);
       return existingFiles;
     } catch (err) {
       console.warn("Error discovering motor files:", err);
@@ -191,8 +198,7 @@ export const useMotorExtractor = () => {
       }
 
       const motors = [];
-      const isDev = process.env.NODE_ENV === "development";
-      const basePath = isDev ? "/app/motors" : "/motors";
+      const basePath = "/motors"; // Always use /motors from public directory
 
       // Load and parse each file
       for (const filename of discoveredFiles) {
@@ -236,8 +242,7 @@ export const useMotorExtractor = () => {
       setError("");
 
       try {
-        const isDev = process.env.NODE_ENV === "development";
-        const basePath = isDev ? "/app/motors" : "/motors";
+        const basePath = "/motors"; // Always use /motors from public directory
 
         const response = await fetch(`${basePath}/${filename}`);
 
