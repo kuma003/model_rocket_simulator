@@ -16,7 +16,7 @@ import { MantineProvider } from '@mantine/core';
 export const links: Route.LinksFunction = () => [
   {
     rel: "icon",
-    href: "/favicon.ico",
+    href: "./favicon.ico",
     type: "image/x-icon",
   },
 ];

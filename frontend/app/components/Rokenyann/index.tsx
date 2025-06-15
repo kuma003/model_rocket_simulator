@@ -25,7 +25,7 @@ export const Rokenyann: React.FC<RokenyannProps> = ({
   return (
     <div className={getClassNames()}>
       <img
-        src="/rokenyann_rocket.png"
+        src="./rokenyann_rocket.png"
         alt="Rocket Mascot"
         className={styles.mascotImage}
       />
