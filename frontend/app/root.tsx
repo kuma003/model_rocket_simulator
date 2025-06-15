@@ -1,4 +1,4 @@
-import '@mantine/core/styles.css';
+import "@mantine/core/styles.css";
 
 import {
   isRouteErrorResponse,
@@ -12,7 +12,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.scss";
-import { MantineProvider } from '@mantine/core';
+import { MantineProvider } from "@mantine/core";
 
 export const links: Route.LinksFunction = () => [
   {
@@ -41,9 +41,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const location = useLocation();
-  const backgroundLocation = location.state?.backgroundLocation;
-  
   return (
     <MantineProvider>
       <Outlet />

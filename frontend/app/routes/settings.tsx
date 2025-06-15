@@ -102,12 +102,14 @@ export default function SettingsModal() {
           <p style={{ margin: "0 0 16px 0", color: "#666" }}>
             Settings panel content will be implemented here.
           </p>
-          <div style={{ 
-            padding: "12px", 
-            backgroundColor: "#f0f8ff", 
-            borderRadius: "4px",
-            border: "1px solid #e1ecf4"
-          }}>
+          <div
+            style={{
+              padding: "12px",
+              backgroundColor: "#f0f8ff",
+              borderRadius: "4px",
+              border: "1px solid #e1ecf4",
+            }}
+          >
             <small style={{ color: "#0969da" }}>
               Demo: This is a placeholder settings modal
             </small>
