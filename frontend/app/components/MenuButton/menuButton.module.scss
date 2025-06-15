@@ -11,21 +11,22 @@
 
 .menuButton {
   --button-radius: 999px;
-  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24);
-  background-size: 300% 300%;
+  background: linear-gradient(
+    to right,
+    rgba(249, 115, 22, 0.2),
+    rgba(219, 39, 119, 0.2)
+  );
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  height: 60px;
-  width: 320px;
-  font-weight: 700;
+  font-size: 30px;
+  height: 70px;
+  width: 350px;
+  font-weight: 600;
   cursor: pointer;
-  border: 3px solid rgba(255, 255, 255, 0.3);
+  border: none;
   color: #ffffff;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-  animation: slideIn 0.5s ease-out forwards, rainbowShift 4s ease infinite;
+  animation: slideIn 0.5s ease-out forwards;
   margin: 8px 0;
   font-family: "Comic Sans MS", "Hiragino Kaku Gothic ProN", "Hiragino Sans",
     "Meiryo", cursive, sans-serif;
@@ -38,27 +39,11 @@
     padding: 0;
   }
 
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateX(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
   &:hover {
-    transform: scale(1.05) translateY(-3px);
-    color: #fff;
+    transform: scale(1.01);
+    color: whitesmoke;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
     animation-duration: 2s;
-
-    :global(.mantine-Button-section) {
-      fill: #fff;
-      transform: translatey(1px) scale(1.1);
-    }
   }
 }
 
@@ -96,24 +81,5 @@
 
   .glowEffect {
     background: rgba(255, 255, 255, 0.05);
-  }
-}
-
-// Add rainbow animation
-@keyframes rainbowShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  25% {
-    background-position: 100% 0%;
-  }
-  50% {
-    background-position: 100% 100%;
-  }
-  75% {
-    background-position: 0% 100%;
-  }
-  100% {
-    background-position: 0% 50%;
   }
 }
