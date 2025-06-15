@@ -6,8 +6,11 @@ import Title from "../Title";
 import { StarField } from "../StartField";
 import { FloatingSpaceObjects } from "../SpaceObjects";
 import { Rokenyann, RokenyannSpeech } from "../Rokenyann";
+import { useNavigate } from "react-router";
 
 export const Top: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div className={styles.toppage}>
       <StarField count={200} />
@@ -21,7 +24,7 @@ export const Top: React.FC = () => {
           {
             label: "ゲームスタート",
             leftIcon: <PlayArrow />,
-            onClick: () => console.log("Home button clicked"),
+            onClick: () => navigate("/design"),
           },
           {
             label: "ランキング",
