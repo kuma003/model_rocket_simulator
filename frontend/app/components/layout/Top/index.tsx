@@ -1,11 +1,11 @@
 import React from "react";
 import styles from "./toppage.module.scss";
-import { MenuButton } from "../MenuButton";
-import { PlayArrow, SimpleRocket, Settings, Info } from "../Icons";
-import Title from "../Title";
-import { StarField } from "../StartField";
-import { FloatingSpaceObjects } from "../SpaceObjects";
-import { Rokenyann, RokenyannSpeech } from "../Rokenyann";
+import { MenuButton } from "../../ui/MenuButton";
+import { PlayArrow, SimpleRocket, Settings, Info } from "../../ui/Icons";
+import Title from "../../ui/Title";
+import { StarField } from "../../effects/StarField";
+import { FloatingSpaceObjects } from "../../effects/SpaceObjects";
+import { Rokenyann, RokenyannSpeech } from "../../features/Rokenyann";
 import { useNavigate, useLocation } from "react-router";
 
 export const Top: React.FC = () => {

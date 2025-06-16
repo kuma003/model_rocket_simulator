@@ -1,7 +1,7 @@
 import React from "react";
-import type { RocketParams } from "../Rocket/types";
+import type { RocketParams } from "../../features/Rocket/types";
 import styles from "./rocketPanel.module.scss";
-import { Settings } from "../Icons";
+import { Settings } from "../../ui/Icons";
 
 export interface RocketPanelProps {
   setRocketParams: (params: RocketParams) => void;

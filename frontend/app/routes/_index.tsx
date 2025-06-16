@@ -1,4 +1,4 @@
-import { Top } from "~/components/Top";
+import { Top } from "~/components/layout/Top";
 import type { Route } from "./+types/_index";
 import { useLocation, useNavigate } from "react-router";
 import { useEffect, lazy, Suspense } from "react";

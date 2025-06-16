@@ -1,7 +1,7 @@
 import react, { useEffect } from "react";
 import useMotorExtractor from "./motors";
 import type { RocketParams } from "./types";
-import RocketPanel from "../RocketPanel";
+import RocketPanel from "~/components/layout/RocketPanel";
 
 const Rocket = () => {
   const { motorData, loading, error, extractAllMotors, getMotorByName } =

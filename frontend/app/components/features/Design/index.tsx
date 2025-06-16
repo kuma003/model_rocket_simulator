@@ -1,5 +1,5 @@
 import React from "react";
-import RocketPanel from "../RocketPanel";
+import RocketPanel from "~/components/layout/RocketPanel";
 import type { RocketParams } from "../Rocket/types";
 import styles from "./design.module.scss";
 
