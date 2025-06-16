@@ -191,7 +191,7 @@ export const useMotorExtractor = () => {
         .split("\n")
         .map((line: string) => line.trim());
       let headerLine: string | null = null;
-      const dataPoints: ThrustPoint[] = [];
+      const dataPoints: ThrustPoint[] = [{ time: 0, thrust: 0 }]; // Initialize with zero point
 
       // Find the header line (first non-comment, non-blank line)
       for (let i = 0; i < lines.length; i++) {
@@ -332,7 +332,9 @@ export const useMotorExtractor = () => {
     try {
       const isDev: boolean = import.meta.env.DEV;
       // Use appropriate base path for development vs production (GitHub Pages)
-      const basePath: string = isDev ? "/motors" : "/model_rocket_simulator/motors";
+      const basePath: string = isDev
+        ? "/motors"
+        : "/model_rocket_simulator/motors";
 
       // Try to load motors manifest first (preferred method)
       console.log(
@@ -410,7 +412,9 @@ export const useMotorExtractor = () => {
       const motors: MotorData[] = [];
       // Use appropriate base path for development vs production (GitHub Pages)
       const isDev: boolean = import.meta.env.DEV;
-      const basePath: string = isDev ? "/motors" : "/model_rocket_simulator/motors";
+      const basePath: string = isDev
+        ? "/motors"
+        : "/model_rocket_simulator/motors";
 
       // Load and parse each discovered file
       for (const filename of discoveredFiles) {
@@ -463,7 +467,9 @@ export const useMotorExtractor = () => {
       try {
         // Use appropriate base path for development vs production (GitHub Pages)
         const isDev: boolean = import.meta.env.DEV;
-        const basePath: string = isDev ? "/motors" : "/model_rocket_simulator/motors";
+        const basePath: string = isDev
+          ? "/motors"
+          : "/model_rocket_simulator/motors";
 
         const response: Response = await fetch(`${basePath}/${filename}`);
 
