@@ -42,12 +42,16 @@ const meta: Meta<typeof RocketPanel> = {
   parameters: {
     layout: "padded",
     backgrounds: {
-      default: "dark",
+      default: "space",
       values: [
         { name: "dark", value: "#1a1a1a" },
         {
           name: "space",
-          value: "linear-gradient(to bottom, #0f0f23, #1a1a2e, #16213e)",
+          value: "linear-gradient(to bottom, #5a3393, #354d8f, #403e80)",
+        },
+        {
+          name: "cosmic",
+          value: "radial-gradient(ellipse at center, #1a0f3a 0%, #0d051a 70%, #000000 100%)",
         },
       ],
     },
