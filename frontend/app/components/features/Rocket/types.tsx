@@ -7,6 +7,8 @@ interface RocketBaseParam {
 }
 
 export interface RocketParams {
+  name: string;
+  designer: string;
   nose: RocketBaseParam & {
     type: "conical" | "ogive" | "elliptical";
   };
