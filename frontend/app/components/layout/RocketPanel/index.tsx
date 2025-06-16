@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import type { RocketParams } from "../../features/Rocket/types";
 import styles from "./rocketPanel.module.scss";
 import { Settings } from "../../ui/Icons";
@@ -14,6 +14,8 @@ import {
   Divider,
   ScrollArea,
 } from "@mantine/core";
+import ThrustCurveChart from "../../features/ThrustCurveChart";
+import { loadMotorData, type MotorData } from "../../../utils/motorParser";
 
 export interface RocketPanelProps {
   rocketParams?: RocketParams;
@@ -60,12 +62,35 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
 }) => {
   const [activeSection, setActiveSection] = useState("ノーズ");
   const [params, setParams] = useState<RocketParams>(rocketParams);
+  const [motorData, setMotorData] = useState<MotorData | null>(null);
+  const [loadingMotorData, setLoadingMotorData] = useState(false);
 
   const updateParams = (newParams: Partial<RocketParams>) => {
     const updatedParams = { ...params, ...newParams };
     setParams(updatedParams);
     setRocketParams(updatedParams);
   };
+
+  useEffect(() => {
+    const loadMotor = async () => {
+      if (params.engine.name) {
+        setLoadingMotorData(true);
+        try {
+          const data = await loadMotorData(params.engine.name);
+          setMotorData(data);
+        } catch (error) {
+          console.error('Failed to load motor data:', error);
+          setMotorData(null);
+        } finally {
+          setLoadingMotorData(false);
+        }
+      } else {
+        setMotorData(null);
+      }
+    };
+
+    loadMotor();
+  }, [params.engine.name]);
 
   const handleImport = () => {
     console.log("Import functionality - to be implemented");
@@ -271,6 +296,7 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
         ]}
         searchable
       />
+      <ThrustCurveChart motorData={motorData} loading={loadingMotorData} />
     </Stack>
   );
 
