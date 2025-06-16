@@ -15,7 +15,8 @@
       "Bash(find:*)",
       "Bash(sudo rm:*)",
       "Bash(npm ls:*)",
-      "Bash(npm update)"
+      "Bash(npm update)",
+      "Bash(npm install:*)"
     ],
     "deny": []
   }
