@@ -9,11 +9,13 @@ interface FinSectionProps {
 
 const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
   return (
-    <Stack gap="sm">
+    <Stack>
       <NumberInput
         label="フィン数"
         value={params.fins.count}
-        onChange={(value) => updateParams({ fins: { ...params.fins, count: Number(value) || 0 } })}
+        onChange={(value) =>
+          updateParams({ fins: { ...params.fins, count: Number(value) || 0 } })
+        }
         min={1}
         max={8}
       />
@@ -21,17 +23,46 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
         label="フィンタイプ"
         value={params.fins.type}
         onChange={(value) => {
-          if (value === "trapozoidal") {
-            updateParams({
-              fins: {
-                ...params.fins,
-                type: "trapozoidal",
-                rootChord: 5,
-                tipChord: 2,
-                sweepLength: 3,
-                height: 4,
-              }
-            });
+          switch (value) {
+            case "trapozoidal": {
+              updateParams({
+                fins: {
+                  ...params.fins,
+                  type: "trapozoidal",
+                  rootChord: 5,
+                  tipChord: 2,
+                  sweepLength: 3,
+                  height: 4,
+                },
+              });
+              break;
+            }
+            case "elliptical": {
+              updateParams({
+                fins: {
+                  ...params.fins,
+                  type: "elliptical",
+                  rootChord: 5,
+                  height: 4,
+                },
+              });
+              break;
+            }
+            case "freedom": {
+              updateParams({
+                fins: {
+                  ...params.fins,
+                  type: "freedom",
+                  points: [
+                    { x: 0, y: 0 },
+                    { x: 5, y: 0 },
+                    { x: 4, y: 4 },
+                    { x: 0, y: 4 },
+                  ],
+                },
+              });
+              break;
+            }
           }
         }}
         data={[
@@ -45,44 +76,174 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
           <NumberInput
             label="ルートコード (cm)"
             value={(params.fins as any).rootChord}
-            onChange={(value) => updateParams({ fins: { ...params.fins, rootChord: Number(value) || 0 } as any })}
+            onChange={(value) =>
+              updateParams({
+                fins: { ...params.fins, rootChord: Number(value) || 0 } as any,
+              })
+            }
             min={0}
             step={0.1}
           />
           <NumberInput
             label="チップコード (cm)"
             value={(params.fins as any).tipChord}
-            onChange={(value) => updateParams({ fins: { ...params.fins, tipChord: Number(value) || 0 } as any })}
+            onChange={(value) =>
+              updateParams({
+                fins: { ...params.fins, tipChord: Number(value) || 0 } as any,
+              })
+            }
             min={0}
             step={0.1}
           />
           <NumberInput
             label="スイープ長 (cm)"
             value={(params.fins as any).sweepLength}
-            onChange={(value) => updateParams({ fins: { ...params.fins, sweepLength: Number(value) || 0 } as any })}
+            onChange={(value) =>
+              updateParams({
+                fins: {
+                  ...params.fins,
+                  sweepLength: Number(value) || 0,
+                } as any,
+              })
+            }
             min={0}
             step={0.1}
           />
           <NumberInput
             label="高さ (cm)"
             value={(params.fins as any).height}
-            onChange={(value) => updateParams({ fins: { ...params.fins, height: Number(value) || 0 } as any })}
+            onChange={(value) =>
+              updateParams({
+                fins: { ...params.fins, height: Number(value) || 0 } as any,
+              })
+            }
             min={0}
             step={0.1}
           />
         </>
       )}
+      {params.fins.type === "elliptical" && (
+        <>
+          <NumberInput
+            label="ルートコード (cm)"
+            value={(params.fins as any).rootChord}
+            onChange={(value) =>
+              updateParams({
+                fins: { ...params.fins, rootChord: Number(value) || 0 } as any,
+              })
+            }
+            min={0}
+            step={0.1}
+          />
+          <NumberInput
+            label="高さ (cm)"
+            value={(params.fins as any).height}
+            onChange={(value) =>
+              updateParams({
+                fins: { ...params.fins, height: Number(value) || 0 } as any,
+              })
+            }
+            min={0}
+            step={0.1}
+          />
+        </>
+      )}
+      {params.fins.type === "freedom" && (
+        <>
+          <div>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>
+              頂点座標
+            </label>
+            {((params.fins as any).points || []).map((point: { x: number; y: number }, index: number) => (
+              <div key={index} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                <NumberInput
+                  placeholder={`X${index + 1}`}
+                  value={point.x}
+                  onChange={(value) => {
+                    const newPoints = [...((params.fins as any).points || [])];
+                    newPoints[index] = { ...newPoints[index], x: Number(value) || 0 };
+                    updateParams({
+                      fins: { ...params.fins, points: newPoints } as any,
+                    });
+                  }}
+                  step={0.1}
+                  style={{ flex: 1 }}
+                />
+                <NumberInput
+                  placeholder={`Y${index + 1}`}
+                  value={point.y}
+                  onChange={(value) => {
+                    const newPoints = [...((params.fins as any).points || [])];
+                    newPoints[index] = { ...newPoints[index], y: Number(value) || 0 };
+                    updateParams({
+                      fins: { ...params.fins, points: newPoints } as any,
+                    });
+                  }}
+                  step={0.1}
+                  style={{ flex: 1 }}
+                />
+                {((params.fins as any).points || []).length > 3 && (
+                  <button
+                    onClick={() => {
+                      const newPoints = [...((params.fins as any).points || [])];
+                      newPoints.splice(index, 1);
+                      updateParams({
+                        fins: { ...params.fins, points: newPoints } as any,
+                      });
+                    }}
+                    style={{
+                      background: '#ff6b6b',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      padding: '0.5rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    削除
+                  </button>
+                )}
+              </div>
+            ))}
+            <button
+              onClick={() => {
+                const currentPoints = (params.fins as any).points || [];
+                const newPoints = [...currentPoints, { x: 0, y: 0 }];
+                updateParams({
+                  fins: { ...params.fins, points: newPoints } as any,
+                });
+              }}
+              style={{
+                background: '#4c6ef5',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                padding: '0.5rem 1rem',
+                cursor: 'pointer'
+              }}
+            >
+              頂点を追加
+            </button>
+          </div>
+        </>
+      )}
       <NumberInput
         label="厚さ (cm)"
         value={params.fins.thickness}
-        onChange={(value) => updateParams({ fins: { ...params.fins, thickness: Number(value) || 0 } })}
+        onChange={(value) =>
+          updateParams({
+            fins: { ...params.fins, thickness: Number(value) || 0 },
+          })
+        }
         min={0}
         step={0.01}
       />
       <Select
         label="材質"
         value={params.fins.material}
-        onChange={(value) => updateParams({ fins: { ...params.fins, material: value as any } })}
+        onChange={(value) =>
+          updateParams({ fins: { ...params.fins, material: value as any } })
+        }
         data={[
           { value: "plastic", label: "プラスチック" },
           { value: "balsa", label: "バルサ" },
@@ -92,7 +253,9 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
       <ColorInput
         label="色"
         value={params.fins.color}
-        onChange={(value) => updateParams({ fins: { ...params.fins, color: value } })}
+        onChange={(value) =>
+          updateParams({ fins: { ...params.fins, color: value } })
+        }
       />
     </Stack>
   );
