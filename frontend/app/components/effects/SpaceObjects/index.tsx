@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./spaceObjects.module.scss";
 
-interface FloatingSpaceObjectsProps {
+export interface FloatingSpaceObjectsProps {
   count?: number;
   className?: string;
 }
