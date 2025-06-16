@@ -1,6 +1,7 @@
 import React from "react";
 import { Stack, TextInput } from "@mantine/core";
 import type { RocketParams } from "../../../features/Rocket/types";
+import styles from "../rocketPanel.module.scss";
 
 interface BasicInfoProps {
   params: RocketParams;
@@ -9,7 +10,7 @@ interface BasicInfoProps {
 
 const BasicInfo: React.FC<BasicInfoProps> = ({ params, updateParams }) => {
   return (
-    <Stack gap="xs">
+    <Stack>
       <TextInput
         label="ロケット名"
         value={params.name}
@@ -19,7 +20,9 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ params, updateParams }) => {
       <TextInput
         label="設計者"
         value={params.designer}
-        onChange={(event) => updateParams({ designer: event.currentTarget.value })}
+        onChange={(event) =>
+          updateParams({ designer: event.currentTarget.value })
+        }
         placeholder="設計者名を入力"
       />
     </Stack>

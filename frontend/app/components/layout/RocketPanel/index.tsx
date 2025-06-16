@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from "react";
 import type { RocketParams } from "../../features/Rocket/types";
 import styles from "./rocketPanel.module.scss";
-import {
-  SegmentedControl,
-  Stack,
-  Divider,
-  ScrollArea,
-} from "@mantine/core";
+import { SegmentedControl, Stack, Divider, ScrollArea } from "@mantine/core";
 import { loadMotorData, type MotorData } from "../../../utils/motorParser";
 
 // Import sub-components
@@ -57,11 +52,17 @@ const defaultRocketParams: RocketParams = {
   },
 };
 
-const RocketPanel: React.FC<RocketPanelProps> = ({ 
-  rocketParams = defaultRocketParams, 
-  setRocketParams 
+const RocketPanel: React.FC<RocketPanelProps> = ({
+  rocketParams = defaultRocketParams,
+  setRocketParams,
 }) => {
-  const [activeSection, setActiveSection] = useState("ノーズ");
+  const sections = [
+    { label: "ノーズ", value: "nose" },
+    { label: "ボディ", value: "body" },
+    { label: "フィン", value: "fins" },
+    { label: "エンジン", value: "engine" },
+  ];
+  const [activeSection, setActiveSection] = useState(sections[0].value);
   const [params, setParams] = useState<RocketParams>(rocketParams);
   const [motorData, setMotorData] = useState<MotorData | null>(null);
   const [loadingMotorData, setLoadingMotorData] = useState(false);
@@ -80,7 +81,7 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
           const data = await loadMotorData(params.engine.name);
           setMotorData(data);
         } catch (error) {
-          console.error('Failed to load motor data:', error);
+          console.error("Failed to load motor data:", error);
           setMotorData(null);
         } finally {
           setLoadingMotorData(false);
@@ -104,16 +105,16 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
 
   const renderActiveSection = () => {
     switch (activeSection) {
-      case "ノーズ":
+      case "nose":
         return <NoseSection params={params} updateParams={updateParams} />;
-      case "ボディ":
+      case "body":
         return <BodySection params={params} updateParams={updateParams} />;
-      case "フィン":
+      case "fins":
         return <FinSection params={params} updateParams={updateParams} />;
-      case "エンジン":
+      case "engine":
         return (
-          <EngineSection 
-            params={params} 
+          <EngineSection
+            params={params}
             updateParams={updateParams}
             motorData={motorData}
             loadingMotorData={loadingMotorData}
@@ -128,7 +129,7 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
     <div className={styles.panel}>
       <PanelHeader />
 
-      <Stack gap="md" className={styles.content}>
+      <Stack className={styles.content}>
         <BasicInfo params={params} updateParams={updateParams} />
 
         <Divider />
@@ -140,7 +141,7 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
         <SegmentedControl
           value={activeSection}
           onChange={setActiveSection}
-          data={["ノーズ", "ボディ", "フィン", "エンジン"]}
+          data={sections}
           className={styles.segmentedControl}
         />
 

@@ -9,11 +9,13 @@ interface NoseSectionProps {
 
 const NoseSection: React.FC<NoseSectionProps> = ({ params, updateParams }) => {
   return (
-    <Stack gap="sm">
+    <Stack>
       <Select
         label="ノーズコーンタイプ"
         value={params.nose.type}
-        onChange={(value) => updateParams({ nose: { ...params.nose, type: value as any } })}
+        onChange={(value) =>
+          updateParams({ nose: { ...params.nose, type: value as any } })
+        }
         data={[
           { value: "conical", label: "円錐型" },
           { value: "ogive", label: "オジャイブ型" },
@@ -23,28 +25,40 @@ const NoseSection: React.FC<NoseSectionProps> = ({ params, updateParams }) => {
       <NumberInput
         label="長さ (cm)"
         value={params.nose.length}
-        onChange={(value) => updateParams({ nose: { ...params.nose, length: Number(value) || 0 } })}
+        onChange={(value) =>
+          updateParams({ nose: { ...params.nose, length: Number(value) || 0 } })
+        }
         min={0}
         step={0.1}
       />
       <NumberInput
         label="直径 (cm)"
         value={params.nose.diameter}
-        onChange={(value) => updateParams({ nose: { ...params.nose, diameter: Number(value) || 0 } })}
+        onChange={(value) =>
+          updateParams({
+            nose: { ...params.nose, diameter: Number(value) || 0 },
+          })
+        }
         min={0}
         step={0.1}
       />
       <NumberInput
         label="厚さ (cm)"
         value={params.nose.thickness}
-        onChange={(value) => updateParams({ nose: { ...params.nose, thickness: Number(value) || 0 } })}
+        onChange={(value) =>
+          updateParams({
+            nose: { ...params.nose, thickness: Number(value) || 0 },
+          })
+        }
         min={0}
         step={0.01}
       />
       <Select
         label="材質"
         value={params.nose.material}
-        onChange={(value) => updateParams({ nose: { ...params.nose, material: value as any } })}
+        onChange={(value) =>
+          updateParams({ nose: { ...params.nose, material: value as any } })
+        }
         data={[
           { value: "plastic", label: "プラスチック" },
           { value: "balsa", label: "バルサ" },
@@ -54,7 +68,9 @@ const NoseSection: React.FC<NoseSectionProps> = ({ params, updateParams }) => {
       <ColorInput
         label="色"
         value={params.nose.color}
-        onChange={(value) => updateParams({ nose: { ...params.nose, color: value } })}
+        onChange={(value) =>
+          updateParams({ nose: { ...params.nose, color: value } })
+        }
       />
     </Stack>
   );

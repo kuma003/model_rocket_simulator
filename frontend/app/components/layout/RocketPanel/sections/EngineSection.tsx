@@ -11,14 +11,14 @@ interface EngineSectionProps {
   loadingMotorData: boolean;
 }
 
-const EngineSection: React.FC<EngineSectionProps> = ({ 
-  params, 
-  updateParams, 
-  motorData, 
-  loadingMotorData 
+const EngineSection: React.FC<EngineSectionProps> = ({
+  params,
+  updateParams,
+  motorData,
+  loadingMotorData,
 }) => {
   return (
-    <Stack gap="sm">
+    <Stack>
       <Select
         label="エンジン"
         value={params.engine.name}

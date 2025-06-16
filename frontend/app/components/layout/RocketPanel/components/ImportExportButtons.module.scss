@@ -1,0 +1,8 @@
+.buttonGroup {
+  justify-content: center;
+  gap: 2rem;
+
+  :global(.mantine-Button-root) {
+    width: 8rem;
+  }
+}
