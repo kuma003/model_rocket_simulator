@@ -64,6 +64,14 @@ export function parseMotorFile(content: string): MotorData | null {
 
 export async function loadMotorData(motorName: string): Promise<MotorData | null> {
   try {
+    // Check if we're in Storybook environment and have mock data
+    if (typeof window !== 'undefined' && (window as any).__mockMotorData) {
+      const mockData = (window as any).__mockMotorData[motorName];
+      if (mockData) {
+        return mockData;
+      }
+    }
+
     // Convert motor name to filename
     const filename = motorName.replace(/\s+/g, '_') + '.eng';
     const response = await fetch(`/motors/${filename}`);
