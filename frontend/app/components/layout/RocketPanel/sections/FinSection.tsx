@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Stack, NumberInput, Select, ColorInput } from "@mantine/core";
 import type { RocketParams } from "../../../features/Rocket/types";
 
@@ -7,7 +7,116 @@ interface FinSectionProps {
   updateParams: (newParams: Partial<RocketParams>) => void;
 }
 
+// Memory storage for each fin type
+interface FinTypeMemory {
+  trapozoidal: {
+    rootChord: number;
+    tipChord: number;
+    sweepLength: number;
+    height: number;
+  };
+  elliptical: {
+    rootChord: number;
+    height: number;
+  };
+  freedom: {
+    points: { x: number; y: number }[];
+  };
+}
+
+const defaultFinMemory: FinTypeMemory = {
+  trapozoidal: {
+    rootChord: 5,
+    tipChord: 2,
+    sweepLength: 3,
+    height: 4,
+  },
+  elliptical: {
+    rootChord: 5,
+    height: 4,
+  },
+  freedom: {
+    points: [
+      { x: 0, y: 0 },
+      { x: 5, y: 0 },
+      { x: 4, y: 4 },
+      { x: 0, y: 4 },
+    ],
+  },
+};
+
 const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
+  const [finMemory, setFinMemory] = useState<FinTypeMemory>(defaultFinMemory);
+
+  // Update memory when current fin values change
+  useEffect(() => {
+    if (params.fins.type === "trapozoidal") {
+      const finData = params.fins as any;
+      setFinMemory(prev => ({
+        ...prev,
+        trapozoidal: {
+          rootChord: finData.rootChord || prev.trapozoidal.rootChord,
+          tipChord: finData.tipChord || prev.trapozoidal.tipChord,
+          sweepLength: finData.sweepLength || prev.trapozoidal.sweepLength,
+          height: finData.height || prev.trapozoidal.height,
+        },
+      }));
+    } else if (params.fins.type === "elliptical") {
+      const finData = params.fins as any;
+      setFinMemory(prev => ({
+        ...prev,
+        elliptical: {
+          rootChord: finData.rootChord || prev.elliptical.rootChord,
+          height: finData.height || prev.elliptical.height,
+        },
+      }));
+    } else if (params.fins.type === "freedom") {
+      const finData = params.fins as any;
+      setFinMemory(prev => ({
+        ...prev,
+        freedom: {
+          points: finData.points || prev.freedom.points,
+        },
+      }));
+    }
+  }, [params.fins]);
+
+  const handleFinTypeChange = (value: string | null) => {
+    if (!value) return;
+    
+    switch (value) {
+      case "trapozoidal": {
+        updateParams({
+          fins: {
+            ...params.fins,
+            type: "trapozoidal",
+            ...finMemory.trapozoidal,
+          },
+        });
+        break;
+      }
+      case "elliptical": {
+        updateParams({
+          fins: {
+            ...params.fins,
+            type: "elliptical",
+            ...finMemory.elliptical,
+          },
+        });
+        break;
+      }
+      case "freedom": {
+        updateParams({
+          fins: {
+            ...params.fins,
+            type: "freedom",
+            ...finMemory.freedom,
+          },
+        });
+        break;
+      }
+    }
+  };
   return (
     <Stack>
       <NumberInput
@@ -22,49 +131,7 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
       <Select
         label="フィンタイプ"
         value={params.fins.type}
-        onChange={(value) => {
-          switch (value) {
-            case "trapozoidal": {
-              updateParams({
-                fins: {
-                  ...params.fins,
-                  type: "trapozoidal",
-                  rootChord: 5,
-                  tipChord: 2,
-                  sweepLength: 3,
-                  height: 4,
-                },
-              });
-              break;
-            }
-            case "elliptical": {
-              updateParams({
-                fins: {
-                  ...params.fins,
-                  type: "elliptical",
-                  rootChord: 5,
-                  height: 4,
-                },
-              });
-              break;
-            }
-            case "freedom": {
-              updateParams({
-                fins: {
-                  ...params.fins,
-                  type: "freedom",
-                  points: [
-                    { x: 0, y: 0 },
-                    { x: 5, y: 0 },
-                    { x: 4, y: 4 },
-                    { x: 0, y: 4 },
-                  ],
-                },
-              });
-              break;
-            }
-          }
-        }}
+        onChange={handleFinTypeChange}
         data={[
           { value: "trapozoidal", label: "台形" },
           { value: "elliptical", label: "楕円" },
