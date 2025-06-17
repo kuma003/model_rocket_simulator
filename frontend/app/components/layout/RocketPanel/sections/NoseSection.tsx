@@ -37,6 +37,7 @@ const NoseSection: React.FC<NoseSectionProps> = ({ params, updateParams }) => {
         onChange={(value) =>
           updateParams({
             nose: { ...params.nose, diameter: Number(value) || 0 },
+            body: { ...params.body, diameter: Number(value) || 0 },
           })
         }
         min={0}
