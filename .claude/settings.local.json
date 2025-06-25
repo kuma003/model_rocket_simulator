@@ -16,7 +16,12 @@
       "Bash(sudo rm:*)",
       "Bash(npm ls:*)",
       "Bash(npm update)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(rg:*)",
+      "Bash(/usr/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"from [''\"\"]isbot[''\"\"]\")",
+      "Bash(/usr/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"from [''\"\"]lint[''\"\"]\")",
+      "Bash(/usr/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"from [''\"\"]@react-router/(serve|node)[''\"\"]\")",
+      "Bash(npm uninstall:*)"
     ],
     "deny": []
   }
