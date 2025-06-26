@@ -1,44 +1,54 @@
 import React from "react";
 import RocketPanel from "~/components/layout/RocketPanel";
+import SimulationPanel from "~/components/layout/SimulationPanel";
 import type { RocketParams } from "../Rocket/types";
 import styles from "./design.module.scss";
 
 const Design: React.FC = () => {
   const [rocketParams, setRocketParams] = React.useState<RocketParams>({
+    name: "新しいロケット",
+    designer: "",
     nose: {
-      length: 0,
-      diameter: 0,
-      thickness: 0,
+      length: 10,
+      diameter: 2.4,
+      thickness: 0.1,
       material: "plastic",
-      color: "#FFFFFF",
+      color: "#FF0000",
       type: "conical",
     },
     body: {
-      length: 0,
-      diameter: 0,
-      thickness: 0,
-      material: "plastic",
-      color: "#FFFFFF",
+      length: 30,
+      diameter: 2.4,
+      thickness: 0.1,
+      material: "cardboard",
+      color: "#FFFF00",
     },
     fins: {
-      thickness: 0,
-      material: "plastic",
-      color: "#FFFFFF",
-      count: 4,
+      thickness: 0.1,
+      material: "balsa",
+      color: "#0000FF",
+      count: 3,
       type: "trapozoidal",
-      rootChord: 0,
-      tipChord: 0,
-      sweepLength: 0,
-      height: 0,
+      rootChord: 5,
+      tipChord: 2,
+      sweepLength: 3,
+      height: 4,
     },
     engine: {
-      name: "",
+      name: "Estes A10",
     },
   });
 
   return (
     <div className={styles.design}>
-      <RocketPanel setRocketParams={setRocketParams} />
+      <RocketPanel
+        rocketParams={rocketParams}
+        setRocketParams={setRocketParams}
+      />
+      <div className={styles.centerArea}>
+        {/* 中央エリア - 将来的にロケットの3D表示などを配置 */}
+      </div>
+      <SimulationPanel rocketParams={rocketParams} />
     </div>
   );
 };

@@ -1,0 +1,169 @@
+// Copy styling from RocketPanel but customize for simulation results
+.panel {
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  height: calc(100vh - 10px); // Adjust height to fit below header
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(64, 147, 90, 0.95) 0%,
+    rgba(43, 143, 77, 0.95) 50%,
+    rgba(128, 62, 64, 0.95) 100%
+  );
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    0 0 30px rgba(64, 147, 90, 0.2);
+  overflow: hidden;
+  animation: panelGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes panelGlow {
+  0% {
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.3),
+      0 0 30px rgba(64, 147, 90, 0.2);
+  }
+  100% {
+    box-shadow:
+      0 25px 50px rgba(0, 0, 0, 0.4),
+      0 0 40px rgba(64, 147, 90, 0.4);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+
+  .icon {
+    width: 45px;
+    height: 45px;
+    margin-right: 12px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 0 10px rgba(100, 200, 120, 0.3));
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.1) rotate(10deg);
+      filter: drop-shadow(0 0 15px rgba(100, 200, 120, 0.5));
+    }
+  }
+
+  h2 {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin: 0;
+    background: linear-gradient(45deg, #4ecdc4, #45b7d1, #96c93d);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    font-family:
+      "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo",
+      cursive, sans-serif;
+    text-shadow: 0 0 20px rgba(100, 200, 120, 0.3);
+  }
+}
+
+.content {
+  padding: 1.5rem;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+// Removed segmented control styles as tabs are no longer used
+
+.scrollArea {
+  flex: 1;
+  width: 100%;
+
+  :global(.mantine-ScrollArea-viewport) {
+    padding-right: 8px;
+  }
+}
+
+// Card styling
+:global(.mantine-Card-root) {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+  }
+}
+
+// Text styling
+:global(.mantine-Text-root) {
+  font-family:
+    "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", cursive, sans-serif !important;
+}
+
+// Add sparkle animation for fun effect
+.panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(255, 255, 255, 0.1) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(255, 255, 255, 0.1) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 40% 60%,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    );
+  background-size:
+    50px 50px,
+    70px 70px,
+    90px 90px;
+  animation: sparkle 4s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+}

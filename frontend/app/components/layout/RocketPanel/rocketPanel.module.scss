@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   width: 350px;
-  height: 100vh;
+  height: calc(100vh - 10px); // Adjust height to fit below header
   position: relative;
   background: linear-gradient(
     135deg,
@@ -20,18 +20,18 @@
   animation: panelGlow 3s ease-in-out infinite alternate;
 }
 
-@keyframes panelGlow {
-  0% {
-    box-shadow:
-      0 20px 40px rgba(0, 0, 0, 0.3),
-      0 0 30px rgba(90, 51, 147, 0.2);
-  }
-  100% {
-    box-shadow:
-      0 25px 50px rgba(0, 0, 0, 0.4),
-      0 0 40px rgba(90, 51, 147, 0.4);
-  }
-}
+// @keyframes panelGlow {
+//   0% {
+//     box-shadow:
+//       0 20px 40px rgba(0, 0, 0, 0.3),
+//       0 0 30px rgba(90, 51, 147, 0.2);
+//   }
+//   100% {
+//     box-shadow:
+//       0 25px 50px rgba(0, 0, 0, 0.4),
+//       0 0 40px rgba(90, 51, 147, 0.4);
+//   }
+// }
 
 .header {
   display: flex;
@@ -65,7 +65,7 @@
     font-size: 1.6rem;
     font-weight: bold;
     margin: 0;
-    background: linear-gradient(45deg, #ff981b, #ed64a6, #c492fa);
+    background: white;
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;

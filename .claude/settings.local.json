@@ -21,7 +21,8 @@
       "Bash(/usr/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"from [''\"\"]isbot[''\"\"]\")",
       "Bash(/usr/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"from [''\"\"]lint[''\"\"]\")",
       "Bash(/usr/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"from [''\"\"]@react-router/(serve|node)[''\"\"]\")",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }

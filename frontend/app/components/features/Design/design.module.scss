@@ -1,9 +1,34 @@
 .design {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   position: absolute;
   background: linear-gradient(to bottom, #5a3393, #354d8f, #403e80);
   background-size: 300% 300%;
   animation: gradientShift 10s ease infinite;
   overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  padding: 5px;
+  gap: 20px;
+}
+
+.centerArea {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }

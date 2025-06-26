@@ -40,3 +40,22 @@ export interface RocketParams {
     name: string;
   };
 }
+
+export interface RocketProps {
+  ref_len: number; // Referential length for scaling
+  diam: number; // Diameter of the rocket
+  mass_dry: number; // Dry mass of the rocket
+  mass_i: number; // Initial mass of the rocket
+  mass_f: number; // Final mass of the rocket after fuel burn
+  CGlen_i: number; // Initial center of gravity length
+  CGlen_f: number; // Final center of gravity length
+  Iyz: number; // Moment of inertia around the y-axis
+
+  CPlen: number; // Center of pressure length
+  Cd: number; // Drag coefficient
+  Cna: number; // Normal force coefficient
+  Cmq: number; // Pitching moment coefficient
+
+  vel_1st: number; // Velocity at first stage separation
+  op_time: number; // Operational time of the rocket
+}
