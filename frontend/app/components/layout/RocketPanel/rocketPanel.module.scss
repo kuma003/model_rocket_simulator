@@ -4,28 +4,32 @@
   width: 350px;
   height: 100vh;
   position: relative;
-  background: linear-gradient(135deg, 
-    rgba(90, 51, 147, 0.95) 0%, 
-    rgba(53, 77, 143, 0.95) 50%, 
+  background: linear-gradient(
+    135deg,
+    rgba(90, 51, 147, 0.95) 0%,
+    rgba(53, 77, 143, 0.95) 50%,
     rgba(64, 62, 128, 0.95) 100%
   );
   backdrop-filter: blur(10px);
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 
-              0 0 30px rgba(90, 51, 147, 0.2);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    0 0 30px rgba(90, 51, 147, 0.2);
   overflow: hidden;
   animation: panelGlow 3s ease-in-out infinite alternate;
 }
 
 @keyframes panelGlow {
   0% {
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 
-                0 0 30px rgba(90, 51, 147, 0.2);
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.3),
+      0 0 30px rgba(90, 51, 147, 0.2);
   }
   100% {
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 
-                0 0 40px rgba(90, 51, 147, 0.4);
+    box-shadow:
+      0 25px 50px rgba(0, 0, 0, 0.4),
+      0 0 40px rgba(90, 51, 147, 0.4);
   }
 }
 
@@ -34,8 +38,9 @@
   align-items: center;
   padding: 1rem 1.5rem;
   width: 100%;
-  background: linear-gradient(90deg, 
-    rgba(255, 255, 255, 0.1) 0%, 
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
     rgba(255, 255, 255, 0.05) 100%
   );
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -64,7 +69,9 @@
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-    font-family: 'Comic Sans MS', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', cursive, sans-serif;
+    font-family:
+      "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo",
+      cursive, sans-serif;
     text-shadow: 0 0 20px rgba(255, 152, 27, 0.3);
   }
 }
@@ -80,26 +87,26 @@
 
 .segmentedControl {
   width: 100%;
-  
+
   :global(.mantine-SegmentedControl-root) {
     background: rgba(0, 0, 0, 0.3);
     border-radius: 25px;
     padding: 4px;
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
-  
+
   :global(.mantine-SegmentedControl-control) {
     border: none !important;
     color: rgba(255, 255, 255, 0.7);
-    font-family: 'Comic Sans MS', 'Hiragino Kaku Gothic ProN', cursive, sans-serif;
+    // font-family: 'Comic Sans MS', 'Hiragino Kaku Gothic ProN', cursive, sans-serif;
     font-weight: 600;
     transition: all 0.3s ease;
-    
+
     &:hover {
       color: rgba(255, 255, 255, 0.9);
     }
   }
-  
+
   :global(.mantine-SegmentedControl-control[data-active]) {
     background: linear-gradient(45deg, #ff981b, #ed64a6) !important;
     color: white !important;
@@ -111,7 +118,7 @@
 .scrollArea {
   flex: 1;
   width: 100%;
-  
+
   :global(.mantine-ScrollArea-viewport) {
     padding-right: 8px;
   }
@@ -128,11 +135,12 @@
   .mantine-ColorInput-label {
     color: rgba(255, 255, 255, 0.9) !important;
     font-weight: 600;
-    font-family: 'Comic Sans MS', 'Hiragino Kaku Gothic ProN', cursive, sans-serif;
+    font-family:
+      "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", cursive, sans-serif;
     margin-bottom: 8px;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
   }
-  
+
   .mantine-TextInput-input,
   .mantine-NumberInput-input,
   .mantine-Select-input,
@@ -143,20 +151,22 @@
     color: white !important;
     backdrop-filter: blur(8px);
     transition: all 0.3s ease !important;
-    font-family: 'Comic Sans MS', 'Hiragino Kaku Gothic ProN', cursive, sans-serif;
-    
+    font-family:
+      "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", cursive, sans-serif;
+
     &:focus {
       border-color: #ff981b !important;
-      box-shadow: 0 0 0 2px rgba(255, 152, 27, 0.2), 
-                  0 0 15px rgba(255, 152, 27, 0.3) !important;
+      box-shadow:
+        0 0 0 2px rgba(255, 152, 27, 0.2),
+        0 0 15px rgba(255, 152, 27, 0.3) !important;
       background: rgba(255, 255, 255, 0.15) !important;
     }
-    
+
     &:hover {
       border-color: rgba(255, 255, 255, 0.3) !important;
       background: rgba(255, 255, 255, 0.12) !important;
     }
-    
+
     &::placeholder {
       color: rgba(255, 255, 255, 0.5) !important;
     }
@@ -165,22 +175,31 @@
 
 // Custom button styles
 :global(.mantine-Button-root) {
-  background: linear-gradient(45deg, rgba(255, 152, 27, 0.8), rgba(237, 100, 166, 0.8)) !important;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 152, 27, 0.8),
+    rgba(237, 100, 166, 0.8)
+  ) !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
   border-radius: 25px !important;
   color: white !important;
-  font-family: 'Comic Sans MS', 'Hiragino Kaku Gothic ProN', cursive, sans-serif !important;
+  font-family:
+    "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", cursive, sans-serif !important;
   font-weight: 600 !important;
   backdrop-filter: blur(8px);
   transition: all 0.3s ease !important;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  
+
   &:hover {
     transform: translateY(-2px) !important;
     box-shadow: 0 8px 25px rgba(255, 152, 27, 0.3) !important;
-    background: linear-gradient(45deg, rgba(255, 152, 27, 0.9), rgba(237, 100, 166, 0.9)) !important;
+    background: linear-gradient(
+      45deg,
+      rgba(255, 152, 27, 0.9),
+      rgba(237, 100, 166, 0.9)
+    ) !important;
   }
-  
+
   &:active {
     transform: translateY(0) !important;
   }
@@ -197,12 +216,13 @@
 
 :global(.mantine-Select-option) {
   color: white !important;
-  font-family: 'Comic Sans MS', 'Hiragino Kaku Gothic ProN', cursive, sans-serif !important;
-  
+  font-family:
+    "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", cursive, sans-serif !important;
+
   &:hover {
     background: rgba(255, 152, 27, 0.2) !important;
   }
-  
+
   &[data-selected] {
     background: linear-gradient(45deg, #ff981b, #ed64a6) !important;
     color: white !important;
@@ -226,23 +246,40 @@
 
 // Add sparkle animation for fun effect
 .panel::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-              radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-              radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 50px 50px, 70px 70px, 90px 90px;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(255, 255, 255, 0.1) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(255, 255, 255, 0.1) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 40% 60%,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    );
+  background-size:
+    50px 50px,
+    70px 70px,
+    90px 90px;
   animation: sparkle 4s linear infinite;
   pointer-events: none;
   z-index: 1;
 }
 
 @keyframes sparkle {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.3;
   }
   50% {
