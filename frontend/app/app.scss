@@ -1,21 +1,24 @@
 // Shared SCSS variables and mixins for the model rocket simulator
-
+@import url("https://fonts.googleapis.com/css2?family=BIZ+UDPGothic&display=swap");
 
 $primary-orange: #ff981b;
 $primary-pink: #ed64a6;
 $primary-purple: #c492fa;
 $gradient-start: #f6ad55;
 
-$text-gradient: linear-gradient(to right, $gradient-start, $primary-pink, $primary-purple);
+$text-gradient: linear-gradient(
+  to right,
+  $gradient-start,
+  $primary-pink,
+  $primary-purple
+);
 
 $white: #ffffff;
 $gray-700: rgb(97, 120, 160);
 
-
 $font-size-title: 3rem;
 $font-size-subtitle: 2rem;
 $font-size-large: 24px;
-
 
 @mixin gradient-text($gradient: $text-gradient) {
   background: $gradient;
@@ -24,7 +27,9 @@ $font-size-large: 24px;
 }
 
 // Japanese-friendly fun font family for child-friendly UI
-$font-family-fun: 'Comic Sans MS', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', cursive, sans-serif;
+$font-family-fun:
+  "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo",
+  cursive, sans-serif;
 
 @mixin fun-japanese-text {
   font-family: $font-family-fun;
