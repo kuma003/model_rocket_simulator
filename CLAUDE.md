@@ -1,0 +1,22 @@
+# Claude Code Configuration
+
+This file contains configuration and instructions for Claude Code when working on this project.
+
+## Project Structure
+- Frontend: React-based application in `/frontend` directory
+- Uses SCSS for styling with modular CSS approach
+
+## Development Workflow
+- Main branch: `main`
+- Development branch: `develop`
+- Always work on the `develop` branch for new features
+
+## Styling Guidelines
+- Primary font: BIZ UDPGothic (Japanese-friendly Google Font)
+- Uses CSS modules with `.module.scss` files
+- Maintains consistent color scheme with gradient effects
+
+## Commit Guidelines
+- Use conventional commit format (feat:, fix:, chore:, etc.)
+- Keep commits focused and atomic
+- No need to add Claude attribution in commit messages
