@@ -1,8 +1,24 @@
+// Material densities in kg/m^3
+export const MaterialDensities = {
+  plastic: {
+    label: "プラスチック",
+    density: 1250,
+  },
+  balsa: {
+    label: "バルサ材",
+    density: 170,
+  },
+  cardboard: {
+    label: "厚紙",
+    density: 680,
+  },
+};
+
 interface RocketBaseParam {
   length: number;
   diameter: number;
   thickness: number;
-  material: "plastic" | "balsa" | "cardboard";
+  material: keyof typeof MaterialDensities; // Material type
   color: string;
 }
 

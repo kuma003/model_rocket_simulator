@@ -10,6 +10,9 @@ This file contains configuration and instructions for Claude Code when working o
 - Main branch: `main`
 - Development branch: `develop`
 - Always work on the `develop` branch for new features
+- **MANDATORY**: After any code changes, ALWAYS run debugging/testing commands before committing
+- **MANDATORY**: Only commit if tests/build pass successfully
+- Check for linting and type errors with available scripts
 
 ## Styling Guidelines
 - Primary font: BIZ UDPGothic (Japanese-friendly Google Font)

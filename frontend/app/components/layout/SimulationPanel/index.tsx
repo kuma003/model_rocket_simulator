@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import type { RocketParams } from "../../features/Rocket/types";
+import { MaterialDensities } from "../../features/Rocket/types";
 import styles from "./simulationPanel.module.scss";
 import { Stack, ScrollArea, Text, Card, Group, Divider } from "@mantine/core";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
@@ -27,30 +28,27 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ rocketParams }) => {
 
   // 簡易的な計算関数
   const calculateSimulation = (params: RocketParams): SimulationResults => {
-    // 材料密度 (g/cm³)
-    const materialDensity = {
-      plastic: 1.2,
-      balsa: 0.15,
-      cardboard: 0.7,
-    };
+    // 単位変換: cm → m, g → kg
+    const CM_TO_M = 0.01;
+    const G_TO_KG = 0.001;
 
-    // ノーズ重量計算
-    const noseVolume = Math.PI * Math.pow(params.nose.diameter / 2, 2) * params.nose.length * params.nose.thickness;
-    const noseMass = noseVolume * materialDensity[params.nose.material];
+    // ノーズ重量計算 (中空円錐近似)
+    const noseVolume = Math.PI * Math.pow(params.nose.diameter * CM_TO_M / 2, 2) * params.nose.length * CM_TO_M * params.nose.thickness * CM_TO_M;
+    const noseMass = noseVolume * MaterialDensities[params.nose.material].density; // kg
 
-    // ボディ重量計算
-    const bodyVolume = Math.PI * params.body.diameter * params.body.length * params.body.thickness;
-    const bodyMass = bodyVolume * materialDensity[params.body.material];
+    // ボディ重量計算 (円筒殻)
+    const bodyVolume = Math.PI * params.body.diameter * CM_TO_M * params.body.length * CM_TO_M * params.body.thickness * CM_TO_M;
+    const bodyMass = bodyVolume * MaterialDensities[params.body.material].density; // kg
 
     // フィン重量計算
     let finMass = 0;
     if (params.fins.type === "trapozoidal") {
-      const finArea = (params.fins.rootChord + params.fins.tipChord) * params.fins.height / 2;
-      const finVolume = finArea * params.fins.thickness * params.fins.count;
-      finMass = finVolume * materialDensity[params.fins.material];
+      const finArea = (params.fins.rootChord + params.fins.tipChord) * params.fins.height / 2 * Math.pow(CM_TO_M, 2);
+      const finVolume = finArea * params.fins.thickness * CM_TO_M * params.fins.count;
+      finMass = finVolume * MaterialDensities[params.fins.material].density; // kg
     }
 
-    const dryMass = noseMass + bodyMass + finMass;
+    const dryMass = (noseMass + bodyMass + finMass) / G_TO_KG; // Convert back to grams for display
 
     // 慣性モーメント計算（簡易）
     const length = params.nose.length + params.body.length;
