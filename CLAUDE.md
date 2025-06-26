@@ -23,3 +23,5 @@ This file contains configuration and instructions for Claude Code when working o
 - Use conventional commit format (feat:, fix:, chore:, etc.)
 - Keep commits focused and atomic
 - No need to add Claude attribution in commit messages
+- **MANDATORY**: Always push to remote repository after successful commit
+- Use `git push origin develop` to push changes to the remote branch
