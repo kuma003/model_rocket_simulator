@@ -57,7 +57,7 @@ export interface RocketParams {
   };
 }
 
-export interface RocketProps {
+export interface RocketSpecs {
   ref_len: number; // Referential length for scaling
   diam: number; // Diameter of the rocket
   mass_dry: number; // Dry mass of the rocket
