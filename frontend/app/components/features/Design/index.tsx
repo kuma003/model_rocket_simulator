@@ -1,6 +1,7 @@
 import React from "react";
 import RocketPanel from "~/components/layout/RocketPanel";
 import SimulationPanel from "~/components/layout/SimulationPanel";
+import RocketVisualization from "./RocketVisualization";
 import type { RocketParams } from "../Rocket/types";
 import styles from "./design.module.scss";
 
@@ -46,7 +47,7 @@ const Design: React.FC = () => {
         setRocketParams={setRocketParams}
       />
       <div className={styles.centerArea}>
-        {/* 中央エリア - 将来的にロケットの3D表示などを配置 */}
+        <RocketVisualization rocketParams={rocketParams} scale={0.3} />
       </div>
       <SimulationPanel rocketParams={rocketParams} />
     </div>
