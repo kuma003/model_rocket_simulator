@@ -47,7 +47,7 @@ const Design: React.FC = () => {
         setRocketParams={setRocketParams}
       />
       <div className={styles.centerArea}>
-        <RocketVisualization rocketParams={rocketParams} scale={0.3} />
+        <RocketVisualization rocketParams={rocketParams} scale={3} />
       </div>
       <SimulationPanel rocketParams={rocketParams} />
     </div>

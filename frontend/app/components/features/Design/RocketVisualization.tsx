@@ -1,114 +1,52 @@
 import React from "react";
 import type { RocketParams } from "../Rocket/types";
+import RocketComponent from "./RocketComponent";
 import styles from "./rocketVisualization.module.scss";
 
 interface RocketVisualizationProps {
   rocketParams: RocketParams;
-  scale?: number; // cm/px - センチメートル/ピクセル比
+  scale?: number; // px/cm - ピクセル/センチメートル比
+  pitchAngle?: number; // ピッチ角（度）
+  rollAngle?: number; // ロール角（度）
 }
 
 const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   rocketParams,
-  scale = 0.5, // デフォルト: 0.5cm/px
+  scale = 2,
+  pitchAngle = 0,
+  rollAngle = 0,
 }) => {
   const { nose, body, fins } = rocketParams;
-  
+
   // 物理寸法をピクセルに変換
-  const pixelsPerCm = 1 / scale;
-  
-  // 各部品の寸法をピクセルに変換
+  const pixelsPerCm = scale;
+
+  // 各部品の寸法をピクセルに変換して全体サイズを計算
   const noseHeight = nose.length * pixelsPerCm;
-  const noseWidth = nose.diameter * pixelsPerCm;
   const bodyHeight = body.length * pixelsPerCm;
+  const finHeight = fins.type === "trapozoidal" ? fins.height * pixelsPerCm : 0;
+  const finRootChord =
+    fins.type === "trapozoidal" ? fins.rootChord * pixelsPerCm : 0;
   const bodyWidth = body.diameter * pixelsPerCm;
-  const finHeight = fins.height * pixelsPerCm;
-  const finRootChord = fins.rootChord * pixelsPerCm;
-  const finTipChord = fins.tipChord * pixelsPerCm;
-  const finSweepLength = fins.sweepLength * pixelsPerCm;
-  
-  // 全体の高さを計算
+
   const totalHeight = noseHeight + bodyHeight + finHeight;
-  
-  // フィンの角度を計算（3等分配置）
-  const finAngles = Array.from({ length: fins.count }, (_, i) => 
-    (360 / fins.count) * i
-  );
-  
+  const totalWidth = Math.max(bodyWidth + finRootChord, 200);
+
   return (
     <div className={styles.container}>
-      <div className={styles.scaleInfo}>
-        スケール: {scale}cm/px
-      </div>
       <svg
-        width={Math.max(bodyWidth + finRootChord, 200)}
-        height={totalHeight + 20}
-        viewBox={`0 0 ${Math.max(bodyWidth + finRootChord, 200)} ${totalHeight + 20}`}
+        width={totalWidth + 40}
+        height={totalHeight + 40}
+        viewBox={`0 0 ${totalWidth + 40} ${totalHeight + 40}`}
         className={styles.rocketSvg}
       >
-        {/* ノーズコーン */}
-        <g transform={`translate(${(bodyWidth - noseWidth) / 2}, 10)`}>
-          {nose.type === "conical" ? (
-            <polygon
-              points={`${noseWidth / 2},0 0,${noseHeight} ${noseWidth},${noseHeight}`}
-              fill={nose.color}
-              stroke="#000"
-              strokeWidth="1"
-            />
-          ) : (
-            <ellipse
-              cx={noseWidth / 2}
-              cy={noseHeight / 2}
-              rx={noseWidth / 2}
-              ry={noseHeight / 2}
-              fill={nose.color}
-              stroke="#000"
-              strokeWidth="1"
-            />
-          )}
-        </g>
-        
-        {/* ボディチューブ */}
-        <g transform={`translate(${(bodyWidth - bodyWidth) / 2}, ${noseHeight + 10})`}>
-          <rect
-            width={bodyWidth}
-            height={bodyHeight}
-            fill={body.color}
-            stroke="#000"
-            strokeWidth="1"
+        <g transform="translate(20, 20)">
+          <RocketComponent
+            rocketParams={rocketParams}
+            scale={scale}
+            pitchAngle={pitchAngle}
+            rollAngle={rollAngle}
           />
-        </g>
-        
-        {/* フィン（側面図なので1つだけ表示） */}
-        <g transform={`translate(${bodyWidth / 2}, ${noseHeight + bodyHeight + 10})`}>
-          <polygon
-            points={`0,0 ${finRootChord},0 ${finRootChord - finSweepLength},${finHeight} ${finRootChord - finSweepLength - finTipChord},${finHeight}`}
-            fill={fins.color}
-            stroke="#000"
-            strokeWidth="1"
-          />
-        </g>
-        
-        {/* 寸法線と数値 */}
-        <g className={styles.dimensions}>
-          {/* 全長 */}
-          <line
-            x1={Math.max(bodyWidth + finRootChord, 200) - 30}
-            y1={10}
-            x2={Math.max(bodyWidth + finRootChord, 200) - 30}
-            y2={totalHeight + 10}
-            stroke="#666"
-            strokeWidth="1"
-            strokeDasharray="2,2"
-          />
-          <text
-            x={Math.max(bodyWidth + finRootChord, 200) - 25}
-            y={totalHeight / 2 + 10}
-            fill="#666"
-            fontSize="10"
-            textAnchor="start"
-          >
-            {((nose.length + body.length + fins.height) / 10).toFixed(1)}cm
-          </text>
         </g>
       </svg>
     </div>
