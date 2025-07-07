@@ -1,5 +1,5 @@
 import type { RocketParams } from "../../components/features/Rocket/types";
-import { MaterialDensities } from "../../components/features/Rocket/types";
+import { Materials } from "../../components/features/Rocket/types";
 import { UNIT_CONVERSIONS } from "../physics/constants";
 
 export interface BodyCalculationResult {
@@ -20,7 +20,7 @@ export function calculateBodyProperties(
     (bodyParams.length * CM_TO_M) *
     (bodyParams.thickness * CM_TO_M);
 
-  const mass = volume * MaterialDensities[bodyParams.material].density;
+  const mass = volume * Materials[bodyParams.material].density;
 
   // 円筒の慣性モーメント計算
   const inertiaMoment =

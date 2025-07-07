@@ -6,13 +6,13 @@ export function calculateSkinFrictionCd(
   refArea: number
 ): number {
   const { REF_VEL, NU_AIR } = PHYSICS_CONSTANTS;
-  
+
   const reynoldsNumber = (REF_VEL * refLength) / NU_AIR;
   const Cf =
     reynoldsNumber > 5e5
       ? 0.455 / Math.pow(Math.log10(reynoldsNumber), 2.58) // turbulent flow
       : 1.328 / Math.sqrt(reynoldsNumber); // laminar flow
-  
+
   return (Cf * surfaceArea) / refArea;
 }
 
@@ -22,7 +22,6 @@ export function calculateTotalDragCoefficient(
   bodyCd: number,
   finCd: number
 ): number {
-  // DUMMY: 簡易的な合成
   return noseCd + bodyCd + finCd;
 }
 

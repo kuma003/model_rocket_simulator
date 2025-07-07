@@ -1,5 +1,5 @@
 // Material densities in kg/m^3
-export const MaterialDensities = {
+export const Materials = {
   plastic: {
     label: "プラスチック",
     density: 1250,
@@ -18,7 +18,7 @@ interface RocketBaseParam {
   length: number;
   diameter: number;
   thickness: number;
-  material: keyof typeof MaterialDensities; // Material type
+  material: keyof typeof Materials; // Material type
   color: string;
 }
 
