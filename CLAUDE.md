@@ -22,6 +22,12 @@ This file contains configuration and instructions for Claude Code when working o
 - Uses CSS modules with `.module.scss` files
 - Maintains consistent color scheme with gradient effects
 
+## Code Documentation Guidelines
+
+- **MANDATORY**: Always write docstrings in English to prevent character encoding issues
+- Use JSDoc format for TypeScript/JavaScript files
+- Include parameter descriptions, return types, and usage examples where appropriate
+
 ## Commit Guidelines
 
 - **MANDATORY**: Use Semantic Commit Messages format
