@@ -1,13 +1,28 @@
 import React from "react";
 import type { RocketParams } from "../Rocket/types";
 
-// 2D座標の型定義
+/**
+ * Type definition for a point in 2D coordinate system
+ * @interface Point2D
+ * @property {number} x - X coordinate (horizontal)
+ * @property {number} y - Y coordinate (vertical)
+ */
 interface Point2D {
   x: number;
   y: number;
 }
 
-// フィンの頂点座標を生成する関数（ローカル座標系）
+/**
+ * Generate fin vertex coordinates in local coordinate system
+ * @param {RocketParams["fins"]} finParams - Fin parameters
+ * @param {number} pixelsPerCm - Pixels per centimeter conversion rate
+ * @returns {Point2D[]} Array of fin vertex coordinates in local coordinate system
+ * @description
+ * Local coordinate system:
+ * - X-axis: Outward from body tube (chord direction)
+ * - Y-axis: Upward (height direction)
+ * - Origin: Root chord tip (body tube surface)
+ */
 function generateFinVertices(finParams: RocketParams["fins"], pixelsPerCm: number): Point2D[] {
   if (finParams.type !== "trapozoidal") {
     return [];
@@ -30,7 +45,17 @@ function generateFinVertices(finParams: RocketParams["fins"], pixelsPerCm: numbe
   ];
 }
 
-// フィンを3D配置から2D投影する関数
+/**
+ * Project fin from 3D placement to 2D view
+ * @param {Point2D[]} vertices - Fin vertex coordinates in local coordinate system
+ * @param {number} finAngleDeg - Fin placement angle in degrees
+ * @param {number} bodyCenterX - Body tube center X coordinate
+ * @param {number} bodyRadius - Body tube radius
+ * @param {number} finAttachmentY - Fin attachment position Y coordinate
+ * @returns {{ projectedVertices: Point2D[], opacity: number, zOrder: number }} Projection result
+ * @description
+ * Projects fin placement from 3D space to 2D side view, calculating visibility and Z-order based on depth
+ */
 function projectFinTo2D(
   vertices: Point2D[], 
   finAngleDeg: number, 
@@ -63,13 +88,39 @@ function projectFinTo2D(
   return { projectedVertices, opacity, zOrder };
 }
 
+/**
+ * Props for RocketComponent
+ * @interface RocketComponentProps
+ * @property {RocketParams} rocketParams - Rocket design parameters
+ * @property {number} [scale=2] - Pixels per centimeter conversion rate
+ * @property {number} [pitchAngle=0] - Pitch angle in degrees
+ * @property {number} [rollAngle=0] - Roll angle in degrees
+ */
 interface RocketComponentProps {
   rocketParams: RocketParams;
-  scale?: number; // px/cm - ピクセル/センチメートル比
-  pitchAngle?: number; // ピッチ角（度）
-  rollAngle?: number; // ロール角（度）
+  scale?: number;
+  pitchAngle?: number;
+  rollAngle?: number;
 }
 
+/**
+ * React component for rendering 2D side view of a rocket
+ * @component
+ * @param {RocketComponentProps} props - Component properties
+ * @returns {JSX.Element} SVG-based 2D rocket rendering
+ * @description
+ * Renders rocket nose cone, body tube, and fins considering their 3D spatial placement
+ * as a 2D side view. Fins are rendered with depth perception using 3D to 2D projection.
+ * @example
+ * ```tsx
+ * <RocketComponent 
+ *   rocketParams={rocketParams}
+ *   scale={2}
+ *   pitchAngle={15}
+ *   rollAngle={45}
+ * />
+ * ```
+ */
 const RocketComponent: React.FC<RocketComponentProps> = ({
   rocketParams,
   scale = 2,
