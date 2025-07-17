@@ -74,14 +74,35 @@ export async function loadMotorData(motorName: string): Promise<MotorData | null
 
     // Convert motor name to filename
     const filename = motorName.replace(/\s+/g, '_') + '.eng';
-    const response = await fetch(`/motors/${filename}`);
+    
+    // Use appropriate base path for development vs production (GitHub Pages)
+    const isDev = import.meta.env.DEV;
+    const basePath = isDev ? "/motors" : "/model_rocket_simulator/motors";
+    const fileUrl = `${basePath}/${filename}`;
+    
+    console.log(`Loading motor file from: ${fileUrl} (isDev: ${isDev})`);
+    
+    const response = await fetch(fileUrl, {
+      method: "GET",
+      cache: "no-cache",
+      headers: {
+        "Accept": "text/plain",
+      }
+    });
+    
+    console.log(`Motor file response for ${filename}:`, {
+      status: response.status,
+      statusText: response.statusText,
+      url: response.url
+    });
     
     if (!response.ok) {
-      console.warn(`Could not load motor file: ${filename}`);
+      console.warn(`Could not load motor file: ${filename} from ${fileUrl} (status: ${response.status})`);
       return null;
     }
     
     const content = await response.text();
+    console.log(`Successfully loaded motor file ${filename}, content length: ${content.length}`);
     return parseMotorFile(content);
   } catch (error) {
     console.error('Error loading motor data:', error);
