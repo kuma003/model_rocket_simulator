@@ -30,8 +30,6 @@ const NoseSection: React.FC<NoseSectionProps> = ({ params, updateParams }) => {
         onChange={(value) =>
           updateParams({ nose: { ...params.nose, length: value } })
         }
-        min={0}
-        step={0.1}
       />
       <UnitNumberInput
         label="直径"
@@ -43,8 +41,6 @@ const NoseSection: React.FC<NoseSectionProps> = ({ params, updateParams }) => {
             body: { ...params.body, diameter: value },
           })
         }
-        min={0}
-        step={0.1}
       />
       <UnitNumberInput
         label="厚さ"
@@ -55,8 +51,7 @@ const NoseSection: React.FC<NoseSectionProps> = ({ params, updateParams }) => {
             nose: { ...params.nose, thickness: value },
           })
         }
-        min={0}
-        step={0.01}
+        decimalScale={2}
       />
       <Select
         label="材質"

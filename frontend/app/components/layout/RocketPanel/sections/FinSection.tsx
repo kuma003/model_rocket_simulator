@@ -53,7 +53,7 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
   useEffect(() => {
     if (params.fins.type === "trapozoidal") {
       const finData = params.fins as any;
-      setFinMemory(prev => ({
+      setFinMemory((prev) => ({
         ...prev,
         trapozoidal: {
           rootChord: finData.rootChord || prev.trapozoidal.rootChord,
@@ -64,7 +64,7 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
       }));
     } else if (params.fins.type === "elliptical") {
       const finData = params.fins as any;
-      setFinMemory(prev => ({
+      setFinMemory((prev) => ({
         ...prev,
         elliptical: {
           rootChord: finData.rootChord || prev.elliptical.rootChord,
@@ -73,7 +73,7 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
       }));
     } else if (params.fins.type === "freedom") {
       const finData = params.fins as any;
-      setFinMemory(prev => ({
+      setFinMemory((prev) => ({
         ...prev,
         freedom: {
           points: finData.points || prev.freedom.points,
@@ -84,7 +84,7 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
 
   const handleFinTypeChange = (value: string | null) => {
     if (!value) return;
-    
+
     switch (value) {
       case "trapozoidal": {
         updateParams({
@@ -128,17 +128,17 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
         }
         min={1}
         max={8}
+        stepHoldDelay={500}
+        stepHoldInterval={100}
       />
       <UnitNumberInput
         label="フィン取り付け位置"
         unitType="length"
-        description="ボディ末端からフィン末端までの距離"
+        // description="ボディ末端からフィン末端までの距離"
         value={params.fins.offset}
         onChange={(value) =>
           updateParams({ fins: { ...params.fins, offset: value } })
         }
-        min={0}
-        step={0.1}
       />
       <Select
         label="フィンタイプ"
@@ -161,8 +161,6 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
                 fins: { ...params.fins, rootChord: value } as any,
               })
             }
-            min={0}
-            step={0.1}
           />
           <UnitNumberInput
             label="チップコード"
@@ -173,8 +171,6 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
                 fins: { ...params.fins, tipChord: value } as any,
               })
             }
-            min={0}
-            step={0.1}
           />
           <UnitNumberInput
             label="スイープ長"
@@ -188,8 +184,6 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
                 } as any,
               })
             }
-            min={0}
-            step={0.1}
           />
           <UnitNumberInput
             label="高さ"
@@ -200,8 +194,6 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
                 fins: { ...params.fins, height: value } as any,
               })
             }
-            min={0}
-            step={0.1}
           />
         </>
       )}
@@ -216,8 +208,6 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
                 fins: { ...params.fins, rootChord: value } as any,
               })
             }
-            min={0}
-            step={0.1}
           />
           <UnitNumberInput
             label="高さ"
@@ -228,68 +218,92 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
                 fins: { ...params.fins, height: value } as any,
               })
             }
-            min={0}
-            step={0.1}
           />
         </>
       )}
       {params.fins.type === "freedom" && (
         <>
           <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>
+            <label
+              style={{
+                display: "block",
+                marginBottom: "0.5rem",
+                fontSize: "0.875rem",
+                fontWeight: 500,
+              }}
+            >
               頂点座標
             </label>
-            {((params.fins as any).points || []).map((point: { x: number; y: number }, index: number) => (
-              <div key={index} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                <NumberInput
-                  placeholder={`X${index + 1}`}
-                  value={point.x}
-                  onChange={(value) => {
-                    const newPoints = [...((params.fins as any).points || [])];
-                    newPoints[index] = { ...newPoints[index], x: Number(value) || 0 };
-                    updateParams({
-                      fins: { ...params.fins, points: newPoints } as any,
-                    });
+            {((params.fins as any).points || []).map(
+              (point: { x: number; y: number }, index: number) => (
+                <div
+                  key={index}
+                  style={{
+                    display: "flex",
+                    gap: "0.5rem",
+                    marginBottom: "0.5rem",
                   }}
-                  step={0.1}
-                  style={{ flex: 1 }}
-                />
-                <NumberInput
-                  placeholder={`Y${index + 1}`}
-                  value={point.y}
-                  onChange={(value) => {
-                    const newPoints = [...((params.fins as any).points || [])];
-                    newPoints[index] = { ...newPoints[index], y: Number(value) || 0 };
-                    updateParams({
-                      fins: { ...params.fins, points: newPoints } as any,
-                    });
-                  }}
-                  step={0.1}
-                  style={{ flex: 1 }}
-                />
-                {((params.fins as any).points || []).length > 3 && (
-                  <button
-                    onClick={() => {
-                      const newPoints = [...((params.fins as any).points || [])];
-                      newPoints.splice(index, 1);
+                >
+                  <NumberInput
+                    placeholder={`X${index + 1}`}
+                    value={point.x}
+                    onChange={(value) => {
+                      const newPoints = [
+                        ...((params.fins as any).points || []),
+                      ];
+                      newPoints[index] = {
+                        ...newPoints[index],
+                        x: Number(value) || 0,
+                      };
                       updateParams({
                         fins: { ...params.fins, points: newPoints } as any,
                       });
                     }}
-                    style={{
-                      background: '#ff6b6b',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      padding: '0.5rem',
-                      cursor: 'pointer'
+                    style={{ flex: 1 }}
+                  />
+                  <NumberInput
+                    placeholder={`Y${index + 1}`}
+                    value={point.y}
+                    onChange={(value) => {
+                      const newPoints = [
+                        ...((params.fins as any).points || []),
+                      ];
+                      newPoints[index] = {
+                        ...newPoints[index],
+                        y: Number(value) || 0,
+                      };
+                      updateParams({
+                        fins: { ...params.fins, points: newPoints } as any,
+                      });
                     }}
-                  >
-                    削除
-                  </button>
-                )}
-              </div>
-            ))}
+                    style={{ flex: 1 }}
+                  />
+                  {((params.fins as any).points || []).length > 3 && (
+                    <button
+                      onClick={() => {
+                        const newPoints = [
+                          ...((params.fins as any).points || []),
+                        ];
+                        newPoints.splice(index, 1);
+                        updateParams({
+                          fins: { ...params.fins, points: newPoints } as any,
+                        });
+                      }}
+                      style={{
+                        background: "#ff6b6b",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        padding: "0.5rem",
+                        cursor: "pointer",
+                      }}
+                    >
+                      削除
+                    </button>
+                  )}
+                </div>
+              )
+            )}
             <button
               onClick={() => {
                 const currentPoints = (params.fins as any).points || [];
@@ -299,12 +313,12 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
                 });
               }}
               style={{
-                background: '#4c6ef5',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                padding: '0.5rem 1rem',
-                cursor: 'pointer'
+                background: "#4c6ef5",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                padding: "0.5rem 1rem",
+                cursor: "pointer",
               }}
             >
               頂点を追加
@@ -321,8 +335,6 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
             fins: { ...params.fins, thickness: value },
           })
         }
-        min={0}
-        step={0.01}
       />
       <Select
         label="材質"

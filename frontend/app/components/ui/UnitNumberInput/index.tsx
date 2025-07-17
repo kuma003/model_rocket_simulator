@@ -2,9 +2,10 @@ import React from "react";
 import { NumberInput, type NumberInputProps } from "@mantine/core";
 import { getUnitLabel, toSILength, fromSILength } from "~/utils/units";
 
-interface UnitNumberInputProps extends Omit<NumberInputProps, 'label' | 'onChange'> {
+interface UnitNumberInputProps
+  extends Omit<NumberInputProps, "label" | "onChange"> {
   label: string;
-  unitType: 'length' | 'mass' | 'volume';
+  unitType: "length" | "mass" | "volume";
   value: number; // SI unit value
   onChange: (value: number) => void; // Callback with SI unit value
 }
@@ -24,17 +25,17 @@ const UnitNumberInput: React.FC<UnitNumberInputProps> = ({
   const displayLabel = `${label} (${unitLabel})`;
 
   // Convert SI value to display value
-  const displayValue = unitType === 'length' ? fromSILength(value) : value;
+  const displayValue = unitType === "length" ? fromSILength(value) : value;
 
   const handleChange = (val: string | number) => {
-    const numValue = typeof val === 'string' ? parseFloat(val) : val;
+    const numValue = typeof val === "string" ? parseFloat(val) : val;
     if (isNaN(numValue)) {
       onChange(0);
       return;
     }
-    
+
     // Convert display value to SI value
-    const siValue = unitType === 'length' ? toSILength(numValue) : numValue;
+    let siValue = unitType === "length" ? toSILength(numValue) : numValue;
     onChange(siValue);
   };
 
@@ -43,6 +44,12 @@ const UnitNumberInput: React.FC<UnitNumberInputProps> = ({
       label={displayLabel}
       value={displayValue}
       onChange={handleChange}
+      stepHoldDelay={500}
+      stepHoldInterval={(t) => Math.max(1000 / t ** 2, 100)}
+      min={0}
+      step={0.1}
+      decimalScale={1}
+      fixedDecimalScale
       {...props}
     />
   );

@@ -27,7 +27,7 @@ const defaultRocketParams: RocketParams = {
   name: "新しいロケット",
   designer: "",
   nose: {
-    length: 0.10,
+    length: 0.1,
     diameter: 0.024,
     thickness: 0.001,
     material: "plastic",
@@ -35,7 +35,7 @@ const defaultRocketParams: RocketParams = {
     type: "conical",
   },
   body: {
-    length: 0.30,
+    length: 0.3,
     diameter: 0.024,
     thickness: 0.001,
     material: "cardboard",
@@ -46,7 +46,7 @@ const defaultRocketParams: RocketParams = {
     material: "balsa",
     color: "#0000FF",
     count: 3,
-    offset: 0.02,
+    offset: 0,
     type: "trapozoidal",
     rootChord: 0.05,
     tipChord: 0.02,
