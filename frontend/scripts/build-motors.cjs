@@ -63,4 +63,25 @@ try {
   console.warn('⚠️  Could not update development manifest:', error.message);
 }
 
+// Create _headers file for GitHub Pages to handle .eng files properly
+const headersContent = `/motors/*
+  Content-Type: text/plain
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Methods: GET
+  Access-Control-Allow-Headers: Content-Type
+
+/motors/*.eng
+  Content-Type: text/plain
+
+/motors/*.json
+  Content-Type: application/json`;
+
+const headersPath = path.join(__dirname, '../build/client/_headers');
+try {
+  fs.writeFileSync(headersPath, headersContent);
+  console.log(`📄 Created _headers file for GitHub Pages`);
+} catch (error) {
+  console.warn('⚠️  Could not create _headers file:', error.message);
+}
+
 console.log(`🎯 Motors build complete! Copied ${copiedCount}/${motorFiles.length} files`);

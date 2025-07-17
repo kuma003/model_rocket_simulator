@@ -337,20 +337,32 @@ export const useMotorExtractor = () => {
         : "/model_rocket_simulator/motors";
 
       // Try to load motors manifest first (preferred method)
-      console.log(
-        "Trying to load manifest from:",
-        `${basePath}/motors-manifest.json`
-      );
-      const manifestResponse: Response = await fetch(
-        `${basePath}/motors-manifest.json`
-      );
+      const manifestUrl = `${basePath}/motors-manifest.json`;
+      console.log("Trying to load manifest from:", manifestUrl);
+      console.log("Environment:", { isDev, basePath });
+      
+      const manifestResponse: Response = await fetch(manifestUrl, {
+        method: "GET",
+        cache: "no-cache",
+        headers: {
+          "Accept": "application/json",
+        }
+      });
+      
+      console.log("Manifest response:", {
+        status: manifestResponse.status,
+        statusText: manifestResponse.statusText,
+        headers: Object.fromEntries(manifestResponse.headers.entries()),
+        url: manifestResponse.url
+      });
+      
       if (manifestResponse.ok) {
         const manifest: { files: string[]; generated: string; count: number } =
           await manifestResponse.json();
         console.log("Loaded manifest:", manifest);
         return manifest.files || [];
       } else {
-        console.log("Manifest not found, status:", manifestResponse.status);
+        console.error("Manifest not found, status:", manifestResponse.status, manifestResponse.statusText);
       }
 
       // Fallback: try common motor file patterns if manifest doesn't exist
@@ -419,19 +431,38 @@ export const useMotorExtractor = () => {
       // Load and parse each discovered file
       for (const filename of discoveredFiles) {
         try {
-          const response: Response = await fetch(`${basePath}/${filename}`);
+          const fileUrl = `${basePath}/${filename}`;
+          console.log(`Loading motor file: ${fileUrl}`);
+          
+          const response: Response = await fetch(fileUrl, {
+            method: "GET",
+            cache: "no-cache",
+            headers: {
+              "Accept": "text/plain",
+            }
+          });
+
+          console.log(`Response for ${filename}:`, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: Object.fromEntries(response.headers.entries()),
+            url: response.url
+          });
 
           if (!response.ok) {
-            console.warn(`Failed to load ${filename}: ${response.status}`);
+            console.error(`Failed to load ${filename}: ${response.status} ${response.statusText}`);
             continue;
           }
 
           const content: string = await response.text();
+          console.log(`Content length for ${filename}: ${content.length} characters`);
+          
           const motorData: MotorData = parseEngFile(content, filename);
           motors.push(motorData);
+          console.log(`Successfully parsed ${filename}`);
         } catch (err: unknown) {
-          console.warn(
-            `Error parsing ${filename}:`,
+          console.error(
+            `Error loading/parsing ${filename}:`,
             err instanceof Error ? err.message : String(err)
           );
         }
