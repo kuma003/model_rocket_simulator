@@ -381,6 +381,17 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
               stroke="#FF0000"
               strokeWidth="2"
             />
+            {/* 第1象限（右上）の塗りつぶし */}
+            <path
+              d="M 0 0 L 6 0 A 6 6 0 0 0 0 -6 Z"
+              fill="#FF0000"
+            />
+            {/* 第3象限（左下）の塗りつぶし */}
+            <path
+              d="M 0 0 L -6 0 A 6 6 0 0 0 0 6 Z"
+              fill="#FF0000"
+            />
+            {/* 十字線 */}
             <line
               x1="-6"
               y1="0"
