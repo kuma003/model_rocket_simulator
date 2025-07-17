@@ -1,5 +1,6 @@
 import React from "react";
-import { Stack, NumberInput, Select, ColorInput } from "@mantine/core";
+import { Stack, Select, ColorInput } from "@mantine/core";
+import UnitNumberInput from "~/components/ui/UnitNumberInput";
 import type { RocketParams } from "../../../features/Rocket/types";
 
 interface BodySectionProps {
@@ -10,33 +11,36 @@ interface BodySectionProps {
 const BodySection: React.FC<BodySectionProps> = ({ params, updateParams }) => {
   return (
     <Stack>
-      <NumberInput
-        label="長さ (cm)"
+      <UnitNumberInput
+        label="長さ"
+        unitType="length"
         value={params.body.length}
         onChange={(value) =>
-          updateParams({ body: { ...params.body, length: Number(value) || 0 } })
+          updateParams({ body: { ...params.body, length: value } })
         }
         min={0}
         step={0.1}
       />
-      <NumberInput
-        label="直径 (cm)"
+      <UnitNumberInput
+        label="直径"
+        unitType="length"
         value={params.body.diameter}
         onChange={(value) =>
           updateParams({
-            body: { ...params.body, diameter: Number(value) || 0 },
-            nose: { ...params.nose, diameter: Number(value) || 0 },
+            body: { ...params.body, diameter: value },
+            nose: { ...params.nose, diameter: value },
           })
         }
         min={0}
         step={0.1}
       />
-      <NumberInput
-        label="厚さ (cm)"
+      <UnitNumberInput
+        label="厚さ"
+        unitType="length"
         value={params.body.thickness}
         onChange={(value) =>
           updateParams({
-            body: { ...params.body, thickness: Number(value) || 0 },
+            body: { ...params.body, thickness: value },
           })
         }
         min={0}

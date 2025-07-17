@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Stack, NumberInput, Select, ColorInput } from "@mantine/core";
+import UnitNumberInput from "~/components/ui/UnitNumberInput";
 import type { RocketParams } from "../../../features/Rocket/types";
 
 interface FinSectionProps {
@@ -128,12 +129,13 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
         min={1}
         max={8}
       />
-      <NumberInput
-        label="フィン取り付け位置 (cm)"
+      <UnitNumberInput
+        label="フィン取り付け位置"
+        unitType="length"
         description="ボディ末端からフィン末端までの距離"
         value={params.fins.offset}
         onChange={(value) =>
-          updateParams({ fins: { ...params.fins, offset: Number(value) || 0 } })
+          updateParams({ fins: { ...params.fins, offset: value } })
         }
         min={0}
         step={0.1}
@@ -150,48 +152,52 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
       />
       {params.fins.type === "trapozoidal" && (
         <>
-          <NumberInput
-            label="ルートコード (cm)"
+          <UnitNumberInput
+            label="ルートコード"
+            unitType="length"
             value={(params.fins as any).rootChord}
             onChange={(value) =>
               updateParams({
-                fins: { ...params.fins, rootChord: Number(value) || 0 } as any,
+                fins: { ...params.fins, rootChord: value } as any,
               })
             }
             min={0}
             step={0.1}
           />
-          <NumberInput
-            label="チップコード (cm)"
+          <UnitNumberInput
+            label="チップコード"
+            unitType="length"
             value={(params.fins as any).tipChord}
             onChange={(value) =>
               updateParams({
-                fins: { ...params.fins, tipChord: Number(value) || 0 } as any,
+                fins: { ...params.fins, tipChord: value } as any,
               })
             }
             min={0}
             step={0.1}
           />
-          <NumberInput
-            label="スイープ長 (cm)"
+          <UnitNumberInput
+            label="スイープ長"
+            unitType="length"
             value={(params.fins as any).sweepLength}
             onChange={(value) =>
               updateParams({
                 fins: {
                   ...params.fins,
-                  sweepLength: Number(value) || 0,
+                  sweepLength: value,
                 } as any,
               })
             }
             min={0}
             step={0.1}
           />
-          <NumberInput
-            label="高さ (cm)"
+          <UnitNumberInput
+            label="高さ"
+            unitType="length"
             value={(params.fins as any).height}
             onChange={(value) =>
               updateParams({
-                fins: { ...params.fins, height: Number(value) || 0 } as any,
+                fins: { ...params.fins, height: value } as any,
               })
             }
             min={0}
@@ -201,23 +207,25 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
       )}
       {params.fins.type === "elliptical" && (
         <>
-          <NumberInput
-            label="ルートコード (cm)"
+          <UnitNumberInput
+            label="ルートコード"
+            unitType="length"
             value={(params.fins as any).rootChord}
             onChange={(value) =>
               updateParams({
-                fins: { ...params.fins, rootChord: Number(value) || 0 } as any,
+                fins: { ...params.fins, rootChord: value } as any,
               })
             }
             min={0}
             step={0.1}
           />
-          <NumberInput
-            label="高さ (cm)"
+          <UnitNumberInput
+            label="高さ"
+            unitType="length"
             value={(params.fins as any).height}
             onChange={(value) =>
               updateParams({
-                fins: { ...params.fins, height: Number(value) || 0 } as any,
+                fins: { ...params.fins, height: value } as any,
               })
             }
             min={0}
@@ -304,12 +312,13 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
           </div>
         </>
       )}
-      <NumberInput
-        label="厚さ (cm)"
+      <UnitNumberInput
+        label="厚さ"
+        unitType="length"
         value={params.fins.thickness}
         onChange={(value) =>
           updateParams({
-            fins: { ...params.fins, thickness: Number(value) || 0 },
+            fins: { ...params.fins, thickness: value },
           })
         }
         min={0}

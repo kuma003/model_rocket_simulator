@@ -1,5 +1,6 @@
 import React from "react";
-import { Stack, NumberInput, Select, ColorInput } from "@mantine/core";
+import { Stack, Select, ColorInput } from "@mantine/core";
+import UnitNumberInput from "~/components/ui/UnitNumberInput";
 import type { RocketParams } from "../../../features/Rocket/types";
 
 interface NoseSectionProps {
@@ -22,33 +23,36 @@ const NoseSection: React.FC<NoseSectionProps> = ({ params, updateParams }) => {
           { value: "elliptical", label: "楕円型" },
         ]}
       />
-      <NumberInput
-        label="長さ (cm)"
+      <UnitNumberInput
+        label="長さ"
+        unitType="length"
         value={params.nose.length}
         onChange={(value) =>
-          updateParams({ nose: { ...params.nose, length: Number(value) || 0 } })
+          updateParams({ nose: { ...params.nose, length: value } })
         }
         min={0}
         step={0.1}
       />
-      <NumberInput
-        label="直径 (cm)"
+      <UnitNumberInput
+        label="直径"
+        unitType="length"
         value={params.nose.diameter}
         onChange={(value) =>
           updateParams({
-            nose: { ...params.nose, diameter: Number(value) || 0 },
-            body: { ...params.body, diameter: Number(value) || 0 },
+            nose: { ...params.nose, diameter: value },
+            body: { ...params.body, diameter: value },
           })
         }
         min={0}
         step={0.1}
       />
-      <NumberInput
-        label="厚さ (cm)"
+      <UnitNumberInput
+        label="厚さ"
+        unitType="length"
         value={params.nose.thickness}
         onChange={(value) =>
           updateParams({
-            nose: { ...params.nose, thickness: Number(value) || 0 },
+            nose: { ...params.nose, thickness: value },
           })
         }
         min={0}

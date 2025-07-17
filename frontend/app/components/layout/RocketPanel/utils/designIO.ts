@@ -1,12 +1,25 @@
 import type { RocketParams } from "../../../features/Rocket/types";
 import { Materials } from "../../../features/Rocket/types";
+import { toSIRocketParams, fromSIRocketParams, type RocketParamsDisplay, type RocketParamsSI } from "~/utils/units";
 
 /**
  * Exports rocket design data as a JSON file
- * @param rocketParams - The rocket parameters to export
+ * Data is exported in SI units for consistency
+ * @param rocketParams - The rocket parameters to export (in display units)
  */
 export const exportDesignData = (rocketParams: RocketParams): void => {
-  const dataStr = JSON.stringify(rocketParams, null, 2);
+  // Convert to SI units before export
+  const siParams = toSIRocketParams(rocketParams as RocketParamsDisplay);
+  
+  // Add metadata to indicate units
+  const exportData = {
+    version: "1.0",
+    units: "SI", // meters, kg, seconds
+    exported: new Date().toISOString(),
+    data: siParams
+  };
+  
+  const dataStr = JSON.stringify(exportData, null, 2);
   const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`;
   
   const exportFileDefaultName = `${rocketParams.name || "rocket_design"}.json`;
@@ -19,8 +32,9 @@ export const exportDesignData = (rocketParams: RocketParams): void => {
 
 /**
  * Imports rocket design data from a JSON file
+ * Handles both old format (display units) and new format (SI units)
  * @param file - The file to import
- * @returns Promise that resolves to the parsed rocket parameters
+ * @returns Promise that resolves to the parsed rocket parameters (in display units)
  */
 export const importDesignData = (file: File): Promise<RocketParams> => {
   return new Promise((resolve, reject) => {
@@ -29,8 +43,25 @@ export const importDesignData = (file: File): Promise<RocketParams> => {
     reader.onload = (e) => {
       try {
         const content = e.target?.result as string;
-        const data = JSON.parse(content);
-        resolve(data);
+        const parsedData = JSON.parse(content);
+        
+        let rocketParams: RocketParams;
+        
+        // Check if this is the new format with metadata
+        if (parsedData.version && parsedData.units && parsedData.data) {
+          // New format - convert from SI to display units
+          if (parsedData.units === "SI") {
+            rocketParams = fromSIRocketParams(parsedData.data as RocketParamsSI) as RocketParams;
+          } else {
+            // Unknown units, assume SI for safety
+            rocketParams = fromSIRocketParams(parsedData.data as RocketParamsSI) as RocketParams;
+          }
+        } else {
+          // Old format - assume display units (cm)
+          rocketParams = parsedData as RocketParams;
+        }
+        
+        resolve(rocketParams);
       } catch (error) {
         reject(new Error("Invalid JSON format"));
       }
@@ -76,6 +107,29 @@ export const validateRocketParams = (data: any): data is RocketParams => {
 
   // Validate engine section
   if (!validateEngine(data.engine)) {
+    return false;
+  }
+
+  return true;
+};
+
+/**
+ * Validates if the imported data conforms to the new export format
+ * @param data - The data to validate
+ * @returns true if valid, false otherwise
+ */
+export const validateExportFormat = (data: any): boolean => {
+  if (!data || typeof data !== "object") {
+    return false;
+  }
+
+  // Check metadata
+  if (typeof data.version !== "string" || typeof data.units !== "string") {
+    return false;
+  }
+
+  // Check if data field exists and is valid
+  if (!data.data || !validateRocketParams(data.data)) {
     return false;
   }
 
