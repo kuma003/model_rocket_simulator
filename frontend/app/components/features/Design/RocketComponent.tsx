@@ -382,12 +382,12 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
         <g>
           {/* 重心マーカー（工学用シンボル） */}
           <g transform={`translate(${totalWidth / 2}, ${cgPosition})`}>
-            <CenterMarker color="#FF0000" label="CG" />
+            <CenterMarker color="#FF0000" />
           </g>
 
           {/* 圧力中心マーカー（青色） */}
           <g transform={`translate(${totalWidth / 2}, ${cpPosition})`}>
-            <CenterMarker color="#0000FF" label="CP" />
+            <CenterMarker color="#0000FF" />
           </g>
         </g>
       )}
