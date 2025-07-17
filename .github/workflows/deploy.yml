@@ -41,6 +41,14 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      - name: Debug build contents
+        working-directory: ./frontend
+        run: |
+          echo "Build directory structure:"
+          find build/client -name "*.eng" -o -name "motors-manifest.json" | head -10
+          echo "Motors directory contents:"
+          ls -la build/client/motors/ || echo "Motors directory not found"
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
