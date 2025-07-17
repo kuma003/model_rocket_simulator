@@ -16,9 +16,10 @@
 .centerArea {
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center; // 縦方向の中央揃え
+  justify-content: center; // 横方向の中央揃え
   min-height: 100%;
+  min-width: 0; // 横スクロール防止（必要なら追加）
 }
 
 @keyframes gradientShift {

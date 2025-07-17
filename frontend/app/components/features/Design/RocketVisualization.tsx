@@ -69,7 +69,11 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
 
   // ロケットを中央配置するためのオフセット計算
   const finChord = fins.type === "trapozoidal" ? Math.max(fins.rootChord, fins.tipChord) : 0;
-  const rocketWidth = (body.diameter + finChord) * scale;
+  const bodyWidth = body.diameter * scale;
+  const finRootChord = fins.type === "trapozoidal" ? fins.rootChord * scale : 0;
+  
+  // RocketComponentと同じ計算を使用
+  const rocketWidth = Math.max(bodyWidth + finRootChord, 200);
   const rocketHeight = (totalHeightCM + (fins.type === "trapozoidal" ? fins.height : 0)) * scale;
   
   const rocketOffsetX = (svgWidth - rocketWidth) / 2;
