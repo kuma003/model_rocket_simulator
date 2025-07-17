@@ -3,6 +3,11 @@ import type { RocketParams } from "../../features/Rocket/types";
 import styles from "./rocketPanel.module.scss";
 import { SegmentedControl, Stack, Divider, ScrollArea } from "@mantine/core";
 import { loadMotorData, type MotorData } from "../../../utils/motorParser";
+import {
+  exportDesignData,
+  importDesignData,
+  validateRocketParams,
+} from "./utils/designIO";
 
 // Import sub-components
 import PanelHeader from "./components/PanelHeader";
@@ -93,15 +98,35 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
     };
 
     loadMotor();
-  }, [params.engine.name]);
+  }, [params.engine]);
 
   const handleImport = () => {
-    console.log("Import functionality - to be implemented");
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        importDesignData(file)
+          .then((data) => {
+            if (validateRocketParams(data)) {
+              setParams(data);
+              setRocketParams(data);
+              alert("デザインデータが正常にインポートされました。");
+            } else {
+              alert("無効なデザインデータファイルです。");
+            }
+          })
+          .catch((error) => {
+            alert("ファイルの読み込みに失敗しました: " + error.message);
+          });
+      }
+    };
+    input.click();
   };
 
   const handleExport = () => {
-    console.log("Export functionality - to be implemented");
-    console.log("Current params:", params);
+    exportDesignData(params);
   };
 
   const renderActiveSection = () => {
