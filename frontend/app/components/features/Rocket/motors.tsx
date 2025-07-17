@@ -337,32 +337,13 @@ export const useMotorExtractor = () => {
         : "/model_rocket_simulator/motors";
 
       // Try to load motors manifest first (preferred method)
-      const manifestUrl = `${basePath}/motors-manifest.json`;
-      console.log("Trying to load manifest from:", manifestUrl);
-      console.log("Environment:", { isDev, basePath });
-      
-      const manifestResponse: Response = await fetch(manifestUrl, {
-        method: "GET",
-        cache: "no-cache",
-        headers: {
-          "Accept": "application/json",
-        }
-      });
-      
-      console.log("Manifest response:", {
-        status: manifestResponse.status,
-        statusText: manifestResponse.statusText,
-        headers: Object.fromEntries(manifestResponse.headers.entries()),
-        url: manifestResponse.url
-      });
-      
+      const manifestResponse: Response = await fetch(
+        `${basePath}/motors-manifest.json`
+      );
       if (manifestResponse.ok) {
         const manifest: { files: string[]; generated: string; count: number } =
           await manifestResponse.json();
-        console.log("Loaded manifest:", manifest);
         return manifest.files || [];
-      } else {
-        console.error("Manifest not found, status:", manifestResponse.status, manifestResponse.statusText);
       }
 
       // Fallback: try common motor file patterns if manifest doesn't exist
@@ -379,7 +360,6 @@ export const useMotorExtractor = () => {
         "Klima_E30.eng",
       ];
 
-      console.log("Fallback: checking for common motor files...");
       const existingFiles: string[] = [];
       for (const filename of commonFiles) {
         try {
@@ -387,15 +367,13 @@ export const useMotorExtractor = () => {
             method: "HEAD",
           });
           if (response.ok) {
-            console.log(`Found motor file: ${filename}`);
             existingFiles.push(filename);
           }
         } catch (err: unknown) {
-          console.log(`Motor file not found: ${filename}`);
+          // File not found, continue checking others
         }
       }
 
-      console.log("Discovered motor files:", existingFiles);
       return existingFiles;
     } catch (err: unknown) {
       console.warn("Error discovering motor files:", err);
@@ -431,38 +409,19 @@ export const useMotorExtractor = () => {
       // Load and parse each discovered file
       for (const filename of discoveredFiles) {
         try {
-          const fileUrl = `${basePath}/${filename}`;
-          console.log(`Loading motor file: ${fileUrl}`);
-          
-          const response: Response = await fetch(fileUrl, {
-            method: "GET",
-            cache: "no-cache",
-            headers: {
-              "Accept": "text/plain",
-            }
-          });
-
-          console.log(`Response for ${filename}:`, {
-            status: response.status,
-            statusText: response.statusText,
-            headers: Object.fromEntries(response.headers.entries()),
-            url: response.url
-          });
+          const response: Response = await fetch(`${basePath}/${filename}`);
 
           if (!response.ok) {
-            console.error(`Failed to load ${filename}: ${response.status} ${response.statusText}`);
+            console.warn(`Failed to load ${filename}: ${response.status}`);
             continue;
           }
 
           const content: string = await response.text();
-          console.log(`Content length for ${filename}: ${content.length} characters`);
-          
           const motorData: MotorData = parseEngFile(content, filename);
           motors.push(motorData);
-          console.log(`Successfully parsed ${filename}`);
         } catch (err: unknown) {
-          console.error(
-            `Error loading/parsing ${filename}:`,
+          console.warn(
+            `Error parsing ${filename}:`,
             err instanceof Error ? err.message : String(err)
           );
         }
