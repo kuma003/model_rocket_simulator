@@ -10,31 +10,31 @@ const Design: React.FC = () => {
     name: "新しいロケット",
     designer: "",
     nose: {
-      length: 0.10, // 10cm -> 0.10m
-      diameter: 0.024, // 2.4cm -> 0.024m
-      thickness: 0.001, // 0.1cm -> 0.001m
+      length: 0.10,
+      diameter: 0.024,
+      thickness: 0.001,
       material: "plastic",
       color: "#FF0000",
       type: "conical",
     },
     body: {
-      length: 0.30, // 30cm -> 0.30m
-      diameter: 0.024, // 2.4cm -> 0.024m
-      thickness: 0.001, // 0.1cm -> 0.001m
+      length: 0.30,
+      diameter: 0.024,
+      thickness: 0.001,
       material: "cardboard",
       color: "#FFFF00",
     },
     fins: {
-      thickness: 0.001, // 0.1cm -> 0.001m
+      thickness: 0.001,
       material: "balsa",
       color: "#0000FF",
       count: 3,
-      offset: 0.02, // 2cm -> 0.02m
+      offset: 0.02,
       type: "trapozoidal",
-      rootChord: 0.05, // 5cm -> 0.05m
-      tipChord: 0.02, // 2cm -> 0.02m
-      sweepLength: 0.03, // 3cm -> 0.03m
-      height: 0.04, // 4cm -> 0.04m
+      rootChord: 0.05,
+      tipChord: 0.02,
+      sweepLength: 0.03,
+      height: 0.04,
     },
     engine: {
       name: "Estes A10",
