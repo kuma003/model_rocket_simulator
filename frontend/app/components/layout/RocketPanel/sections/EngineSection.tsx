@@ -29,7 +29,7 @@ const EngineSection: React.FC<EngineSectionProps> = ({
           { value: "Estes B4", label: "Estes B4" },
           { value: "Estes C6", label: "Estes C6" },
         ]}
-        searchable
+        allowDeselect={false}
       />
       <ThrustCurveChart motorData={motorData} loading={loadingMotorData} />
     </Stack>
