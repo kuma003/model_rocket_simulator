@@ -44,8 +44,8 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
     const totalWidthCM = body.diameter + finChord;
 
     // Target SVG dimensions
-    const targetHeight = 300;
-    const targetWidth = 400;
+    const targetHeight = 800;
+    const targetWidth = 500;
 
     // Calculate scale based on dimensions
     const scaleByHeight = targetHeight / (totalHeightCM + finHeight);

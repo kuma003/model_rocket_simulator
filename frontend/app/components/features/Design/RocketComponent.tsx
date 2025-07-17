@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import type { RocketParams } from "../Rocket/types";
-import { CenterOfGravityMarker, CenterOfPressureMarker } from "../../ui/CenterMarkers";
+import { CenterMarker } from "../../ui/CenterMarkers";
 
 /**
  * Type definition for a point in 2D coordinate system
@@ -382,12 +382,12 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
         <g>
           {/* 重心マーカー（工学用シンボル） */}
           <g transform={`translate(${totalWidth / 2}, ${cgPosition})`}>
-            <CenterOfGravityMarker />
+            <CenterMarker color="#FF0000" label="CG" />
           </g>
 
           {/* 圧力中心マーカー（青色） */}
           <g transform={`translate(${totalWidth / 2}, ${cpPosition})`}>
-            <CenterOfPressureMarker />
+            <CenterMarker color="#0000FF" label="CP" />
           </g>
         </g>
       )}
