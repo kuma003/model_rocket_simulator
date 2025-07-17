@@ -27,21 +27,21 @@ interface FinTypeMemory {
 
 const defaultFinMemory: FinTypeMemory = {
   trapozoidal: {
-    rootChord: 5,
-    tipChord: 2,
-    sweepLength: 3,
-    height: 4,
+    rootChord: 0.05, // 5cm -> 0.05m
+    tipChord: 0.02, // 2cm -> 0.02m
+    sweepLength: 0.03, // 3cm -> 0.03m
+    height: 0.04, // 4cm -> 0.04m
   },
   elliptical: {
-    rootChord: 5,
-    height: 4,
+    rootChord: 0.05, // 5cm -> 0.05m
+    height: 0.04, // 4cm -> 0.04m
   },
   freedom: {
     points: [
       { x: 0, y: 0 },
-      { x: 5, y: 0 },
-      { x: 4, y: 4 },
-      { x: 0, y: 4 },
+      { x: 0.05, y: 0 }, // 5cm -> 0.05m
+      { x: 0.04, y: 0.04 }, // 4cm -> 0.04m
+      { x: 0, y: 0.04 }, // 4cm -> 0.04m
     ],
   },
 };

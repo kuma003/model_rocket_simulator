@@ -1,17 +1,17 @@
 import React from "react";
 import { NumberInput, type NumberInputProps } from "@mantine/core";
-import { getUnitLabel } from "~/utils/units";
+import { getUnitLabel, toSILength, fromSILength } from "~/utils/units";
 
 interface UnitNumberInputProps extends Omit<NumberInputProps, 'label' | 'onChange'> {
   label: string;
   unitType: 'length' | 'mass' | 'volume';
-  value: number;
-  onChange: (value: number) => void;
+  value: number; // SI unit value
+  onChange: (value: number) => void; // Callback with SI unit value
 }
 
 /**
- * NumberInput component with unit label
- * Displays the appropriate unit label based on the unit type
+ * NumberInput component with unit label and automatic unit conversion
+ * Displays in user-friendly units but stores in SI units
  */
 const UnitNumberInput: React.FC<UnitNumberInputProps> = ({
   label,
@@ -23,15 +23,25 @@ const UnitNumberInput: React.FC<UnitNumberInputProps> = ({
   const unitLabel = getUnitLabel(unitType);
   const displayLabel = `${label} (${unitLabel})`;
 
+  // Convert SI value to display value
+  const displayValue = unitType === 'length' ? fromSILength(value) : value;
+
   const handleChange = (val: string | number) => {
     const numValue = typeof val === 'string' ? parseFloat(val) : val;
-    onChange(isNaN(numValue) ? 0 : numValue);
+    if (isNaN(numValue)) {
+      onChange(0);
+      return;
+    }
+    
+    // Convert display value to SI value
+    const siValue = unitType === 'length' ? toSILength(numValue) : numValue;
+    onChange(siValue);
   };
 
   return (
     <NumberInput
       label={displayLabel}
-      value={value}
+      value={displayValue}
       onChange={handleChange}
       {...props}
     />

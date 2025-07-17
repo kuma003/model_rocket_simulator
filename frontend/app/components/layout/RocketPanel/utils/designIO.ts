@@ -1,22 +1,18 @@
 import type { RocketParams } from "../../../features/Rocket/types";
 import { Materials } from "../../../features/Rocket/types";
-import { toSIRocketParams, fromSIRocketParams, type RocketParamsDisplay, type RocketParamsSI } from "~/utils/units";
 
 /**
  * Exports rocket design data as a JSON file
- * Data is exported in SI units for consistency
- * @param rocketParams - The rocket parameters to export (in display units)
+ * RocketParams already uses SI units internally
+ * @param rocketParams - The rocket parameters to export (SI units)
  */
 export const exportDesignData = (rocketParams: RocketParams): void => {
-  // Convert to SI units before export
-  const siParams = toSIRocketParams(rocketParams as RocketParamsDisplay);
-  
   // Add metadata to indicate units
   const exportData = {
     version: "1.0",
     units: "SI", // meters, kg, seconds
     exported: new Date().toISOString(),
-    data: siParams
+    data: rocketParams
   };
   
   const dataStr = JSON.stringify(exportData, null, 2);
@@ -34,7 +30,7 @@ export const exportDesignData = (rocketParams: RocketParams): void => {
  * Imports rocket design data from a JSON file
  * Handles both old format (display units) and new format (SI units)
  * @param file - The file to import
- * @returns Promise that resolves to the parsed rocket parameters (in display units)
+ * @returns Promise that resolves to the parsed rocket parameters (SI units)
  */
 export const importDesignData = (file: File): Promise<RocketParams> => {
   return new Promise((resolve, reject) => {
@@ -49,16 +45,16 @@ export const importDesignData = (file: File): Promise<RocketParams> => {
         
         // Check if this is the new format with metadata
         if (parsedData.version && parsedData.units && parsedData.data) {
-          // New format - convert from SI to display units
+          // New format - data is already in SI units
           if (parsedData.units === "SI") {
-            rocketParams = fromSIRocketParams(parsedData.data as RocketParamsSI) as RocketParams;
+            rocketParams = parsedData.data as RocketParams;
           } else {
             // Unknown units, assume SI for safety
-            rocketParams = fromSIRocketParams(parsedData.data as RocketParamsSI) as RocketParams;
+            rocketParams = parsedData.data as RocketParams;
           }
         } else {
-          // Old format - assume display units (cm)
-          rocketParams = parsedData as RocketParams;
+          // Old format - assume display units (cm), convert to SI
+          rocketParams = convertLegacyParamsToSI(parsedData);
         }
         
         resolve(rocketParams);
@@ -111,6 +107,56 @@ export const validateRocketParams = (data: any): data is RocketParams => {
   }
 
   return true;
+};
+
+/**
+ * Converts legacy rocket parameters (display units) to SI units
+ * @param legacyParams - Legacy parameters in display units (cm)
+ * @returns Parameters in SI units (meters)
+ */
+const convertLegacyParamsToSI = (legacyParams: any): RocketParams => {
+  const params = { ...legacyParams };
+  
+  // Convert nose parameters
+  if (params.nose) {
+    params.nose.length = (params.nose.length || 0) / 100;
+    params.nose.diameter = (params.nose.diameter || 0) / 100;
+    params.nose.thickness = (params.nose.thickness || 0) / 100;
+  }
+  
+  // Convert body parameters
+  if (params.body) {
+    params.body.length = (params.body.length || 0) / 100;
+    params.body.diameter = (params.body.diameter || 0) / 100;
+    params.body.thickness = (params.body.thickness || 0) / 100;
+  }
+  
+  // Convert fins parameters
+  if (params.fins) {
+    params.fins.thickness = (params.fins.thickness || 0) / 100;
+    params.fins.offset = (params.fins.offset || 0) / 100;
+    
+    if (params.fins.rootChord !== undefined) {
+      params.fins.rootChord = params.fins.rootChord / 100;
+    }
+    if (params.fins.tipChord !== undefined) {
+      params.fins.tipChord = params.fins.tipChord / 100;
+    }
+    if (params.fins.sweepLength !== undefined) {
+      params.fins.sweepLength = params.fins.sweepLength / 100;
+    }
+    if (params.fins.height !== undefined) {
+      params.fins.height = params.fins.height / 100;
+    }
+    if (params.fins.points) {
+      params.fins.points = params.fins.points.map((point: any) => ({
+        x: point.x / 100,
+        y: point.y / 100,
+      }));
+    }
+  }
+  
+  return params as RocketParams;
 };
 
 /**

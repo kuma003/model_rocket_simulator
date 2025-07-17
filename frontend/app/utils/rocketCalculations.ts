@@ -3,8 +3,7 @@
  * All calculations are performed in SI units (meters, kg, seconds)
  */
 
-import { Materials } from "~/components/features/Rocket/types";
-import { toSIRocketParams, type RocketParamsDisplay, type RocketParamsSI } from "./units";
+import { Materials, type RocketParams } from "~/components/features/Rocket/types";
 
 /**
  * Calculate the volume of a component given its dimensions
@@ -55,44 +54,43 @@ export const calculateNoseVolume = (length: number, diameter: number, thickness:
 
 /**
  * Calculate the total mass of the rocket
- * @param params - Rocket parameters in display units
+ * @param params - Rocket parameters in SI units
  * @returns Total mass in kilograms
  */
-export const calculateTotalMass = (params: RocketParamsDisplay): number => {
-  // Convert to SI units
-  const siParams = toSIRocketParams(params);
+export const calculateTotalMass = (params: RocketParams): number => {
+  // Parameters are already in SI units
   
   // Calculate nose mass
   const noseVolume = calculateNoseVolume(
-    siParams.nose.length,
-    siParams.nose.diameter,
-    siParams.nose.thickness
+    params.nose.length,
+    params.nose.diameter,
+    params.nose.thickness
   );
-  const noseMass = calculateComponentMass(noseVolume, siParams.nose.material as keyof typeof Materials);
+  const noseMass = calculateComponentMass(noseVolume, params.nose.material as keyof typeof Materials);
   
   // Calculate body mass
   const bodyVolume = calculateComponentVolume(
-    siParams.body.length,
-    siParams.body.diameter,
-    siParams.body.thickness
+    params.body.length,
+    params.body.diameter,
+    params.body.thickness
   );
-  const bodyMass = calculateComponentMass(bodyVolume, siParams.body.material as keyof typeof Materials);
+  const bodyMass = calculateComponentMass(bodyVolume, params.body.material as keyof typeof Materials);
   
   // Calculate fins mass
   let finsMass = 0;
-  if (siParams.fins.type === "trapozoidal") {
-    const fins = siParams.fins as any;
+  if (params.fins.type === "trapozoidal") {
+    const fins = params.fins as any;
     const finArea = ((fins.rootChord + fins.tipChord) * fins.height) / 2;
-    const finVolume = finArea * siParams.fins.thickness;
-    finsMass = calculateComponentMass(finVolume, siParams.fins.material as keyof typeof Materials) * siParams.fins.count;
-  } else if (siParams.fins.type === "elliptical") {
-    const fins = siParams.fins as any;
+    const finVolume = finArea * params.fins.thickness;
+    finsMass = calculateComponentMass(finVolume, params.fins.material as keyof typeof Materials) * params.fins.count;
+  } else if (params.fins.type === "elliptical") {
+    const fins = params.fins as any;
     const finArea = (Math.PI * fins.rootChord * fins.height) / 4;
-    const finVolume = finArea * siParams.fins.thickness;
-    finsMass = calculateComponentMass(finVolume, siParams.fins.material as keyof typeof Materials) * siParams.fins.count;
-  } else if (siParams.fins.type === "freedom") {
+    const finVolume = finArea * params.fins.thickness;
+    finsMass = calculateComponentMass(finVolume, params.fins.material as keyof typeof Materials) * params.fins.count;
+  } else if (params.fins.type === "freedom") {
     // For freedom fins, approximate area using shoelace formula
-    const fins = siParams.fins as any;
+    const fins = params.fins as any;
     const points = fins.points || [];
     let area = 0;
     for (let i = 0; i < points.length; i++) {
@@ -101,8 +99,8 @@ export const calculateTotalMass = (params: RocketParamsDisplay): number => {
       area -= points[j].x * points[i].y;
     }
     area = Math.abs(area) / 2;
-    const finVolume = area * siParams.fins.thickness;
-    finsMass = calculateComponentMass(finVolume, siParams.fins.material as keyof typeof Materials) * siParams.fins.count;
+    const finVolume = area * params.fins.thickness;
+    finsMass = calculateComponentMass(finVolume, params.fins.material as keyof typeof Materials) * params.fins.count;
   }
   
   return noseMass + bodyMass + finsMass;
@@ -110,45 +108,44 @@ export const calculateTotalMass = (params: RocketParamsDisplay): number => {
 
 /**
  * Calculate the center of gravity of the rocket
- * @param params - Rocket parameters in display units
+ * @param params - Rocket parameters in SI units
  * @returns Center of gravity position from nose tip in meters
  */
-export const calculateCenterOfGravity = (params: RocketParamsDisplay): number => {
-  // Convert to SI units
-  const siParams = toSIRocketParams(params);
+export const calculateCenterOfGravity = (params: RocketParams): number => {
+  // Parameters are already in SI units
   
   // Calculate component masses and their CG positions
   const noseVolume = calculateNoseVolume(
-    siParams.nose.length,
-    siParams.nose.diameter,
-    siParams.nose.thickness
+    params.nose.length,
+    params.nose.diameter,
+    params.nose.thickness
   );
-  const noseMass = calculateComponentMass(noseVolume, siParams.nose.material as keyof typeof Materials);
-  const noseCG = siParams.nose.length * 0.6; // CG of cone is at 60% of length
+  const noseMass = calculateComponentMass(noseVolume, params.nose.material as keyof typeof Materials);
+  const noseCG = params.nose.length * 0.6; // CG of cone is at 60% of length
   
   const bodyVolume = calculateComponentVolume(
-    siParams.body.length,
-    siParams.body.diameter,
-    siParams.body.thickness
+    params.body.length,
+    params.body.diameter,
+    params.body.thickness
   );
-  const bodyMass = calculateComponentMass(bodyVolume, siParams.body.material as keyof typeof Materials);
-  const bodyCG = siParams.nose.length + siParams.body.length / 2; // CG at middle of body
+  const bodyMass = calculateComponentMass(bodyVolume, params.body.material as keyof typeof Materials);
+  const bodyCG = params.nose.length + params.body.length / 2; // CG at middle of body
   
   // For fins, assume CG is at the geometric center
   let finsMass = 0;
   let finsCG = 0;
-  if (siParams.fins.type === "trapozoidal") {
-    const fins = siParams.fins as any;
+  if (params.fins.type === "trapozoidal") {
+    const fins = params.fins as any;
     const finArea = ((fins.rootChord + fins.tipChord) * fins.height) / 2;
-    const finVolume = finArea * siParams.fins.thickness;
-    finsMass = calculateComponentMass(finVolume, siParams.fins.material as keyof typeof Materials) * siParams.fins.count;
-    finsCG = siParams.nose.length + siParams.body.length - siParams.fins.offset + fins.rootChord / 3;
-  } else if (siParams.fins.type === "elliptical") {
-    const fins = siParams.fins as any;
+    const finVolume = finArea * params.fins.thickness;
+    finsMass = calculateComponentMass(finVolume, params.fins.material as keyof typeof Materials) * params.fins.count;
+    finsCG = params.nose.length + params.body.length - params.fins.offset + fins.rootChord / 3;
+  } else if (params.fins.type === "elliptical") {
+    const fins = params.fins as any;
     const finArea = (Math.PI * fins.rootChord * fins.height) / 4;
-    const finVolume = finArea * siParams.fins.thickness;
-    finsMass = calculateComponentMass(finVolume, siParams.fins.material as keyof typeof Materials) * siParams.fins.count;
-    finsCG = siParams.nose.length + siParams.body.length - siParams.fins.offset + fins.rootChord / 2;
+    const finVolume = finArea * params.fins.thickness;
+    finsMass = calculateComponentMass(finVolume, params.fins.material as keyof typeof Materials) * params.fins.count;
+    finsCG = params.nose.length + params.body.length - params.fins.offset + fins.rootChord / 2;
   }
   
   // Calculate weighted average
@@ -160,31 +157,27 @@ export const calculateCenterOfGravity = (params: RocketParamsDisplay): number =>
 
 /**
  * Calculate the center of pressure (simplified)
- * @param params - Rocket parameters in display units
+ * @param params - Rocket parameters in SI units
  * @returns Center of pressure position from nose tip in meters
  */
-export const calculateCenterOfPressure = (params: RocketParamsDisplay): number => {
-  // Convert to SI units
-  const siParams = toSIRocketParams(params);
-  
+export const calculateCenterOfPressure = (params: RocketParams): number => {
   // Simplified CP calculation
   // For a basic rocket, CP is typically around 60-70% of total length
-  const totalLength = siParams.nose.length + siParams.body.length;
+  const totalLength = params.nose.length + params.body.length;
   return totalLength * 0.65;
 };
 
 /**
  * Calculate stability margin
- * @param params - Rocket parameters in display units
+ * @param params - Rocket parameters in SI units
  * @returns Stability margin (positive = stable, negative = unstable)
  */
-export const calculateStabilityMargin = (params: RocketParamsDisplay): number => {
+export const calculateStabilityMargin = (params: RocketParams): number => {
   const cg = calculateCenterOfGravity(params);
   const cp = calculateCenterOfPressure(params);
   
   // Stability margin = (CP - CG) / diameter
-  const siParams = toSIRocketParams(params);
-  const diameter = siParams.body.diameter;
+  const diameter = params.body.diameter;
   
   return (cp - cg) / diameter;
 };

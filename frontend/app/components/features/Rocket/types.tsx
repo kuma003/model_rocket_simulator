@@ -14,18 +14,18 @@ export const Materials = {
   },
 };
 
-// Note: These types represent display units (cm) for UI components
-// Internal calculations should use SI units (meters) via unit conversion
+// RocketBaseParam uses SI units (meters) for internal storage
+// Display components handle unit conversion for user interface
 interface RocketBaseParam {
-  length: number; // cm (display unit)
-  diameter: number; // cm (display unit)
-  thickness: number; // cm (display unit)
+  length: number; // m (SI unit)
+  diameter: number; // m (SI unit)
+  thickness: number; // m (SI unit)
   material: keyof typeof Materials; // Material type
   color: string;
 }
 
-// RocketParams interface for UI components (display units in cm)
-// For internal calculations, use unit conversion utilities
+// RocketParams interface using SI units (meters) for internal storage
+// Display components handle unit conversion for user interface
 export interface RocketParams {
   name: string;
   designer: string;
@@ -35,25 +35,25 @@ export interface RocketParams {
   body: RocketBaseParam;
   fins: Omit<RocketBaseParam, "length" | "diameter"> & {
     count: number;
-    offset: number; // cm (display unit)
+    offset: number; // m (SI unit)
   } & (
       | {
           type: "trapozoidal";
-          rootChord: number; // cm (display unit)
-          tipChord: number; // cm (display unit)
-          sweepLength: number; // cm (display unit)
-          height: number; // cm (display unit)
+          rootChord: number; // m (SI unit)
+          tipChord: number; // m (SI unit)
+          sweepLength: number; // m (SI unit)
+          height: number; // m (SI unit)
         }
       | {
           type: "elliptical";
-          rootChord: number; // cm (display unit)
-          height: number; // cm (display unit)
+          rootChord: number; // m (SI unit)
+          height: number; // m (SI unit)
         }
       | {
           type: "freedom";
           points: {
-            x: number; // cm (display unit)
-            y: number; // cm (display unit)
+            x: number; // m (SI unit)
+            y: number; // m (SI unit)
           }[];
         }
     );
