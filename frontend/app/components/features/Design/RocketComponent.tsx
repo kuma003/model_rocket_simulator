@@ -42,9 +42,9 @@ function generateFinVertices(
   // 原点：root chordの先端（ボディチューブ表面）
   return [
     { x: 0, y: 0 }, // root leading edge (ボディ接続点)
-    { x: rootChord, y: 0 }, // root trailing edge
-    { x: sweepLength + tipChord, y: height }, // tip trailing edge
-    { x: sweepLength, y: height }, // tip leading edge
+    { x: 0, y: rootChord }, // root trailing edge
+    { x: height, y: sweepLength + tipChord }, // tip trailing edge
+    { x: height, y: sweepLength }, // tip leading edge
   ];
 }
 
@@ -71,13 +71,13 @@ function projectFinTo2D(
   const sin = Math.sin(finAngleRad);
 
   // 側面図での圧縮率（角度による見え方の変化）
-  const compressionFactor = Math.abs(cos);
+  const compressionFactor = cos;
 
   // フィンの取り付け位置（ボディチューブ表面）
   const finBaseX = bodyCenterX + bodyRadius * cos;
 
   // 可視性の計算（前面にあるフィンほど不透明）
-  const opacity = Math.max(0.2, (cos + 1) / 2);
+  const opacity = 1;
 
   // Z-order（右側面図なのでcosの値で決定、負の値が後方）
   const zOrder = cos;
@@ -190,35 +190,22 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
         )}
       </g>
 
-      {/* ボディチューブ */}
-      <g
-        transform={`translate(${(totalWidth - bodyWidth) / 2}, ${noseHeight})`}
-      >
-        <rect
-          width={bodyWidth}
-          height={bodyHeight}
-          fill={body.color}
-          stroke="#000"
-          strokeWidth="1"
-        />
-      </g>
-
-      {/* フィン（正確な3D→2D投影で描画） */}
+      {/* フィン（後方のもののみ先に描画） */}
       {fins.type === "trapozoidal" &&
         (() => {
           // フィンの基本頂点座標を生成
           const baseVertices = generateFinVertices(fins, pixelsPerCm);
 
-          // フィンの取り付け位置（offsetを考慮）
+          // フィンの取り付け位置
           const finAttachmentY =
-            noseHeight + bodyHeight - fins.offset * pixelsPerCm;
+            noseHeight + bodyHeight - fins.offset * pixelsPerCm - finHeight;
           const bodyRadius = bodyWidth / 2;
           const bodyCenterX = totalWidth / 2;
 
           // 各フィンの投影データを計算
           const finData = Array.from({ length: fins.count }, (_, i) => {
             // フィンの配置角度（度）
-            const finAngle = (360 / fins.count) * i + rollAngle;
+            const finAngle = (360 / fins.count) * i + rollAngle + 12;
 
             // 3D配置から2D投影
             const projection = projectFinTo2D(
@@ -237,25 +224,95 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
             };
           });
 
-          // z-orderでソート（後方のフィンから描画）
-          finData.sort((a, b) => a.zOrder - b.zOrder);
+          // 後方のフィンのみ（cos < 0）を先に描画
+          return finData
+            .filter((fin) => fin.zOrder < 0)
+            .sort((a, b) => a.zOrder - b.zOrder)
+            .map((fin) => {
+              const pointsString = fin.vertices
+                .map((v) => `${v.x.toFixed(2)},${v.y.toFixed(2)}`)
+                .join(" ");
 
-          return finData.map((fin) => {
-            const pointsString = fin.vertices
-              .map((v) => `${v.x.toFixed(2)},${v.y.toFixed(2)}`)
-              .join(" ");
+              return (
+                <polygon
+                  key={fin.index}
+                  points={pointsString}
+                  fill={fins.color}
+                  stroke="#000"
+                  strokeWidth="1"
+                  opacity={fin.opacity}
+                />
+              );
+            });
+        })()}
 
-            return (
-              <polygon
-                key={fin.index}
-                points={pointsString}
-                fill={fins.color}
-                stroke="#000"
-                strokeWidth="1"
-                opacity={fin.opacity}
-              />
+      {/* ボディチューブ */}
+      <g
+        transform={`translate(${(totalWidth - bodyWidth) / 2}, ${noseHeight})`}
+      >
+        <rect
+          width={bodyWidth}
+          height={bodyHeight}
+          fill={body.color}
+          stroke="#000"
+          strokeWidth="1"
+        />
+      </g>
+
+      {/* フィン（前方のもののみ後で描画） */}
+      {fins.type === "trapozoidal" &&
+        (() => {
+          // フィンの基本頂点座標を生成
+          const baseVertices = generateFinVertices(fins, pixelsPerCm);
+
+          // フィンの取り付け位置
+          const finAttachmentY =
+            noseHeight + bodyHeight - fins.offset * pixelsPerCm - finHeight;
+          const bodyRadius = bodyWidth / 2;
+          const bodyCenterX = totalWidth / 2;
+
+          // 各フィンの投影データを計算
+          const finData = Array.from({ length: fins.count }, (_, i) => {
+            // フィンの配置角度（度）
+            const finAngle = (360 / fins.count) * i + rollAngle + 12;
+
+            // 3D配置から2D投影
+            const projection = projectFinTo2D(
+              baseVertices,
+              finAngle,
+              bodyCenterX,
+              bodyRadius,
+              finAttachmentY
             );
+
+            return {
+              index: i,
+              vertices: projection.projectedVertices,
+              opacity: projection.opacity,
+              zOrder: projection.zOrder,
+            };
           });
+
+          // 前方のフィンのみ（cos >= 0）を後で描画
+          return finData
+            .filter((fin) => fin.zOrder >= 0)
+            .sort((a, b) => a.zOrder - b.zOrder)
+            .map((fin) => {
+              const pointsString = fin.vertices
+                .map((v) => `${v.x.toFixed(2)},${v.y.toFixed(2)}`)
+                .join(" ");
+
+              return (
+                <polygon
+                  key={fin.index}
+                  points={pointsString}
+                  fill={fins.color}
+                  stroke="#000"
+                  strokeWidth="1"
+                  opacity={fin.opacity}
+                />
+              );
+            });
         })()}
     </g>
   );
