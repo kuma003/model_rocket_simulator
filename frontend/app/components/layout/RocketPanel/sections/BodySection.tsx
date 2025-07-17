@@ -18,7 +18,6 @@ const BodySection: React.FC<BodySectionProps> = ({ params, updateParams }) => {
         onChange={(value) =>
           updateParams({ body: { ...params.body, length: value } })
         }
-        min={0}
         step={0.1}
       />
       <UnitNumberInput
@@ -31,7 +30,6 @@ const BodySection: React.FC<BodySectionProps> = ({ params, updateParams }) => {
             nose: { ...params.nose, diameter: value },
           })
         }
-        min={0}
         step={0.1}
       />
       <UnitNumberInput

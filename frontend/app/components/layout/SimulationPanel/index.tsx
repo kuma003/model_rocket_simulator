@@ -24,12 +24,11 @@ export interface SimulationPanelProps {
   trajectoryData: TrajectoryData;
 }
 
-const SimulationPanel: React.FC<SimulationPanelProps> = ({ 
+const SimulationPanel: React.FC<SimulationPanelProps> = ({
   rocketParams,
   rocketProperties,
-  trajectoryData 
+  trajectoryData,
 }) => {
-
   return (
     <div className={styles.panel}>
       <div className={styles.header}>
@@ -93,8 +92,12 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
                 <Text size="sm" c="white">
                   安定比
                 </Text>
-                <Text size="sm" c={rocketProperties.stabilityMargin > 0 ? "white" : "red"} fw={600}>
-                  {rocketProperties.stabilityMargin.toFixed(3)}
+                <Text
+                  size="sm"
+                  c={rocketProperties.stabilityMargin > 0 ? "white" : "red"}
+                  fw={600}
+                >
+                  {(rocketProperties.stabilityMargin * 100).toFixed(1)}%
                 </Text>
               </Group>
             </Card>

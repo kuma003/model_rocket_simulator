@@ -30,7 +30,7 @@ const UnitNumberInput: React.FC<UnitNumberInputProps> = ({
   const handleChange = (val: string | number) => {
     const numValue = typeof val === "string" ? parseFloat(val) : val;
     if (isNaN(numValue)) {
-      onChange(0);
+      onChange(0.1);
       return;
     }
 
@@ -45,8 +45,10 @@ const UnitNumberInput: React.FC<UnitNumberInputProps> = ({
       value={displayValue}
       onChange={handleChange}
       stepHoldDelay={500}
-      stepHoldInterval={(t) => Math.max(1000 / t ** 2, 100)}
-      min={0}
+      stepHoldInterval={(t) => Math.max(1000 / t ** 2, 75)}
+      clampBehavior="strict"
+      allowNegative={false}
+      min={0.1}
       step={0.1}
       decimalScale={1}
       fixedDecimalScale
