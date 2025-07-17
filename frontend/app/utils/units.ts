@@ -1,6 +1,6 @@
 /**
  * Unit conversion utilities for the rocket simulator
- * Internal calculations use SI units (meters, kg, seconds)
+ * Internal storage uses SI units (meters, kg, seconds)
  * User interface displays convenient units (cm, g, etc.)
  */
 
@@ -139,9 +139,6 @@ export const fromSIVolume = (value: number, toUnit: VolumeUnit = VOLUME_UNITS.CU
       return value;
   }
 };
-
-// Note: RocketParams interface now uses SI units directly
-// These legacy conversion functions are kept for backward compatibility
 
 /**
  * Format a number with appropriate precision for display
