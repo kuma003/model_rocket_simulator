@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import type { RocketParams } from "../Rocket/types";
+import type { RocketProperties } from "../../../utils/calculations/simulationEngine";
 import RocketComponent from "./RocketComponent";
 import styles from "./rocketVisualization.module.scss";
 
@@ -7,12 +8,14 @@ import styles from "./rocketVisualization.module.scss";
  * Props for RocketVisualization component
  * @interface RocketVisualizationProps
  * @property {RocketParams} rocketParams - Rocket design parameters
+ * @property {RocketProperties} rocketProperties - Calculated rocket properties
  * @property {number} [pitchAngle=0] - Pitch angle in degrees
  * @property {number} [rollAngle=0] - Roll angle in degrees
  * @property {boolean} [showCenterMarkers=false] - Whether to show center markers
  */
 interface RocketVisualizationProps {
   rocketParams: RocketParams;
+  rocketProperties: RocketProperties;
   pitchAngle?: number;
   rollAngle?: number;
   showCenterMarkers?: boolean;
@@ -29,38 +32,39 @@ interface RocketVisualizationProps {
  */
 const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   rocketParams,
+  rocketProperties,
   pitchAngle = 0,
   rollAngle = 0,
   showCenterMarkers = false,
 }) => {
   const { nose, body, fins } = rocketParams;
 
-  // Calculate dimensions and scaling
-  const { totalHeightCM, scale, svgWidth, svgHeight } = useMemo(() => {
-    const totalHeightCM = nose.length + body.length;
+  // Calculate dimensions and scaling (using meter units)
+  const { totalHeightM, scale, svgWidth, svgHeight } = useMemo(() => {
+    const totalHeightM = nose.length + body.length;
     const finHeight = fins.type === "trapozoidal" ? fins.height : 0;
     const finChord =
       fins.type === "trapozoidal" ? Math.max(fins.rootChord, fins.tipChord) : 0;
-    const totalWidthCM = body.diameter + finChord;
+    const totalWidthM = body.diameter + finChord;
 
     // Target SVG dimensions
     const targetHeight = 800;
     const targetWidth = 500;
 
-    // Calculate scale based on dimensions
-    const scaleByHeight = targetHeight / (totalHeightCM + finHeight);
-    const scaleByWidth = targetWidth / totalWidthCM;
+    // Calculate scale based on dimensions (pixels per meter)
+    const scaleByHeight = targetHeight / (totalHeightM + finHeight);
+    const scaleByWidth = targetWidth / totalWidthM;
     const scale = Math.min(scaleByHeight, scaleByWidth) * 0.8; // 80% to leave margin
 
     // Calculate actual SVG dimensions
-    const svgWidth = Math.max(targetWidth, totalWidthCM * scale + 40); // 40px margin
+    const svgWidth = Math.max(targetWidth, totalWidthM * scale + 40); // 40px margin
     const svgHeight = Math.max(
       targetHeight,
-      (totalHeightCM + finHeight) * scale + 40
+      (totalHeightM + finHeight) * scale + 40
     ); // 40px margin
 
     return {
-      totalHeightCM,
+      totalHeightM,
       scale,
       svgWidth,
       svgHeight,
@@ -74,7 +78,7 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   
   // RocketComponentと同じ計算を使用
   const rocketWidth = Math.max(bodyWidth + finRootChord, 200);
-  const rocketHeight = (totalHeightCM + (fins.type === "trapozoidal" ? fins.height : 0)) * scale;
+  const rocketHeight = (totalHeightM + (fins.type === "trapozoidal" ? fins.height : 0)) * scale;
   
   const rocketOffsetX = (svgWidth - rocketWidth) / 2;
   const rocketOffsetY = (svgHeight - rocketHeight) / 2;
@@ -89,6 +93,7 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
         <g transform={`translate(${rocketOffsetX}, ${rocketOffsetY})`}>
           <RocketComponent
             rocketParams={rocketParams}
+            rocketProperties={rocketProperties}
             scale={scale}
             pitchAngle={pitchAngle}
             rollAngle={rollAngle}

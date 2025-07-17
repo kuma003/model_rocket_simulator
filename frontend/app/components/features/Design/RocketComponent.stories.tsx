@@ -1,41 +1,45 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import RocketComponent from "./RocketComponent";
 import type { RocketParams } from "../Rocket/types";
+import { calculateRocketProperties } from "../../../utils/calculations/simulationEngine";
 
 const defaultParams: RocketParams = {
   name: "サンプルロケット",
   designer: "テスト設計者",
   nose: {
-    length: 10,
-    diameter: 2.4,
-    thickness: 0.1,
+    length: 0.10, // Convert to meters
+    diameter: 0.024, // Convert to meters
+    thickness: 0.001, // Convert to meters
     material: "plastic",
     color: "#FF0000",
     type: "conical",
   },
   body: {
-    length: 30,
-    diameter: 2.4,
-    thickness: 0.1,
+    length: 0.30, // Convert to meters
+    diameter: 0.024, // Convert to meters
+    thickness: 0.001, // Convert to meters
     material: "cardboard",
     color: "#FFFF00",
   },
   fins: {
-    thickness: 0.1,
+    thickness: 0.001, // Convert to meters
     material: "balsa",
     color: "#0000FF",
     count: 3,
     type: "trapozoidal",
-    rootChord: 5,
-    tipChord: 2,
-    sweepLength: 3,
-    height: 4,
-    offset: 0,
+    rootChord: 0.05, // Convert to meters
+    tipChord: 0.02, // Convert to meters
+    sweepLength: 0.03, // Convert to meters
+    height: 0.04, // Convert to meters
+    offset: 0.02, // Convert to meters
   },
   engine: {
     name: "Estes A10",
   },
 };
+
+// Calculate rocket properties for stories
+const defaultRocketProperties = calculateRocketProperties(defaultParams);
 
 const meta: Meta<typeof RocketComponent> = {
   title: "Components/RocketComponent",
@@ -88,6 +92,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     rocketParams: defaultParams,
+    rocketProperties: defaultRocketProperties,
     scale: 2,
     pitchAngle: 0,
     rollAngle: 0,
@@ -97,6 +102,7 @@ export const Default: Story = {
 export const SmallScale: Story = {
   args: {
     rocketParams: defaultParams,
+    rocketProperties: defaultRocketProperties,
     scale: 1,
     pitchAngle: 0,
     rollAngle: 0,
@@ -113,6 +119,7 @@ export const SmallScale: Story = {
 export const LargeScale: Story = {
   args: {
     rocketParams: defaultParams,
+    rocketProperties: defaultRocketProperties,
     scale: 5,
     pitchAngle: 0,
     rollAngle: 0,
@@ -129,6 +136,7 @@ export const LargeScale: Story = {
 export const PitchAngle45: Story = {
   args: {
     rocketParams: defaultParams,
+    rocketProperties: defaultRocketProperties,
     scale: 2,
     pitchAngle: 45,
     rollAngle: 0,
@@ -145,6 +153,7 @@ export const PitchAngle45: Story = {
 export const RollAngle90: Story = {
   args: {
     rocketParams: defaultParams,
+    rocketProperties: defaultRocketProperties,
     scale: 2,
     pitchAngle: 0,
     rollAngle: 90,
@@ -161,6 +170,7 @@ export const RollAngle90: Story = {
 export const CombinedAngles: Story = {
   args: {
     rocketParams: defaultParams,
+    rocketProperties: defaultRocketProperties,
     scale: 2,
     pitchAngle: 30,
     rollAngle: 45,
@@ -185,6 +195,15 @@ export const OgiveNose: Story = {
         color: "#FF6600",
       },
     },
+    rocketProperties: calculateRocketProperties({
+      ...defaultParams,
+      name: "オジャイブノーズロケット",
+      nose: {
+        ...defaultParams.nose,
+        type: "ogive",
+        color: "#FF6600",
+      },
+    }),
     scale: 2,
     pitchAngle: 0,
     rollAngle: 0,
@@ -209,6 +228,15 @@ export const EllipticalNose: Story = {
         color: "#9966FF",
       },
     },
+    rocketProperties: calculateRocketProperties({
+      ...defaultParams,
+      name: "楕円ノーズロケット",
+      nose: {
+        ...defaultParams.nose,
+        type: "elliptical",
+        color: "#9966FF",
+      },
+    }),
     scale: 2,
     pitchAngle: 0,
     rollAngle: 0,
@@ -253,30 +281,59 @@ export const HighPowerRocket: Story = {
       name: "高出力ロケット",
       nose: {
         ...defaultParams.nose,
-        length: 15,
-        diameter: 3.8,
+        length: 0.15, // Convert to meters
+        diameter: 0.038, // Convert to meters
         type: "ogive",
         color: "#FF4500",
       },
       body: {
         ...defaultParams.body,
-        length: 60,
-        diameter: 3.8,
+        length: 0.60, // Convert to meters
+        diameter: 0.038, // Convert to meters
         color: "#1E90FF",
       },
       fins: {
-        thickness: 0.1,
+        thickness: 0.001, // Convert to meters
         material: "balsa",
         color: "#FF1493",
         count: 4,
-        offset: 0,
+        offset: 0.02, // Convert to meters
         type: "trapozoidal",
-        rootChord: 8,
-        tipChord: 3,
-        sweepLength: 5,
-        height: 6,
+        rootChord: 0.08, // Convert to meters
+        tipChord: 0.03, // Convert to meters
+        sweepLength: 0.05, // Convert to meters
+        height: 0.06, // Convert to meters
       },
     },
+    rocketProperties: calculateRocketProperties({
+      ...defaultParams,
+      name: "高出力ロケット",
+      nose: {
+        ...defaultParams.nose,
+        length: 0.15,
+        diameter: 0.038,
+        type: "ogive",
+        color: "#FF4500",
+      },
+      body: {
+        ...defaultParams.body,
+        length: 0.60,
+        diameter: 0.038,
+        color: "#1E90FF",
+      },
+      fins: {
+        thickness: 0.001,
+        material: "balsa",
+        color: "#FF1493",
+        count: 4,
+        offset: 0.02,
+        type: "trapozoidal",
+        rootChord: 0.08,
+        tipChord: 0.03,
+        sweepLength: 0.05,
+        height: 0.06,
+      },
+    }),
     scale: 1.5,
     pitchAngle: 0,
     rollAngle: 0,
@@ -297,10 +354,19 @@ export const FinOffset: Story = {
       name: "フィンオフセットテスト",
       fins: {
         ...defaultParams.fins,
-        offset: 5,
+        offset: 0.05, // Convert to meters
         color: "#FF4500",
       },
     },
+    rocketProperties: calculateRocketProperties({
+      ...defaultParams,
+      name: "フィンオフセットテスト",
+      fins: {
+        ...defaultParams.fins,
+        offset: 0.05,
+        color: "#FF4500",
+      },
+    }),
     scale: 2,
     pitchAngle: 0,
     rollAngle: 0,
@@ -317,6 +383,7 @@ export const FinOffset: Story = {
 export const FinOffsetComparison: Story = {
   args: {
     rocketParams: defaultParams,
+    rocketProperties: defaultRocketProperties,
     scale: 1.5,
     pitchAngle: 0,
     rollAngle: 0,
@@ -387,6 +454,7 @@ export const FinOffsetComparison: Story = {
 export const ComparisonView: Story = {
   args: {
     rocketParams: defaultParams,
+    rocketProperties: defaultRocketProperties,
     scale: 1.5,
     pitchAngle: 0,
     rollAngle: 0,

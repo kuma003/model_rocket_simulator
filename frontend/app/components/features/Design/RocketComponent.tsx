@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import type { RocketParams } from "../Rocket/types";
+import type { RocketProperties } from "../../../utils/calculations/simulationEngine";
 import { CenterMarker } from "../../ui/CenterMarkers";
-import { calculateCenterOfGravity, calculateCenterOfPressure } from "../../../utils/rocketCalculations";
 
 /**
  * Type definition for a point in 2D coordinate system
@@ -27,16 +27,16 @@ interface Point2D {
  */
 function generateFinVertices(
   finParams: RocketParams["fins"],
-  pixelsPerCm: number
+  pixelsPerM: number
 ): Point2D[] {
   if (finParams.type !== "trapozoidal") {
     return [];
   }
 
-  const rootChord = finParams.rootChord * pixelsPerCm;
-  const tipChord = finParams.tipChord * pixelsPerCm;
-  const height = finParams.height * pixelsPerCm;
-  const sweepLength = finParams.sweepLength * pixelsPerCm;
+  const rootChord = finParams.rootChord * pixelsPerM;
+  const tipChord = finParams.tipChord * pixelsPerM;
+  const height = finParams.height * pixelsPerM;
+  const sweepLength = finParams.sweepLength * pixelsPerM;
 
   // フィンの頂点を定義（ローカル座標系）
   // X軸：ボディチューブから外向き（chord方向）
@@ -90,93 +90,20 @@ function projectFinTo2D(
   return { projectedVertices, zOrder };
 }
 
-/**
- * Calculate center of gravity position using actual calculations
- * @param {RocketParams} rocketParams - Rocket design parameters
- * @returns {number} Center of gravity position from nose tip in cm
- */
-function calculateCenterOfGravityForDisplay(rocketParams: RocketParams): number {
-  // Convert to SI units (meters) for calculation
-  const siParams = {
-    ...rocketParams,
-    nose: {
-      ...rocketParams.nose,
-      length: rocketParams.nose.length / 100, // cm to m
-      diameter: rocketParams.nose.diameter / 100, // cm to m
-      thickness: rocketParams.nose.thickness / 100, // cm to m
-    },
-    body: {
-      ...rocketParams.body,
-      length: rocketParams.body.length / 100, // cm to m
-      diameter: rocketParams.body.diameter / 100, // cm to m
-      thickness: rocketParams.body.thickness / 100, // cm to m
-    },
-    fins: {
-      ...rocketParams.fins,
-      thickness: rocketParams.fins.thickness / 100, // cm to m
-      offset: rocketParams.fins.offset / 100, // cm to m
-      ...(rocketParams.fins.type === "trapozoidal" ? {
-        rootChord: rocketParams.fins.rootChord / 100, // cm to m
-        tipChord: rocketParams.fins.tipChord / 100, // cm to m
-        height: rocketParams.fins.height / 100, // cm to m
-        sweepLength: rocketParams.fins.sweepLength / 100, // cm to m
-      } : {}),
-    },
-  };
-
-  // Use actual calculation and convert back to cm
-  return calculateCenterOfGravity(siParams) * 100;
-}
-
-/**
- * Calculate center of pressure position using actual calculations
- * @param {RocketParams} rocketParams - Rocket design parameters
- * @returns {number} Center of pressure position from nose tip in cm
- */
-function calculateCenterOfPressureForDisplay(rocketParams: RocketParams): number {
-  // Convert to SI units (meters) for calculation
-  const siParams = {
-    ...rocketParams,
-    nose: {
-      ...rocketParams.nose,
-      length: rocketParams.nose.length / 100, // cm to m
-      diameter: rocketParams.nose.diameter / 100, // cm to m
-      thickness: rocketParams.nose.thickness / 100, // cm to m
-    },
-    body: {
-      ...rocketParams.body,
-      length: rocketParams.body.length / 100, // cm to m
-      diameter: rocketParams.body.diameter / 100, // cm to m
-      thickness: rocketParams.body.thickness / 100, // cm to m
-    },
-    fins: {
-      ...rocketParams.fins,
-      thickness: rocketParams.fins.thickness / 100, // cm to m
-      offset: rocketParams.fins.offset / 100, // cm to m
-      ...(rocketParams.fins.type === "trapozoidal" ? {
-        rootChord: rocketParams.fins.rootChord / 100, // cm to m
-        tipChord: rocketParams.fins.tipChord / 100, // cm to m
-        height: rocketParams.fins.height / 100, // cm to m
-        sweepLength: rocketParams.fins.sweepLength / 100, // cm to m
-      } : {}),
-    },
-  };
-
-  // Use actual calculation and convert back to cm
-  return calculateCenterOfPressure(siParams) * 100;
-}
 
 /**
  * Props for RocketComponent
  * @interface RocketComponentProps
  * @property {RocketParams} rocketParams - Rocket design parameters
- * @property {number} [scale=2] - Pixels per centimeter conversion rate
+ * @property {RocketProperties} rocketProperties - Calculated rocket properties
+ * @property {number} [scale=200] - Pixels per meter conversion rate
  * @property {number} [pitchAngle=0] - Pitch angle in degrees
  * @property {number} [rollAngle=0] - Roll angle in degrees
  * @property {boolean} [showCenterMarkers=false] - Whether to show center of gravity and pressure center markers
  */
 interface RocketComponentProps {
   rocketParams: RocketParams;
+  rocketProperties: RocketProperties;
   scale?: number;
   pitchAngle?: number;
   rollAngle?: number;
@@ -203,28 +130,29 @@ interface RocketComponentProps {
  */
 const RocketComponent: React.FC<RocketComponentProps> = ({
   rocketParams,
-  scale = 2,
+  rocketProperties,
+  scale = 200,
   pitchAngle = 0,
   rollAngle = 0,
   showCenterMarkers = false,
 }) => {
   const { nose, body, fins } = rocketParams;
 
-  // 物理寸法をピクセルに変換
-  const pixelsPerCm = scale;
+  // 物理寸法をピクセルに変換（メートル単位）
+  const pixelsPerM = scale;
 
-  // 各部品の寸法をピクセルに変換
-  const noseHeight = nose.length * pixelsPerCm;
-  const noseWidth = nose.diameter * pixelsPerCm;
-  const bodyHeight = body.length * pixelsPerCm;
-  const bodyWidth = body.diameter * pixelsPerCm;
-  const finHeight = fins.type === "trapozoidal" ? fins.height * pixelsPerCm : 0;
+  // 各部品の寸法をピクセルに変換（メートル単位）
+  const noseHeight = nose.length * pixelsPerM;
+  const noseWidth = nose.diameter * pixelsPerM;
+  const bodyHeight = body.length * pixelsPerM;
+  const bodyWidth = body.diameter * pixelsPerM;
+  const finHeight = fins.type === "trapozoidal" ? fins.height * pixelsPerM : 0;
   const finRootChord =
-    fins.type === "trapozoidal" ? fins.rootChord * pixelsPerCm : 0;
+    fins.type === "trapozoidal" ? fins.rootChord * pixelsPerM : 0;
   const finTipChord =
-    fins.type === "trapozoidal" ? fins.tipChord * pixelsPerCm : 0;
+    fins.type === "trapozoidal" ? fins.tipChord * pixelsPerM : 0;
   const finSweepLength =
-    fins.type === "trapozoidal" ? fins.sweepLength * pixelsPerCm : 0;
+    fins.type === "trapozoidal" ? fins.sweepLength * pixelsPerM : 0;
 
   // 全体の高さを計算
   const totalHeight = noseHeight + bodyHeight + finHeight;
@@ -244,11 +172,11 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
     }
 
     // フィンの基本頂点座標を生成
-    const baseVertices = generateFinVertices(fins, pixelsPerCm);
+    const baseVertices = generateFinVertices(fins, pixelsPerM);
 
     // フィンの取り付け位置
     const finAttachmentY =
-      noseHeight + bodyHeight - fins.offset * pixelsPerCm - finRootChord;
+      noseHeight + bodyHeight - fins.offset * pixelsPerM - finRootChord;
     const bodyRadius = bodyWidth / 2;
     const bodyCenterX = totalWidth / 2;
 
@@ -285,7 +213,7 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
     return { backFins, frontFins };
   }, [
     fins,
-    pixelsPerCm,
+    pixelsPerM,
     noseHeight,
     bodyHeight,
     finHeight,
@@ -294,12 +222,13 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
     rollAngle,
   ]);
 
-  // 重心と圧力中心の位置を計算
+  // 重心と圧力中心の位置を計算（実際の計算結果を使用）
   const { cgPosition, cpPosition } = useMemo(() => {
-    const cgPosition = calculateCenterOfGravityForDisplay(rocketParams) * pixelsPerCm;
-    const cpPosition = calculateCenterOfPressureForDisplay(rocketParams) * pixelsPerCm;
+    // Use calculated rocket properties with meter-to-pixel conversion
+    const cgPosition = rocketProperties.specs.CGlen_f * pixelsPerM; // m to pixels
+    const cpPosition = rocketProperties.specs.CPlen * pixelsPerM; // m to pixels
     return { cgPosition, cpPosition };
-  }, [rocketParams, pixelsPerCm]);
+  }, [rocketProperties, pixelsPerM]);
 
   return (
     <g transform={pitchTransform}>

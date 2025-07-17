@@ -12,6 +12,7 @@ import {
   calculatePitchingMomentCoefficient,
 } from "./aerodynamics";
 import { UNIT_CONVERSIONS, PHYSICS_CONSTANTS } from "../physics/constants";
+import { calculateCenterOfGravity, calculateCenterOfPressure as calculateCenterOfPressureFromRocketCalculations } from "../rocketCalculations";
 
 export interface RocketProperties {
   dryMass: number; // g
@@ -54,6 +55,10 @@ export function calculateRocketProperties(params: RocketParams): RocketPropertie
   // bodyResults.dragCoefficient +
   // finResults.totalDragCoefficient;
 
+  // Calculate actual center of gravity and pressure center
+  const actualCG = calculateCenterOfGravity(params);
+  const actualCP = calculateCenterOfPressureFromRocketCalculations(params);
+
   // RocketSpecs の計算
   const specs: RocketSpecs = {
     ref_len: refLength,
@@ -61,14 +66,10 @@ export function calculateRocketProperties(params: RocketParams): RocketPropertie
     mass_dry: dryMass,
     mass_i: dryMass + 100, // DUMMY: 推進剤重量
     mass_f: dryMass,
-    CGlen_i: refLength * 0.5, // DUMMY
-    CGlen_f: refLength * 0.5, // DUMMY
+    CGlen_i: actualCG, // Use actual center of gravity
+    CGlen_f: actualCG, // Use actual center of gravity
     Iyz: inertiaMoment,
-    CPlen: calculateCenterOfPressure(
-      params.nose.length,
-      params.body.length,
-      finResults.Cp
-    ),
+    CPlen: actualCP, // Use actual center of pressure
     Cd: totalCd,
     Cna: finResults.Cna,
     Cmq: calculatePitchingMomentCoefficient(),

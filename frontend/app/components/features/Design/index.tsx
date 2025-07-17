@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 import RocketPanel from "~/components/layout/RocketPanel";
 import SimulationPanel from "~/components/layout/SimulationPanel";
 import RocketVisualization from "./RocketVisualization";
 import type { RocketParams } from "../Rocket/types";
+import { calculateRocketProperties, calculateTrajectory, type RocketProperties, type TrajectoryData } from "../../../utils/calculations/simulationEngine";
 import styles from "./design.module.scss";
 
 const Design: React.FC = () => {
@@ -41,6 +42,13 @@ const Design: React.FC = () => {
     },
   });
 
+  // Calculate rocket properties and trajectory once at the parent level
+  const { rocketProperties, trajectoryData } = useMemo(() => {
+    const rocketProperties = calculateRocketProperties(rocketParams);
+    const trajectoryData = calculateTrajectory(rocketProperties);
+    return { rocketProperties, trajectoryData };
+  }, [rocketParams]);
+
   return (
     <div className={styles.design}>
       <RocketPanel
@@ -48,9 +56,17 @@ const Design: React.FC = () => {
         setRocketParams={setRocketParams}
       />
       <div className={styles.centerArea}>
-        <RocketVisualization rocketParams={rocketParams} showCenterMarkers={true} />
+        <RocketVisualization 
+          rocketParams={rocketParams} 
+          rocketProperties={rocketProperties}
+          showCenterMarkers={true} 
+        />
       </div>
-      <SimulationPanel rocketParams={rocketParams} />
+      <SimulationPanel 
+        rocketParams={rocketParams}
+        rocketProperties={rocketProperties}
+        trajectoryData={trajectoryData}
+      />
     </div>
   );
 };

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import type { RocketParams } from "../../features/Rocket/types";
 import {
-  runSimulation,
-  type SimulationResults,
+  type RocketProperties,
+  type TrajectoryData,
 } from "../../../utils/calculations/simulationEngine";
 import styles from "./simulationPanel.module.scss";
 import { Stack, ScrollArea, Text, Card, Group, Divider } from "@mantine/core";
@@ -20,37 +20,15 @@ import {
 
 export interface SimulationPanelProps {
   rocketParams: RocketParams;
+  rocketProperties: RocketProperties;
+  trajectoryData: TrajectoryData;
 }
 
-const SimulationPanel: React.FC<SimulationPanelProps> = ({ rocketParams }) => {
-  const [results, setResults] = useState<SimulationResults>({
-    dryMass: 0,
-    inertiaMoment: 0,
-    flightTime: 0,
-    maxAltitude: 0,
-    altitudeData: [],
-    specs: {
-      ref_len: 0,
-      diam: 0,
-      mass_dry: 0,
-      mass_i: 0,
-      mass_f: 0,
-      CGlen_i: 0,
-      CGlen_f: 0,
-      Iyz: 0,
-      CPlen: 0,
-      Cd: 0,
-      Cna: 0,
-      Cmq: 0,
-      vel_1st: 0,
-      op_time: 0,
-    },
-  });
-
-  useEffect(() => {
-    const newResults = runSimulation(rocketParams);
-    setResults(newResults);
-  }, [rocketParams]);
+const SimulationPanel: React.FC<SimulationPanelProps> = ({ 
+  rocketParams,
+  rocketProperties,
+  trajectoryData 
+}) => {
 
   return (
     <div className={styles.panel}>
@@ -69,7 +47,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ rocketParams }) => {
                   乾燥重量
                 </Text>
                 <Text size="sm" c="white" fw={600}>
-                  {results.dryMass.toFixed(1)}g
+                  {rocketProperties.dryMass.toFixed(1)}g
                 </Text>
               </Group>
             </Card>
@@ -83,7 +61,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ rocketParams }) => {
                   慣性モーメント
                 </Text>
                 <Text size="sm" c="white" fw={600}>
-                  {results.inertiaMoment.toFixed(2)}g·cm²
+                  {rocketProperties.inertiaMoment.toFixed(2)}g·cm²
                 </Text>
               </Group>
             </Card>
@@ -94,7 +72,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ rocketParams }) => {
                   飛行時間
                 </Text>
                 <Text size="sm" c="white" fw={600}>
-                  {results.flightTime.toFixed(1)}秒
+                  {trajectoryData.flightTime.toFixed(1)}秒
                 </Text>
               </Group>
             </Card>
@@ -105,7 +83,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ rocketParams }) => {
                   最高高度
                 </Text>
                 <Text size="sm" c="white" fw={600}>
-                  {results.maxAltitude.toFixed(1)}m
+                  {trajectoryData.maxAltitude.toFixed(1)}m
                 </Text>
               </Group>
             </Card>
@@ -119,7 +97,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ rocketParams }) => {
               </Text>
               <div style={{ height: 200, width: "100%" }}>
                 <ResponsiveContainer>
-                  <LineChart data={results.altitudeData}>
+                  <LineChart data={trajectoryData.altitudeData}>
                     <CartesianGrid
                       strokeDasharray="3 3"
                       stroke="rgba(255,255,255,0.1)"
