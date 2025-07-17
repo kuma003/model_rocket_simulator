@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import type { RocketParams } from "../Rocket/types";
+import { CenterOfGravityMarker, CenterOfPressureMarker } from "../../ui/CenterMarkers";
 
 /**
  * Type definition for a point in 2D coordinate system
@@ -95,26 +96,29 @@ function projectFinTo2D(
  */
 function calculateCenterOfGravity(rocketParams: RocketParams): number {
   const { nose, body, fins } = rocketParams;
-  
+
   // 材質の密度（kg/m³）
   const Materials = {
     plastic: { density: 1250 },
     balsa: { density: 170 },
     cardboard: { density: 680 },
   };
-  
+
   // 各部品の体積と重心位置を計算
-  const noseVolume = (Math.PI * Math.pow(nose.diameter / 2, 2) * nose.length) / 3; // 円錐の体積
+  const noseVolume =
+    (Math.PI * Math.pow(nose.diameter / 2, 2) * nose.length) / 3; // 円錐の体積
   const noseCG = nose.length * 0.75; // 円錐の重心は高さの3/4
-  const noseMass = noseVolume * Materials[nose.material].density * nose.thickness;
-  
+  const noseMass =
+    noseVolume * Materials[nose.material].density * nose.thickness;
+
   const bodyVolume = Math.PI * Math.pow(body.diameter / 2, 2) * body.length; // 円筒の体積
   const bodyCG = nose.length + body.length / 2; // 円筒の重心は中央
-  const bodyMass = bodyVolume * Materials[body.material].density * body.thickness;
-  
+  const bodyMass =
+    bodyVolume * Materials[body.material].density * body.thickness;
+
   let finsMass = 0;
   let finsCG = 0;
-  
+
   if (fins.type === "trapozoidal") {
     // 台形フィンの面積
     const finArea = ((fins.rootChord + fins.tipChord) / 2) * fins.height;
@@ -123,11 +127,11 @@ function calculateCenterOfGravity(rocketParams: RocketParams): number {
     // フィンの重心位置（フィンの中心）
     finsCG = nose.length + body.length - fins.offset - fins.height / 2;
   }
-  
+
   // 全体の重心位置を計算
   const totalMass = noseMass + bodyMass + finsMass;
   const totalMoment = noseMass * noseCG + bodyMass * bodyCG + finsMass * finsCG;
-  
+
   return totalMoment / totalMass;
 }
 
@@ -138,32 +142,37 @@ function calculateCenterOfGravity(rocketParams: RocketParams): number {
  */
 function calculateCenterOfPressure(rocketParams: RocketParams): number {
   const { nose, body, fins } = rocketParams;
-  
+
   // 簡略化された圧力中心計算
   // 実際の計算は複雑ですが、ここでは近似値を使用
-  
+
   // ノーズコーンの圧力中心
   const noseCpContribution = nose.length * 0.6; // ノーズコーンの圧力中心
   const noseArea = Math.PI * Math.pow(nose.diameter / 2, 2);
-  
+
   // ボディの圧力中心（通常は中央付近）
   const bodyCpContribution = nose.length + body.length / 2;
   const bodyArea = body.diameter * body.length; // 側面積
-  
+
   // フィンの圧力中心
   let finsCpContribution = 0;
   let finsArea = 0;
-  
+
   if (fins.type === "trapozoidal") {
-    finsArea = ((fins.rootChord + fins.tipChord) / 2) * fins.height * fins.count;
+    finsArea =
+      ((fins.rootChord + fins.tipChord) / 2) * fins.height * fins.count;
     // フィンの圧力中心は通常フィンの中心よりやや後方
-    finsCpContribution = nose.length + body.length - fins.offset - fins.height * 0.3;
+    finsCpContribution =
+      nose.length + body.length - fins.offset - fins.height * 0.3;
   }
-  
+
   // 面積重み付き平均
   const totalArea = noseArea + bodyArea + finsArea;
-  const totalMoment = noseArea * noseCpContribution + bodyArea * bodyCpContribution + finsArea * finsCpContribution;
-  
+  const totalMoment =
+    noseArea * noseCpContribution +
+    bodyArea * bodyCpContribution +
+    finsArea * finsCpContribution;
+
   return totalMoment / totalArea;
 }
 
@@ -373,89 +382,12 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
         <g>
           {/* 重心マーカー（工学用シンボル） */}
           <g transform={`translate(${totalWidth / 2}, ${cgPosition})`}>
-            <circle
-              cx="0"
-              cy="0"
-              r="8"
-              fill="none"
-              stroke="#FF0000"
-              strokeWidth="2"
-            />
-            {/* 第1象限（右上）の塗りつぶし */}
-            <path
-              d="M 0 0 L 6 0 A 6 6 0 0 0 0 -6 Z"
-              fill="#FF0000"
-            />
-            {/* 第3象限（左下）の塗りつぶし */}
-            <path
-              d="M 0 0 L -6 0 A 6 6 0 0 0 0 6 Z"
-              fill="#FF0000"
-            />
-            {/* 十字線 */}
-            <line
-              x1="-6"
-              y1="0"
-              x2="6"
-              y2="0"
-              stroke="#FF0000"
-              strokeWidth="2"
-            />
-            <line
-              x1="0"
-              y1="-6"
-              x2="0"
-              y2="6"
-              stroke="#FF0000"
-              strokeWidth="2"
-            />
-            <text
-              x="12"
-              y="0"
-              dy="0.35em"
-              fontSize="12"
-              fill="#FF0000"
-              fontWeight="bold"
-            >
-              CG
-            </text>
+            <CenterOfGravityMarker />
           </g>
 
           {/* 圧力中心マーカー（青色） */}
           <g transform={`translate(${totalWidth / 2}, ${cpPosition})`}>
-            <circle
-              cx="0"
-              cy="0"
-              r="8"
-              fill="none"
-              stroke="#0000FF"
-              strokeWidth="2"
-            />
-            <line
-              x1="-6"
-              y1="0"
-              x2="6"
-              y2="0"
-              stroke="#0000FF"
-              strokeWidth="2"
-            />
-            <line
-              x1="0"
-              y1="-6"
-              x2="0"
-              y2="6"
-              stroke="#0000FF"
-              strokeWidth="2"
-            />
-            <text
-              x="12"
-              y="0"
-              dy="0.35em"
-              fontSize="12"
-              fill="#0000FF"
-              fontWeight="bold"
-            >
-              CP
-            </text>
+            <CenterOfPressureMarker />
           </g>
         </g>
       )}
