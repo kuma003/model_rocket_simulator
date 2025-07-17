@@ -27,6 +27,8 @@ This file contains configuration and instructions for Claude Code when working o
 - **MANDATORY**: Always write docstrings in English to prevent character encoding issues
 - Use JSDoc format for TypeScript/JavaScript files
 - Include parameter descriptions, return types, and usage examples where appropriate
+- **MANDATORY**: Do NOT add comments explaining unit changes or conversions in code
+- Unit system details should be documented in Git history, not in source code comments
 
 ## Commit Guidelines
 
