@@ -17,6 +17,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
+import { UNIT_CONVERSIONS } from "~/utils/physics/constants";
 
 export interface SimulationPanelProps {
   rocketParams: RocketParams;
@@ -29,6 +30,8 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
   rocketProperties,
   trajectoryData,
 }) => {
+  const { G_TO_KG, CM_TO_M } = UNIT_CONVERSIONS;
+
   return (
     <div className={styles.panel}>
       <div className={styles.header}>
@@ -46,7 +49,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
                   乾燥重量
                 </Text>
                 <Text size="sm" c="white" fw={600}>
-                  {rocketProperties.dryMass.toFixed(1)}g
+                  {(rocketProperties.dryMass / G_TO_KG).toFixed(1)}g
                 </Text>
               </Group>
             </Card>
@@ -60,7 +63,11 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
                   慣性モーメント
                 </Text>
                 <Text size="sm" c="white" fw={600}>
-                  {rocketProperties.inertiaMoment.toFixed(2)}g·cm²
+                  {(
+                    rocketProperties.inertiaMoment /
+                    (CM_TO_M * CM_TO_M * CM_TO_M)
+                  ).toFixed(2)}
+                  g·cm²
                 </Text>
               </Group>
             </Card>

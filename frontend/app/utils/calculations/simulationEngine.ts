@@ -31,8 +31,6 @@ export interface SimulationResults extends RocketProperties, TrajectoryData {}
 export function calculateRocketProperties(
   params: RocketParams
 ): RocketProperties {
-  const { G_TO_KG } = UNIT_CONVERSIONS;
-
   // 各コンポーネントの計算
   const noseResults = calculateNoseProperties(params);
   const bodyResults = calculateBodyProperties(params);
@@ -43,12 +41,11 @@ export function calculateRocketProperties(
   console.log("Fin Results:", finResults);
 
   // 総重量計算
-  const totalMassKg = noseResults.mass + bodyResults.mass + finResults.mass;
-  const dryMass = totalMassKg / G_TO_KG; // Convert to grams for display
+  const dryMass = noseResults.mass + bodyResults.mass + finResults.mass;
 
   // 慣性モーメント計算
   const totalInertiaMoment = noseResults.Iyx + bodyResults.Iyx;
-  const inertiaMoment = totalInertiaMoment * 10000; // Convert to g·cm²
+  const inertiaMoment = totalInertiaMoment;
 
   // 空力計算
   const refLength = params.nose.length + params.body.length;
@@ -60,7 +57,7 @@ export function calculateRocketProperties(
     (noseResults.Cg * noseResults.mass +
       bodyResults.Cg * bodyResults.mass +
       finResults.Cg * finResults.mass) /
-    totalMassKg;
+    dryMass;
   const CP =
     (noseResults.Cp * noseResults.Cna +
       bodyResults.Cp * bodyResults.Cna +

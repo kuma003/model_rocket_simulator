@@ -42,26 +42,20 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   // Calculate dimensions and scaling (using meter units)
   const { totalHeightM, scale, svgWidth, svgHeight } = useMemo(() => {
     const totalHeightM = nose.length + body.length;
-    const finHeight = fins.type === "trapozoidal" ? fins.height : 0;
-    const finChord =
-      fins.type === "trapozoidal" ? Math.max(fins.rootChord, fins.tipChord) : 0;
-    const totalWidthM = body.diameter + finChord;
+    const totalWidthM = body.diameter;
 
     // Target SVG dimensions
     const targetHeight = 800;
     const targetWidth = 500;
 
     // Calculate scale based on dimensions (pixels per meter)
-    const scaleByHeight = targetHeight / (totalHeightM + finHeight);
+    const scaleByHeight = targetHeight / totalHeightM;
     const scaleByWidth = targetWidth / totalWidthM;
     const scale = Math.min(scaleByHeight, scaleByWidth) * 0.8; // 80% to leave margin
 
     // Calculate actual SVG dimensions
     const svgWidth = Math.max(targetWidth, totalWidthM * scale + 40); // 40px margin
-    const svgHeight = Math.max(
-      targetHeight,
-      (totalHeightM + finHeight) * scale + 40
-    ); // 40px margin
+    const svgHeight = Math.max(targetHeight, totalHeightM * scale + 40); // 40px margin
 
     return {
       totalHeightM,
@@ -72,14 +66,13 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   }, [nose.length, body.length, body.diameter, fins]);
 
   // ロケットを中央配置するためのオフセット計算
-  const finChord = fins.type === "trapozoidal" ? Math.max(fins.rootChord, fins.tipChord) : 0;
+  const finChord =
+    fins.type === "trapozoidal" ? Math.max(fins.rootChord, fins.tipChord) : 0;
   const bodyWidth = body.diameter * scale;
-  const finRootChord = fins.type === "trapozoidal" ? fins.rootChord * scale : 0;
-  
-  // RocketComponentと同じ計算を使用
-  const rocketWidth = Math.max(bodyWidth + finRootChord, 200);
-  const rocketHeight = (totalHeightM + (fins.type === "trapozoidal" ? fins.height : 0)) * scale;
-  
+
+  const rocketWidth = Math.max(bodyWidth, 200);
+  const rocketHeight = totalHeightM * scale;
+
   const rocketOffsetX = (svgWidth - rocketWidth) / 2;
   const rocketOffsetY = (svgHeight - rocketHeight) / 2;
 

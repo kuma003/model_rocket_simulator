@@ -146,16 +146,11 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
   const bodyHeight = body.length * pixelsPerM;
   const bodyWidth = body.diameter * pixelsPerM;
   const finHeight = fins.type === "trapozoidal" ? fins.height * pixelsPerM : 0;
-  const finRootChord =
-    fins.type === "trapozoidal" ? fins.rootChord * pixelsPerM : 0;
-  const finTipChord =
-    fins.type === "trapozoidal" ? fins.tipChord * pixelsPerM : 0;
-  const finSweepLength =
-    fins.type === "trapozoidal" ? fins.sweepLength * pixelsPerM : 0;
+  const finOffset = fins.offset * pixelsPerM;
 
   // 全体の高さを計算
-  const totalHeight = noseHeight + bodyHeight + finHeight;
-  const totalWidth = Math.max(bodyWidth + finRootChord, 200);
+  const totalHeight = noseHeight + bodyHeight;
+  const totalWidth = Math.max(bodyWidth, 200);
 
   // 回転の中心点を計算
   const centerX = totalWidth / 2;
@@ -166,16 +161,30 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
 
   // フィンデータを事前計算し、z-order順にソート
   const { backFins, frontFins } = useMemo(() => {
-    if (fins.type !== "trapozoidal") {
+    if (fins.type === "elliptical") {
       return { backFins: [], frontFins: [] };
     }
+    let baseVertices: Point2D[] = [];
+    let finAttachmentY = 0;
 
     // フィンの基本頂点座標を生成
-    const baseVertices = generateFinVertices(fins, pixelsPerM);
+    if (fins.type === "trapozoidal") {
+      baseVertices = generateFinVertices(fins, pixelsPerM);
+      // フィンの取り付け位置
+      finAttachmentY =
+        noseHeight + bodyHeight - finOffset - fins.rootChord * pixelsPerM;
+    } else if (fins.type === "freedom") {
+      // 自由形状フィンの頂点を直接使用
+      baseVertices = fins.points.map((p) => ({
+        x: p.x * pixelsPerM,
+        y: p.y * pixelsPerM,
+      }));
+      const rootChord =
+        baseVertices.reduce((max, p) => Math.max(max, p.y), 0) -
+        baseVertices.reduce((min, p) => Math.min(min, p.y), 0);
+      finAttachmentY = noseHeight + bodyHeight - finOffset - rootChord;
+    }
 
-    // フィンの取り付け位置
-    const finAttachmentY =
-      noseHeight + bodyHeight - fins.offset * pixelsPerM - finRootChord;
     const bodyRadius = bodyWidth / 2;
     const bodyCenterX = totalWidth / 2;
 
