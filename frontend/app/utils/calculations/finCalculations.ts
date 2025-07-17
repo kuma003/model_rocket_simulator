@@ -1,56 +1,67 @@
 import type { RocketParams } from "../../components/features/Rocket/types";
 import { Materials } from "../../components/features/Rocket/types";
 import { UNIT_CONVERSIONS } from "../physics/constants";
-
-export interface FinCalculationResult {
-  totalMass: number; // kg
-  totalArea: number; // m²
-  // DUMMY: 以下は実装予定の項目（ダミー値を返す）
-  centerOfPressure: number; // m from nose tip (DUMMY)
-  normalForceCoefficient: number; // dimensionless (DUMMY)
-}
+import { calculateSkinFrictionCd } from "./aerodynamics";
+import type { ComponentCalculationResult } from "./types";
 
 export function calculateFinProperties(
-  finParams: RocketParams["fins"]
-): FinCalculationResult {
+  param: RocketParams
+): ComponentCalculationResult {
   const { CM_TO_M } = UNIT_CONVERSIONS;
+  const finParams = param.fins;
 
   let totalMass = 0;
   let totalArea = 0;
+  let Cg = 0;
 
   if (finParams.type === "trapozoidal") {
     const singleFinArea =
       ((finParams.rootChord + finParams.tipChord) * finParams.height) / 2;
     totalArea = singleFinArea * Math.pow(CM_TO_M, 2) * finParams.count;
-
-    const volume = totalArea * finParams.thickness * CM_TO_M;
-    totalMass = volume * Materials[finParams.material].density;
+    Cg =
+      ((finParams.tipChord * finParams.sweepLength) /
+        (finParams.rootChord + finParams.tipChord) +
+        finParams.rootChord / 2) *
+      CM_TO_M;
   } else if (finParams.type === "elliptical") {
-    // DUMMY: 楕円フィンの計算（実装予定）
     const singleFinArea =
       (Math.PI * finParams.rootChord * finParams.height) / 4;
     totalArea = singleFinArea * Math.pow(CM_TO_M, 2) * finParams.count;
-
-    const volume = totalArea * finParams.thickness * CM_TO_M;
-    totalMass = volume * Materials[finParams.material].density;
+    Cg = (finParams.rootChord / 2) * CM_TO_M;
   } else if (finParams.type === "freedom") {
-    // DUMMY: 自由形状フィンの計算（実装予定）
-    // 簡易的に矩形として計算
-    const estimatedArea = 100; // cm² (DUMMY)
+    // Shoelace formula (expected non-closed polygon)
+    let estimatedArea = 0;
+    for (let i = 0; i < finParams.points.length; i++) {
+      const j = (i + 1) % finParams.points.length;
+      const temp =
+        finParams.points[i].x * finParams.points[j].y -
+        finParams.points[j].x * finParams.points[i].y;
+      estimatedArea += temp;
+      Cg += (finParams.points[i].y + finParams.points[j].y) * temp;
+    }
+    estimatedArea = Math.abs(estimatedArea) / 2;
+    Cg = (Cg / (6 * estimatedArea)) * CM_TO_M;
     totalArea = estimatedArea * Math.pow(CM_TO_M, 2) * finParams.count;
-
-    const volume = totalArea * finParams.thickness * CM_TO_M;
-    totalMass = volume * Materials[finParams.material].density;
   }
+  const volume = totalArea * finParams.thickness * CM_TO_M;
+  totalMass = volume * Materials[finParams.material].density;
 
-  // DUMMY: 以下の値は実装予定
-  const centerOfPressure = 0.7; // m from nose tip (DUMMY)
-  const normalForceCoefficient = 2.0; // dimensionless (DUMMY)
+  const Iyx = 0; // since fins are typically thin, we can assume negligible inertia moment for simplicity
+  const Cd = calculateSkinFrictionCd(
+    totalArea,
+    totalArea * 2,
+    Math.PI * Math.pow(param.body.diameter * CM_TO_M, 2)
+  );
+  const Cna = 0;
+  const centerOfPressure = 0;
 
   return {
-    totalMass,
-    totalArea,
-    centerOfPressure,
-    normalForceCoefficient,
+    volume: volume,
+    mass: totalMass,
+    Cg: finParams.offset * CM_TO_M, // m from nose tip
+    Iyx: Iyx, // Simplified inertia moment
+    Cd: Cd,
+    Cna: Cna, // dimensionless
+    Cp: centerOfPressure, // m from nose tip
   };
 }

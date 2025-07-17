@@ -2,21 +2,13 @@ import type { RocketParams } from "../../components/features/Rocket/types";
 import { Materials } from "../../components/features/Rocket/types";
 import { calculateSkinFrictionCd } from "./aerodynamics";
 import { UNIT_CONVERSIONS } from "../physics/constants";
-
-export interface NoseCalculationResult {
-  volume: number; // m³
-  mass: number; // kg
-  Cg: number; // m from nose tip
-  Iyx: number; // kg·m²
-  Cd: number; // dimensionless
-  Cna: number; // dimensionless
-  Cp: number; // m from nose tip
-}
+import type { ComponentCalculationResult } from "./types";
 
 export function calculateNoseProperties(
-  noseParams: RocketParams["nose"]
-): NoseCalculationResult {
+  param: RocketParams
+): ComponentCalculationResult {
   const { CM_TO_M } = UNIT_CONVERSIONS;
+  const noseParams = param.nose;
 
   let volume = 0;
   let mass = 0;
@@ -106,12 +98,9 @@ export function calculateNoseProperties(
   const Cna = 2; // Normal force coefficient
   const Cp = length - volume / refArea; // Center of pressure from nose tip
 
-  // // 安全性チェック：慣性モーメントが負になることを防ぐ
-  // inertiaMoment = Math.max(0, inertiaMoment);
-
   return {
-    volume,
-    mass,
+    volume: volume,
+    mass: mass,
     Cg: Cg,
     Iyx: Iyz,
     Cd: Cd,

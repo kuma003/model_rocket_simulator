@@ -28,17 +28,16 @@ export function runSimulation(params: RocketParams): SimulationResults {
   const { GRAVITY } = PHYSICS_CONSTANTS;
 
   // 各コンポーネントの計算
-  const noseResults = calculateNoseProperties(params.nose);
-  const bodyResults = calculateBodyProperties(params.body);
-  const finResults = calculateFinProperties(params.fins);
+  const noseResults = calculateNoseProperties(params);
+  const bodyResults = calculateBodyProperties(params);
+  const finResults = calculateFinProperties(params);
 
   // 総重量計算
-  const totalMassKg =
-    noseResults.mass + bodyResults.mass + finResults.totalMass;
+  const totalMassKg = noseResults.mass + bodyResults.mass + finResults.mass;
   const dryMass = totalMassKg / G_TO_KG; // Convert to grams for display
 
   // 慣性モーメント計算
-  const totalInertiaMoment = noseResults.Iyx + bodyResults.inertiaMoment;
+  const totalInertiaMoment = noseResults.Iyx + bodyResults.Iyx;
   const inertiaMoment = totalInertiaMoment * 10000; // Convert to g·cm²
 
   // 空力計算
@@ -66,10 +65,10 @@ export function runSimulation(params: RocketParams): SimulationResults {
     CPlen: calculateCenterOfPressure(
       params.nose.length,
       params.body.length,
-      finResults.centerOfPressure
+      finResults.Cp
     ),
     Cd: totalCd,
-    Cna: finResults.normalForceCoefficient,
+    Cna: finResults.Cna,
     Cmq: calculatePitchingMomentCoefficient(),
     vel_1st: 0, // DUMMY: 1段目分離速度
     op_time: flightTime,
