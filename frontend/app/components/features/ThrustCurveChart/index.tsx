@@ -67,9 +67,18 @@ const ThrustCurveChart: React.FC<ThrustCurveChartProps> = ({
                 position: "insideBottom",
                 offset: -10,
               }}
-              domain={[0, "dataMax"]}
-              tickCount={5}
               type="number"
+              domain={[0, (dataMax: number) => Math.ceil(dataMax * 2) / 2]} // ceiling to nearest 0.5
+              tickFormatter={(value: number) => value.toFixed(2)}
+              ticks={(() => {
+                const max = motorData
+                  ? Math.ceil(motorData.burnTime * 2) / 2
+                  : 0;
+                return Array.from(
+                  { length: Math.floor(max / 0.5) + 1 },
+                  (_, i) => i * 0.5
+                );
+              })()}
             />
             <YAxis
               label={{
@@ -78,17 +87,8 @@ const ThrustCurveChart: React.FC<ThrustCurveChartProps> = ({
                 position: "insideLeft",
               }}
               style={{ margin: "0" }}
-              domain={[0, "dataMax"]}
               tickCount={5}
-            />
-            <Tooltip
-              formatter={(value, name) => [
-                `${(value as number).toFixed(2)}N`,
-                name === "thrust" ? "推力" : name,
-              ]}
-              labelFormatter={(label) =>
-                `時間: ${(label as number).toFixed(3)}s`
-              }
+              tickFormatter={(value) => value.toFixed(0)}
             />
             <Line
               type="monotone"

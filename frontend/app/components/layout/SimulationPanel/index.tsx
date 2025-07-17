@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import type { RocketParams } from "../../features/Rocket/types";
-import { runSimulation, type SimulationResults } from "../../../utils/calculations/simulationEngine";
+import {
+  runSimulation,
+  type SimulationResults,
+} from "../../../utils/calculations/simulationEngine";
 import styles from "./simulationPanel.module.scss";
 import { Stack, ScrollArea, Text, Card, Group, Divider } from "@mantine/core";
 import {
@@ -11,6 +14,8 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  LineChart,
+  Line,
 } from "recharts";
 
 export interface SimulationPanelProps {
@@ -98,7 +103,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ rocketParams }) => {
               </Text>
               <div style={{ height: 200, width: "100%" }}>
                 <ResponsiveContainer>
-                  <BarChart data={results.altitudeData}>
+                  <LineChart data={results.altitudeData}>
                     <CartesianGrid
                       strokeDasharray="3 3"
                       stroke="rgba(255,255,255,0.1)"
@@ -107,20 +112,23 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ rocketParams }) => {
                       dataKey="time"
                       tick={{ fill: "white", fontSize: 10 }}
                       axisLine={{ stroke: "rgba(255,255,255,0.3)" }}
+                      tickCount={5}
+                      tickFormatter={(value) => value.toFixed(0)}
                     />
                     <YAxis
                       tick={{ fill: "white", fontSize: 10 }}
                       axisLine={{ stroke: "rgba(255,255,255,0.3)" }}
+                      tickFormatter={(value) => value.toFixed(0)}
                     />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "rgba(0,0,0,0.8)",
-                        border: "1px solid rgba(255,255,255,0.2)",
-                        borderRadius: "8px",
-                      }}
+                    <Line
+                      type="monotone"
+                      dataKey="altitude"
+                      stroke="white"
+                      strokeWidth={2}
+                      dot={false}
+                      name="altitude"
                     />
-                    <Bar dataKey="altitude" fill="#4ecdc4" />
-                  </BarChart>
+                  </LineChart>
                 </ResponsiveContainer>
               </div>
             </Card>
