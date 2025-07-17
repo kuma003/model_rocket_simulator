@@ -7,7 +7,6 @@ import type { ComponentCalculationResult } from "./types";
 export function calculateNoseProperties(
   param: RocketParams
 ): ComponentCalculationResult {
-  const { CM_TO_M } = UNIT_CONVERSIONS;
   const noseParams = param.nose;
 
   let volume = 0;
@@ -18,9 +17,9 @@ export function calculateNoseProperties(
   let surfaceArea = 0;
 
   // convert parameters to SI units
-  const radius = (noseParams.diameter * CM_TO_M) / 2;
-  const length = noseParams.length * CM_TO_M;
-  const thickness = noseParams.thickness * CM_TO_M;
+  const radius = noseParams.diameter / 2;
+  const length = noseParams.length;
+  const thickness = noseParams.thickness;
 
   const refArea = Math.PI * Math.pow(radius, 2);
   const phi = Math.atan(noseParams.diameter / (2 * noseParams.length));
