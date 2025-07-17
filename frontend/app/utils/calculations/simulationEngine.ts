@@ -11,6 +11,7 @@ import { UNIT_CONVERSIONS, PHYSICS_CONSTANTS } from "../physics/constants";
 export interface RocketProperties {
   dryMass: number; // g
   inertiaMoment: number; // g·cm²
+  stabilityMargin: number; // (CP-CG) / RefLength
   specs: RocketSpecs;
 }
 
@@ -90,10 +91,15 @@ export function calculateRocketProperties(
     op_time: 0, // Will be set by trajectory calculation
   };
 
+  // Calculate stability margin: (CP - CG) / RefLength
+  const stabilityMargin = (CP - CG) / refLength;
+
   console.log("Rocket Specs:", specs);
+  console.log("Stability Margin:", stabilityMargin);
   return {
     dryMass,
     inertiaMoment,
+    stabilityMargin,
     specs,
   };
 }

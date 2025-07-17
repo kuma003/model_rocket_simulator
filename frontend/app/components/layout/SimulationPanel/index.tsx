@@ -88,6 +88,17 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
               </Group>
             </Card>
 
+            <Card shadow="sm" padding="md" radius="md">
+              <Group justify="space-between">
+                <Text size="sm" c="white">
+                  安定比
+                </Text>
+                <Text size="sm" c={rocketProperties.stabilityMargin > 0 ? "white" : "red"} fw={600}>
+                  {rocketProperties.stabilityMargin.toFixed(3)}
+                </Text>
+              </Group>
+            </Card>
+
             <Divider />
 
             {/* 軌道グラフ */}

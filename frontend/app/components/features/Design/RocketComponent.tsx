@@ -90,7 +90,6 @@ function projectFinTo2D(
   return { projectedVertices, zOrder };
 }
 
-
 /**
  * Props for RocketComponent
  * @interface RocketComponentProps
@@ -183,7 +182,7 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
     // 各フィンの投影データを計算
     const finData = Array.from({ length: fins.count }, (_, i) => {
       // フィンの配置角度（度）
-      const finAngle = (360 / fins.count) * i + rollAngle + 12;
+      const finAngle = (360 / fins.count) * i + rollAngle;
 
       // 3D配置から2D投影
       const projection = projectFinTo2D(
