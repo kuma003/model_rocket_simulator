@@ -126,6 +126,8 @@ export function calculateFinProperties(
   totalMass = volume * Materials[finParams.material].density;
   const refArea = Math.PI * Math.pow(param.body.diameter / 2, 2);
 
+  Cg += param.nose.length + param.body.length - finParams.offset - C_r; // tip of the fin from the nose tip
+
   const Iyx = 0; // since fins are typically thin, we can assume negligible inertia moment for simplicity
   const Cd = calculateSkinFrictionCd(
     C_r, // root chord
@@ -146,12 +148,12 @@ export function calculateFinProperties(
     param.nose.length +
     param.body.length -
     finParams.offset -
-    C_r;
+    C_r; // tip of the fin from the nose tip;
 
   return {
     volume: volume,
     mass: totalMass,
-    Cg: finParams.offset, // m from nose tip
+    Cg: Cg, // m from nose tip
     Iyx: Iyx, // Simplified inertia moment
     Cd: Cd,
     Cna: Cna, // dimensionless

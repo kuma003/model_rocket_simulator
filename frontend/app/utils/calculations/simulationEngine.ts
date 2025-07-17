@@ -5,14 +5,8 @@ import type {
 import { calculateNoseProperties } from "./noseCalculations";
 import { calculateBodyProperties } from "./bodyCalculations";
 import { calculateFinProperties } from "./finCalculations";
-import {
-  calculateSkinFrictionCd,
-  calculateTotalDragCoefficient,
-  calculateCenterOfPressure,
-  calculatePitchingMomentCoefficient,
-} from "./aerodynamics";
+
 import { UNIT_CONVERSIONS, PHYSICS_CONSTANTS } from "../physics/constants";
-import { calculateCenterOfGravity, calculateCenterOfPressure as calculateCenterOfPressureFromRocketCalculations } from "../rocketCalculations";
 
 export interface RocketProperties {
   dryMass: number; // g
@@ -33,13 +27,19 @@ export interface SimulationResults extends RocketProperties, TrajectoryData {}
  * @param params - Rocket parameters
  * @returns Rocket properties including mass, inertia, and specs
  */
-export function calculateRocketProperties(params: RocketParams): RocketProperties {
+export function calculateRocketProperties(
+  params: RocketParams
+): RocketProperties {
   const { G_TO_KG } = UNIT_CONVERSIONS;
 
   // 各コンポーネントの計算
   const noseResults = calculateNoseProperties(params);
   const bodyResults = calculateBodyProperties(params);
   const finResults = calculateFinProperties(params);
+
+  console.log("Nose Results:", noseResults);
+  console.log("Body Results:", bodyResults);
+  console.log("Fin Results:", finResults);
 
   // 総重量計算
   const totalMassKg = noseResults.mass + bodyResults.mass + finResults.mass;
@@ -51,13 +51,26 @@ export function calculateRocketProperties(params: RocketParams): RocketPropertie
 
   // 空力計算
   const refLength = params.nose.length + params.body.length;
-  const totalCd = noseResults.Cd;
-  // bodyResults.dragCoefficient +
-  // finResults.totalDragCoefficient;
+  const totalCd = noseResults.Cd + bodyResults.Cd + finResults.Cd;
+  const totalCna = noseResults.Cna + bodyResults.Cna + finResults.Cna;
 
   // Calculate actual center of gravity and pressure center
-  const actualCG = calculateCenterOfGravity(params);
-  const actualCP = calculateCenterOfPressureFromRocketCalculations(params);
+  const CG =
+    (noseResults.Cg * noseResults.mass +
+      bodyResults.Cg * bodyResults.mass +
+      finResults.Cg * finResults.mass) /
+    totalMassKg;
+  const CP =
+    (noseResults.Cp * noseResults.Cna +
+      bodyResults.Cp * bodyResults.Cna +
+      finResults.Cp * finResults.Cna) /
+    totalCna;
+
+  const pitchMomentCoefficient =
+    -2 *
+    ((noseResults.Cna * (noseResults.Cg - CG)) / refLength +
+      (bodyResults.Cna * (bodyResults.Cg - CG)) / refLength +
+      (finResults.Cna * (finResults.Cg - CG)) / refLength);
 
   // RocketSpecs の計算
   const specs: RocketSpecs = {
@@ -66,17 +79,18 @@ export function calculateRocketProperties(params: RocketParams): RocketPropertie
     mass_dry: dryMass,
     mass_i: dryMass + 100, // DUMMY: 推進剤重量
     mass_f: dryMass,
-    CGlen_i: actualCG, // Use actual center of gravity
-    CGlen_f: actualCG, // Use actual center of gravity
+    CGlen_i: CG, // Use actual center of gravity
+    CGlen_f: CG, // Use actual center of gravity
     Iyz: inertiaMoment,
-    CPlen: actualCP, // Use actual center of pressure
+    CPlen: CP, // Use actual center of pressure
     Cd: totalCd,
     Cna: finResults.Cna,
-    Cmq: calculatePitchingMomentCoefficient(),
+    Cmq: pitchMomentCoefficient,
     vel_1st: 0, // DUMMY: 1段目分離速度
     op_time: 0, // Will be set by trajectory calculation
   };
 
+  console.log("Rocket Specs:", specs);
   return {
     dryMass,
     inertiaMoment,
@@ -89,7 +103,9 @@ export function calculateRocketProperties(params: RocketParams): RocketPropertie
  * @param properties - Rocket properties
  * @returns Trajectory data including flight time, max altitude, and altitude data
  */
-export function calculateTrajectory(properties: RocketProperties): TrajectoryData {
+export function calculateTrajectory(
+  properties: RocketProperties
+): TrajectoryData {
   const { dryMass, specs } = properties;
   const totalCd = specs.Cd;
 
@@ -113,7 +129,7 @@ export function calculateTrajectory(properties: RocketProperties): TrajectoryDat
 export function runSimulation(params: RocketParams): SimulationResults {
   const properties = calculateRocketProperties(params);
   const trajectory = calculateTrajectory(properties);
-  
+
   // Update specs with flight time
   const updatedSpecs = {
     ...properties.specs,
