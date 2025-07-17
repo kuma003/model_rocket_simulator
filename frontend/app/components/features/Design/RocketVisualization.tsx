@@ -9,11 +9,13 @@ import styles from "./rocketVisualization.module.scss";
  * @property {RocketParams} rocketParams - Rocket design parameters
  * @property {number} [pitchAngle=0] - Pitch angle in degrees
  * @property {number} [rollAngle=0] - Roll angle in degrees
+ * @property {boolean} [showCenterMarkers=false] - Whether to show center markers
  */
 interface RocketVisualizationProps {
   rocketParams: RocketParams;
   pitchAngle?: number;
   rollAngle?: number;
+  showCenterMarkers?: boolean;
 }
 
 /**
@@ -29,6 +31,7 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   rocketParams,
   pitchAngle = 0,
   rollAngle = 0,
+  showCenterMarkers = false,
 }) => {
   const { nose, body, fins } = rocketParams;
 
@@ -77,6 +80,7 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
             scale={scale}
             pitchAngle={pitchAngle}
             rollAngle={rollAngle}
+            showCenterMarkers={showCenterMarkers}
           />
         </g>
       </svg>

@@ -65,7 +65,7 @@ function projectFinTo2D(
   bodyCenterX: number,
   bodyRadius: number,
   finAttachmentY: number
-): { projectedVertices: Point2D[]; opacity: number; zOrder: number } {
+): { projectedVertices: Point2D[]; zOrder: number } {
   const finAngleRad = (finAngleDeg * Math.PI) / 180;
   const cos = Math.cos(finAngleRad);
   const sin = Math.sin(finAngleRad);
@@ -76,11 +76,8 @@ function projectFinTo2D(
   // フィンの取り付け位置（ボディチューブ表面）
   const finBaseX = bodyCenterX + bodyRadius * cos;
 
-  // 可視性の計算（前面にあるフィンほど不透明）
-  const opacity = 1;
-
   // Z-order（右側面図なのでcosの値で決定、負の値が後方）
-  const zOrder = cos;
+  const zOrder = sin;
 
   // 各頂点を2D投影
   const projectedVertices = vertices.map((vertex) => ({
@@ -88,7 +85,86 @@ function projectFinTo2D(
     y: finAttachmentY + vertex.y,
   }));
 
-  return { projectedVertices, opacity, zOrder };
+  return { projectedVertices, zOrder };
+}
+
+/**
+ * Calculate center of gravity position
+ * @param {RocketParams} rocketParams - Rocket design parameters
+ * @returns {number} Center of gravity position from nose tip in cm
+ */
+function calculateCenterOfGravity(rocketParams: RocketParams): number {
+  const { nose, body, fins } = rocketParams;
+  
+  // 材質の密度（kg/m³）
+  const Materials = {
+    plastic: { density: 1250 },
+    balsa: { density: 170 },
+    cardboard: { density: 680 },
+  };
+  
+  // 各部品の体積と重心位置を計算
+  const noseVolume = (Math.PI * Math.pow(nose.diameter / 2, 2) * nose.length) / 3; // 円錐の体積
+  const noseCG = nose.length * 0.75; // 円錐の重心は高さの3/4
+  const noseMass = noseVolume * Materials[nose.material].density * nose.thickness;
+  
+  const bodyVolume = Math.PI * Math.pow(body.diameter / 2, 2) * body.length; // 円筒の体積
+  const bodyCG = nose.length + body.length / 2; // 円筒の重心は中央
+  const bodyMass = bodyVolume * Materials[body.material].density * body.thickness;
+  
+  let finsMass = 0;
+  let finsCG = 0;
+  
+  if (fins.type === "trapozoidal") {
+    // 台形フィンの面積
+    const finArea = ((fins.rootChord + fins.tipChord) / 2) * fins.height;
+    const finVolume = finArea * fins.thickness;
+    finsMass = finVolume * Materials[fins.material].density * fins.count;
+    // フィンの重心位置（フィンの中心）
+    finsCG = nose.length + body.length - fins.offset - fins.height / 2;
+  }
+  
+  // 全体の重心位置を計算
+  const totalMass = noseMass + bodyMass + finsMass;
+  const totalMoment = noseMass * noseCG + bodyMass * bodyCG + finsMass * finsCG;
+  
+  return totalMoment / totalMass;
+}
+
+/**
+ * Calculate center of pressure position (simplified)
+ * @param {RocketParams} rocketParams - Rocket design parameters
+ * @returns {number} Center of pressure position from nose tip in cm
+ */
+function calculateCenterOfPressure(rocketParams: RocketParams): number {
+  const { nose, body, fins } = rocketParams;
+  
+  // 簡略化された圧力中心計算
+  // 実際の計算は複雑ですが、ここでは近似値を使用
+  
+  // ノーズコーンの圧力中心
+  const noseCpContribution = nose.length * 0.6; // ノーズコーンの圧力中心
+  const noseArea = Math.PI * Math.pow(nose.diameter / 2, 2);
+  
+  // ボディの圧力中心（通常は中央付近）
+  const bodyCpContribution = nose.length + body.length / 2;
+  const bodyArea = body.diameter * body.length; // 側面積
+  
+  // フィンの圧力中心
+  let finsCpContribution = 0;
+  let finsArea = 0;
+  
+  if (fins.type === "trapozoidal") {
+    finsArea = ((fins.rootChord + fins.tipChord) / 2) * fins.height * fins.count;
+    // フィンの圧力中心は通常フィンの中心よりやや後方
+    finsCpContribution = nose.length + body.length - fins.offset - fins.height * 0.3;
+  }
+  
+  // 面積重み付き平均
+  const totalArea = noseArea + bodyArea + finsArea;
+  const totalMoment = noseArea * noseCpContribution + bodyArea * bodyCpContribution + finsArea * finsCpContribution;
+  
+  return totalMoment / totalArea;
 }
 
 /**
@@ -98,12 +174,14 @@ function projectFinTo2D(
  * @property {number} [scale=2] - Pixels per centimeter conversion rate
  * @property {number} [pitchAngle=0] - Pitch angle in degrees
  * @property {number} [rollAngle=0] - Roll angle in degrees
+ * @property {boolean} [showCenterMarkers=false] - Whether to show center of gravity and pressure center markers
  */
 interface RocketComponentProps {
   rocketParams: RocketParams;
   scale?: number;
   pitchAngle?: number;
   rollAngle?: number;
+  showCenterMarkers?: boolean;
 }
 
 /**
@@ -129,6 +207,7 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
   scale = 2,
   pitchAngle = 0,
   rollAngle = 0,
+  showCenterMarkers = false,
 }) => {
   const { nose, body, fins } = rocketParams;
 
@@ -167,9 +246,10 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
 
     // フィンの基本頂点座標を生成
     const baseVertices = generateFinVertices(fins, pixelsPerCm);
-    
+
     // フィンの取り付け位置
-    const finAttachmentY = noseHeight + bodyHeight - fins.offset * pixelsPerCm - finHeight;
+    const finAttachmentY =
+      noseHeight + bodyHeight - fins.offset * pixelsPerCm - finRootChord;
     const bodyRadius = bodyWidth / 2;
     const bodyCenterX = totalWidth / 2;
 
@@ -194,7 +274,6 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
       return {
         index: i,
         points: pointsString,
-        opacity: projection.opacity,
         zOrder: projection.zOrder,
       };
     });
@@ -205,7 +284,23 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
     const frontFins = sortedFins.filter((fin) => fin.zOrder >= 0);
 
     return { backFins, frontFins };
-  }, [fins, pixelsPerCm, noseHeight, bodyHeight, finHeight, bodyWidth, totalWidth, rollAngle]);
+  }, [
+    fins,
+    pixelsPerCm,
+    noseHeight,
+    bodyHeight,
+    finHeight,
+    bodyWidth,
+    totalWidth,
+    rollAngle,
+  ]);
+
+  // 重心と圧力中心の位置を計算
+  const { cgPosition, cpPosition } = useMemo(() => {
+    const cgPosition = calculateCenterOfGravity(rocketParams) * pixelsPerCm;
+    const cpPosition = calculateCenterOfPressure(rocketParams) * pixelsPerCm;
+    return { cgPosition, cpPosition };
+  }, [rocketParams, pixelsPerCm]);
 
   return (
     <g transform={pitchTransform}>
@@ -246,7 +341,6 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
           fill={fins.color}
           stroke="#000"
           strokeWidth="1"
-          opacity={fin.opacity}
         />
       ))}
 
@@ -271,9 +365,89 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
           fill={fins.color}
           stroke="#000"
           strokeWidth="1"
-          opacity={fin.opacity}
         />
       ))}
+
+      {/* 重心と圧力中心のマーカー */}
+      {showCenterMarkers && (
+        <g>
+          {/* 重心マーカー（工学用シンボル） */}
+          <g transform={`translate(${totalWidth / 2}, ${cgPosition})`}>
+            <circle
+              cx="0"
+              cy="0"
+              r="8"
+              fill="none"
+              stroke="#FF0000"
+              strokeWidth="2"
+            />
+            <line
+              x1="-6"
+              y1="0"
+              x2="6"
+              y2="0"
+              stroke="#FF0000"
+              strokeWidth="2"
+            />
+            <line
+              x1="0"
+              y1="-6"
+              x2="0"
+              y2="6"
+              stroke="#FF0000"
+              strokeWidth="2"
+            />
+            <text
+              x="12"
+              y="0"
+              dy="0.35em"
+              fontSize="12"
+              fill="#FF0000"
+              fontWeight="bold"
+            >
+              CG
+            </text>
+          </g>
+
+          {/* 圧力中心マーカー（青色） */}
+          <g transform={`translate(${totalWidth / 2}, ${cpPosition})`}>
+            <circle
+              cx="0"
+              cy="0"
+              r="8"
+              fill="none"
+              stroke="#0000FF"
+              strokeWidth="2"
+            />
+            <line
+              x1="-6"
+              y1="0"
+              x2="6"
+              y2="0"
+              stroke="#0000FF"
+              strokeWidth="2"
+            />
+            <line
+              x1="0"
+              y1="-6"
+              x2="0"
+              y2="6"
+              stroke="#0000FF"
+              strokeWidth="2"
+            />
+            <text
+              x="12"
+              y="0"
+              dy="0.35em"
+              fontSize="12"
+              fill="#0000FF"
+              fontWeight="bold"
+            >
+              CP
+            </text>
+          </g>
+        </g>
+      )}
     </g>
   );
 };
