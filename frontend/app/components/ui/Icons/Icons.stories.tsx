@@ -85,7 +85,6 @@ export const RocketDefault: StoryObj<typeof Rocket> = {
 
 // All Icons showcase
 export const AllIcons: StoryObj = {
-  title: "Icons/All Icons",
   render: () => (
     <div
       style={{

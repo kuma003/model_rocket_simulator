@@ -36,22 +36,26 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   const { totalHeightCM, scale, svgWidth, svgHeight } = useMemo(() => {
     const totalHeightCM = nose.length + body.length;
     const finHeight = fins.type === "trapozoidal" ? fins.height : 0;
-    const finChord = fins.type === "trapozoidal" ? Math.max(fins.rootChord, fins.tipChord) : 0;
+    const finChord =
+      fins.type === "trapozoidal" ? Math.max(fins.rootChord, fins.tipChord) : 0;
     const totalWidthCM = body.diameter + finChord;
-    
+
     // Target SVG dimensions
     const targetHeight = 300;
     const targetWidth = 400;
-    
+
     // Calculate scale based on dimensions
     const scaleByHeight = targetHeight / (totalHeightCM + finHeight);
     const scaleByWidth = targetWidth / totalWidthCM;
     const scale = Math.min(scaleByHeight, scaleByWidth) * 0.8; // 80% to leave margin
-    
+
     // Calculate actual SVG dimensions
-    const svgWidth = Math.max(targetWidth, (totalWidthCM * scale) + 40); // 40px margin
-    const svgHeight = Math.max(targetHeight, ((totalHeightCM + finHeight) * scale) + 40); // 40px margin
-    
+    const svgWidth = Math.max(targetWidth, totalWidthCM * scale + 40); // 40px margin
+    const svgHeight = Math.max(
+      targetHeight,
+      (totalHeightCM + finHeight) * scale + 40
+    ); // 40px margin
+
     return {
       totalHeightCM,
       scale,
@@ -61,30 +65,19 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   }, [nose.length, body.length, body.diameter, fins]);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.scaleInfo}>
-        Scale: {scale.toFixed(2)} px/cm | Height: {totalHeightCM.toFixed(1)} cm
-      </div>
+    <div>
       <svg
-        className={styles.rocketSvg}
         width={svgWidth}
         height={svgHeight}
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
       >
-        <g transform={`translate(${svgWidth / 2 - (body.diameter * scale) / 2}, 20)`}>
+        <g>
           <RocketComponent
             rocketParams={rocketParams}
             scale={scale}
             pitchAngle={pitchAngle}
             rollAngle={rollAngle}
           />
-        </g>
-        
-        {/* Dimension annotations */}
-        <g className={styles.dimensions}>
-          <text x={10} y={svgHeight - 10} fill="#666">
-            {body.diameter.toFixed(1)}cm ø
-          </text>
         </g>
       </svg>
     </div>

@@ -30,6 +30,7 @@ const defaultParams: RocketParams = {
     tipChord: 2,
     sweepLength: 3,
     height: 4,
+    offset: 0,
   },
   engine: {
     name: "Estes A10",
@@ -264,13 +265,16 @@ export const HighPowerRocket: Story = {
         color: "#1E90FF",
       },
       fins: {
-        ...defaultParams.fins,
+        thickness: 0.1,
+        material: "balsa",
+        color: "#FF1493",
         count: 4,
+        offset: 0,
+        type: "trapozoidal",
         rootChord: 8,
         tipChord: 3,
         sweepLength: 5,
         height: 6,
-        color: "#FF1493",
       },
     },
     scale: 1.5,
@@ -281,6 +285,100 @@ export const HighPowerRocket: Story = {
     docs: {
       description: {
         story: "高出力用の大型ロケット。より大きなサイズと強化されたフィン。",
+      },
+    },
+  },
+};
+
+export const FinOffset: Story = {
+  args: {
+    rocketParams: {
+      ...defaultParams,
+      name: "フィンオフセットテスト",
+      fins: {
+        ...defaultParams.fins,
+        offset: 5,
+        color: "#FF4500",
+      },
+    },
+    scale: 2,
+    pitchAngle: 0,
+    rollAngle: 0,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "フィンのオフセットを5cmに設定。フィンの位置が後方に移動している。",
+      },
+    },
+  },
+};
+
+export const FinOffsetComparison: Story = {
+  args: {
+    rocketParams: defaultParams,
+    scale: 1.5,
+    pitchAngle: 0,
+    rollAngle: 0,
+  },
+  decorators: [
+    (Story) => (
+      <svg width="800" height="400" viewBox="0 0 800 400">
+        <text x="100" y="30" textAnchor="middle" fontSize="14" fill="#333">
+          Offset: 0cm
+        </text>
+        <g transform="translate(50, 50)">
+          <Story />
+        </g>
+        <text x="300" y="30" textAnchor="middle" fontSize="14" fill="#333">
+          Offset: 3cm
+        </text>
+        <g transform="translate(250, 50)">
+          <RocketComponent
+            rocketParams={{
+              ...defaultParams,
+              fins: { ...defaultParams.fins, offset: 3, color: "#FF6600" },
+            }}
+            scale={1.5}
+            pitchAngle={0}
+            rollAngle={0}
+          />
+        </g>
+        <text x="500" y="30" textAnchor="middle" fontSize="14" fill="#333">
+          Offset: 6cm
+        </text>
+        <g transform="translate(450, 50)">
+          <RocketComponent
+            rocketParams={{
+              ...defaultParams,
+              fins: { ...defaultParams.fins, offset: 6, color: "#9966FF" },
+            }}
+            scale={1.5}
+            pitchAngle={0}
+            rollAngle={0}
+          />
+        </g>
+        <text x="700" y="30" textAnchor="middle" fontSize="14" fill="#333">
+          Offset: 9cm
+        </text>
+        <g transform="translate(650, 50)">
+          <RocketComponent
+            rocketParams={{
+              ...defaultParams,
+              fins: { ...defaultParams.fins, offset: 9, color: "#66FFFF" },
+            }}
+            scale={1.5}
+            pitchAngle={0}
+            rollAngle={0}
+          />
+        </g>
+      </svg>
+    ),
+  ],
+  parameters: {
+    docs: {
+      description: {
+        story: "異なるフィンオフセット値を持つロケットを並べて表示。オフセットがフィンの位置に与える影響を確認できる。",
       },
     },
   },

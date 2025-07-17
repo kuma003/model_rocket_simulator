@@ -128,6 +128,7 @@ const defaultParams: RocketParams = {
     tipChord: 2,
     sweepLength: 3,
     height: 4,
+    offset: 0,
   },
   engine: {
     name: "Estes A10",
@@ -209,6 +210,7 @@ export const EmptyRocket: Story = {
         tipChord: 0,
         sweepLength: 0,
         height: 0,
+        offset: 0,
       },
       engine: {
         name: "",
@@ -230,6 +232,7 @@ export const ElipticalFins: Story = {
         type: "elliptical",
         rootChord: 6,
         height: 5,
+        offset: 0,
       },
     },
   },
@@ -265,6 +268,7 @@ export const HighPowerRocket: Story = {
         tipChord: 3,
         sweepLength: 5,
         height: 6,
+        offset: 0,
       },
       engine: {
         name: "Estes C6",

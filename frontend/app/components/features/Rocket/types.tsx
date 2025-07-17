@@ -31,6 +31,7 @@ export interface RocketParams {
   body: RocketBaseParam;
   fins: Omit<RocketBaseParam, "length" | "diameter"> & {
     count: number;
+    offset: number;
   } & (
       | {
           type: "trapozoidal";

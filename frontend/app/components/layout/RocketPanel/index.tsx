@@ -41,6 +41,7 @@ const defaultRocketParams: RocketParams = {
     material: "balsa",
     color: "#0000FF",
     count: 3,
+    offset: 0,
     type: "trapozoidal",
     rootChord: 5,
     tipChord: 2,

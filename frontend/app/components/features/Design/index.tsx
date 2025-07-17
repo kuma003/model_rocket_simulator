@@ -29,6 +29,7 @@ const Design: React.FC = () => {
       material: "balsa",
       color: "#0000FF",
       count: 3,
+      offset: 2,
       type: "trapozoidal",
       rootChord: 5,
       tipChord: 2,
@@ -47,7 +48,7 @@ const Design: React.FC = () => {
         setRocketParams={setRocketParams}
       />
       <div className={styles.centerArea}>
-        <RocketVisualization rocketParams={rocketParams} scale={3} />
+        <RocketVisualization rocketParams={rocketParams} />
       </div>
       <SimulationPanel rocketParams={rocketParams} />
     </div>

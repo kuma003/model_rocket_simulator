@@ -23,7 +23,10 @@ interface Point2D {
  * - Y-axis: Upward (height direction)
  * - Origin: Root chord tip (body tube surface)
  */
-function generateFinVertices(finParams: RocketParams["fins"], pixelsPerCm: number): Point2D[] {
+function generateFinVertices(
+  finParams: RocketParams["fins"],
+  pixelsPerCm: number
+): Point2D[] {
   if (finParams.type !== "trapozoidal") {
     return [];
   }
@@ -38,10 +41,10 @@ function generateFinVertices(finParams: RocketParams["fins"], pixelsPerCm: numbe
   // Y軸：上向き（高さ方向）
   // 原点：root chordの先端（ボディチューブ表面）
   return [
-    { x: 0, y: 0 },                              // root leading edge (ボディ接続点)
-    { x: rootChord, y: 0 },                      // root trailing edge
-    { x: rootChord - sweepLength, y: height },   // tip trailing edge
-    { x: -tipChord + sweepLength, y: height },   // tip leading edge
+    { x: 0, y: 0 }, // root leading edge (ボディ接続点)
+    { x: rootChord, y: 0 }, // root trailing edge
+    { x: sweepLength + tipChord, y: height }, // tip trailing edge
+    { x: sweepLength, y: height }, // tip leading edge
   ];
 }
 
@@ -57,34 +60,34 @@ function generateFinVertices(finParams: RocketParams["fins"], pixelsPerCm: numbe
  * Projects fin placement from 3D space to 2D side view, calculating visibility and Z-order based on depth
  */
 function projectFinTo2D(
-  vertices: Point2D[], 
-  finAngleDeg: number, 
-  bodyCenterX: number, 
-  bodyRadius: number, 
+  vertices: Point2D[],
+  finAngleDeg: number,
+  bodyCenterX: number,
+  bodyRadius: number,
   finAttachmentY: number
-): { projectedVertices: Point2D[], opacity: number, zOrder: number } {
+): { projectedVertices: Point2D[]; opacity: number; zOrder: number } {
   const finAngleRad = (finAngleDeg * Math.PI) / 180;
   const cos = Math.cos(finAngleRad);
   const sin = Math.sin(finAngleRad);
-  
+
   // 側面図での圧縮率（角度による見え方の変化）
   const compressionFactor = Math.abs(cos);
-  
+
   // フィンの取り付け位置（ボディチューブ表面）
   const finBaseX = bodyCenterX + bodyRadius * cos;
-  
+
   // 可視性の計算（前面にあるフィンほど不透明）
   const opacity = Math.max(0.2, (cos + 1) / 2);
-  
-  // Z-order（sinの値で決定、負の値が後方）
-  const zOrder = sin;
-  
+
+  // Z-order（右側面図なのでcosの値で決定、負の値が後方）
+  const zOrder = cos;
+
   // 各頂点を2D投影
-  const projectedVertices = vertices.map(vertex => ({
+  const projectedVertices = vertices.map((vertex) => ({
     x: finBaseX + vertex.x * compressionFactor,
     y: finAttachmentY + vertex.y,
   }));
-  
+
   return { projectedVertices, opacity, zOrder };
 }
 
@@ -113,7 +116,7 @@ interface RocketComponentProps {
  * as a 2D side view. Fins are rendered with depth perception using 3D to 2D projection.
  * @example
  * ```tsx
- * <RocketComponent 
+ * <RocketComponent
  *   rocketParams={rocketParams}
  *   scale={2}
  *   pitchAngle={15}
@@ -177,9 +180,9 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
         ) : (
           <ellipse
             cx={noseWidth / 2}
-            cy={noseHeight / 2}
+            cy={noseHeight}
             rx={noseWidth / 2}
-            ry={noseHeight / 2}
+            ry={noseHeight}
             fill={nose.color}
             stroke="#000"
             strokeWidth="1"
@@ -205,17 +208,18 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
         (() => {
           // フィンの基本頂点座標を生成
           const baseVertices = generateFinVertices(fins, pixelsPerCm);
-          
-          // フィンの取り付け位置
-          const finAttachmentY = noseHeight + bodyHeight;
+
+          // フィンの取り付け位置（offsetを考慮）
+          const finAttachmentY =
+            noseHeight + bodyHeight - fins.offset * pixelsPerCm;
           const bodyRadius = bodyWidth / 2;
           const bodyCenterX = totalWidth / 2;
-          
+
           // 各フィンの投影データを計算
           const finData = Array.from({ length: fins.count }, (_, i) => {
             // フィンの配置角度（度）
             const finAngle = (360 / fins.count) * i + rollAngle;
-            
+
             // 3D配置から2D投影
             const projection = projectFinTo2D(
               baseVertices,
@@ -224,7 +228,7 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
               bodyRadius,
               finAttachmentY
             );
-            
+
             return {
               index: i,
               vertices: projection.projectedVertices,
@@ -232,15 +236,15 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
               zOrder: projection.zOrder,
             };
           });
-          
+
           // z-orderでソート（後方のフィンから描画）
           finData.sort((a, b) => a.zOrder - b.zOrder);
-          
+
           return finData.map((fin) => {
             const pointsString = fin.vertices
-              .map(v => `${v.x.toFixed(2)},${v.y.toFixed(2)}`)
+              .map((v) => `${v.x.toFixed(2)},${v.y.toFixed(2)}`)
               .join(" ");
-            
+
             return (
               <polygon
                 key={fin.index}
@@ -253,7 +257,6 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
             );
           });
         })()}
-      
     </g>
   );
 };

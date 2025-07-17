@@ -128,6 +128,16 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
         min={1}
         max={8}
       />
+      <NumberInput
+        label="フィン取り付け位置 (cm)"
+        description="ボディ末端からフィン末端までの距離"
+        value={params.fins.offset}
+        onChange={(value) =>
+          updateParams({ fins: { ...params.fins, offset: Number(value) || 0 } })
+        }
+        min={0}
+        step={0.1}
+      />
       <Select
         label="フィンタイプ"
         value={params.fins.type}
