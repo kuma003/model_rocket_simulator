@@ -29,6 +29,22 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({ rocketParams }) => {
     flightTime: 0,
     maxAltitude: 0,
     altitudeData: [],
+    specs: {
+      ref_len: 0,
+      diam: 0,
+      mass_dry: 0,
+      mass_i: 0,
+      mass_f: 0,
+      CGlen_i: 0,
+      CGlen_f: 0,
+      Iyz: 0,
+      CPlen: 0,
+      Cd: 0,
+      Cna: 0,
+      Cmq: 0,
+      vel_1st: 0,
+      op_time: 0,
+    },
   });
 
   useEffect(() => {

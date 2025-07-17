@@ -13,19 +13,27 @@ import {
 } from "./aerodynamics";
 import { UNIT_CONVERSIONS, PHYSICS_CONSTANTS } from "../physics/constants";
 
-export interface SimulationResults {
+export interface RocketProperties {
   dryMass: number; // g
   inertiaMoment: number; // g·cm²
+  specs: RocketSpecs;
+}
+
+export interface TrajectoryData {
   flightTime: number; // s
   maxAltitude: number; // m
   altitudeData: Array<{ time: number; altitude: number }>;
-  // 以下は将来的に実装予定
-  specs?: RocketSpecs;
 }
 
-export function runSimulation(params: RocketParams): SimulationResults {
-  const { CM_TO_M, G_TO_KG, KG_TO_G } = UNIT_CONVERSIONS;
-  const { GRAVITY } = PHYSICS_CONSTANTS;
+export interface SimulationResults extends RocketProperties, TrajectoryData {}
+
+/**
+ * Calculate rocket properties (mass, inertia, aerodynamic coefficients)
+ * @param params - Rocket parameters
+ * @returns Rocket properties including mass, inertia, and specs
+ */
+export function calculateRocketProperties(params: RocketParams): RocketProperties {
+  const { G_TO_KG } = UNIT_CONVERSIONS;
 
   // 各コンポーネントの計算
   const noseResults = calculateNoseProperties(params);
@@ -42,17 +50,11 @@ export function runSimulation(params: RocketParams): SimulationResults {
 
   // 空力計算
   const refLength = params.nose.length + params.body.length;
-
   const totalCd = noseResults.Cd;
   // bodyResults.dragCoefficient +
   // finResults.totalDragCoefficient;
 
-  // DUMMY: 飛行軌道計算（実装予定）
-  const maxAltitude = calculateMaxAltitude(dryMass, totalCd);
-  const flightTime = calculateFlightTime(maxAltitude);
-  const altitudeData = generateAltitudeData(maxAltitude, flightTime);
-
-  // DUMMY: RocketSpecs の計算（実装予定）
+  // RocketSpecs の計算
   const specs: RocketSpecs = {
     ref_len: refLength,
     diam: params.body.diameter,
@@ -71,16 +73,56 @@ export function runSimulation(params: RocketParams): SimulationResults {
     Cna: finResults.Cna,
     Cmq: calculatePitchingMomentCoefficient(),
     vel_1st: 0, // DUMMY: 1段目分離速度
-    op_time: flightTime,
+    op_time: 0, // Will be set by trajectory calculation
   };
 
   return {
     dryMass,
     inertiaMoment,
+    specs,
+  };
+}
+
+/**
+ * Calculate trajectory data (flight time, altitude, trajectory points)
+ * @param properties - Rocket properties
+ * @returns Trajectory data including flight time, max altitude, and altitude data
+ */
+export function calculateTrajectory(properties: RocketProperties): TrajectoryData {
+  const { dryMass, specs } = properties;
+  const totalCd = specs.Cd;
+
+  // 飛行軌道計算
+  const maxAltitude = calculateMaxAltitude(dryMass, totalCd);
+  const flightTime = calculateFlightTime(maxAltitude);
+  const altitudeData = generateAltitudeData(maxAltitude, flightTime);
+
+  return {
     flightTime,
     maxAltitude,
     altitudeData,
-    specs,
+  };
+}
+
+/**
+ * Complete simulation including both rocket properties and trajectory calculation
+ * @param params - Rocket parameters
+ * @returns Complete simulation results
+ */
+export function runSimulation(params: RocketParams): SimulationResults {
+  const properties = calculateRocketProperties(params);
+  const trajectory = calculateTrajectory(properties);
+  
+  // Update specs with flight time
+  const updatedSpecs = {
+    ...properties.specs,
+    op_time: trajectory.flightTime,
+  };
+
+  return {
+    ...properties,
+    ...trajectory,
+    specs: updatedSpecs,
   };
 }
 
