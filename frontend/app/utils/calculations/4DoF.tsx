@@ -76,82 +76,108 @@ const run4DoFSimulation = (
   const thrustForceFunction = interpolate(spec.engine.thrustCurve);
 
   while (currentTime <= maxTime) {
-    // Calculate forces and torques
-    const velocityMagnitude2 =
-      Math.pow(velocity.x, 2) + Math.pow(velocity.y, 2);
-    const AoA = pitch - Math.atan2(velocity.y, velocity.x);
-    const thrustForce = isCombusting ? thrustForceFunction(currentTime) : 0;
-    const preForceCalc =
-      0.5 * PHYSICS_CONSTANTS.AIR_DENSITY * velocityMagnitude2 * refArea;
-    const dragForce = -preForceCalc * spec.Cd;
-    const normalForce = -preForceCalc * spec.Cna * AoA;
+    // Update mass and center of gravity
     mass = isCombusting
       ? spec.mass_i -
         (spec.mass_i - spec.mass_f) * (currentTime / spec.engine.burnTime)
       : spec.mass_f;
-    const weightForce = -mass * PHYSICS_CONSTANTS.GRAVITY; // kg⋅m/s²
 
-    if (isLaunchClear) {
-      // Calculate acceleration
-      const sin = Math.sin(pitch);
-      const cos = Math.cos(pitch);
-      const axialForce = thrustForce + dragForce + weightForce * sin;
-      const axialAcceleration = axialForce / mass;
+    const CG = isCombusting
+      ? spec.CGlen_i +
+        (spec.CGlen_f - spec.CGlen_i) * (currentTime / spec.engine.burnTime)
+      : spec.CGlen_f;
 
-      // Update position based on previous velocity and time step
-      position.x += velocity.x * timeStep;
-      position.y += velocity.y * timeStep;
-      // Update velocity based on acceleration and time step
-      velocity.x += axialAcceleration * cos * timeStep;
-      velocity.y += axialAcceleration * sin * timeStep;
+    // Calculate velocity magnitude and unit vector
+    const velocityMagnitude = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+    const velocityUnitX = velocityMagnitude > 0 ? velocity.x / velocityMagnitude : 0;
+    const velocityUnitY = velocityMagnitude > 0 ? velocity.y / velocityMagnitude : 0;
 
-      const preMomentCalc =
-        (PHYSICS_CONSTANTS.AIR_DENSITY *
-          refArea *
-          spec.ref_len *
-          spec.ref_len) /
-        4;
+    // Calculate angle of attack
+    const velocityAngle = Math.atan2(velocity.y, velocity.x);
+    const AoA = pitch - velocityAngle;
 
-      const CG = isCombusting
-        ? spec.CGlen_i +
-          (spec.CGlen_f - spec.CGlen_i) * (currentTime / spec.engine.burnTime)
-        : spec.CGlen_f;
+    // Calculate forces in inertial coordinate system
+    const thrustForce = isCombusting ? thrustForceFunction(currentTime) : 0;
+    const dynamicPressure = 0.5 * PHYSICS_CONSTANTS.AIR_DENSITY * velocityMagnitude * velocityMagnitude * refArea;
+    
+    // Thrust force (along rocket axis)
+    const thrustX = thrustForce * Math.cos(pitch);
+    const thrustY = thrustForce * Math.sin(pitch);
 
-      // Update pitch and angular velocity
-      pitch += omega * timeStep; // update pitchangle before update omega
-      omega +=
-        ((spec.Cmq * preMomentCalc + normalForce * (spec.CPlen - CG)) *
-          timeStep) /
-        spec.Iyz;
+    // Gravity force (always downward)
+    const gravityX = 0;
+    const gravityY = -mass * PHYSICS_CONSTANTS.GRAVITY;
 
-      touchdown = position.y <= 0; // Check if rocket has touched down
-      if (touchdown) position.y = 0; // Reset position to ground level
-    } else {
-      // Calculate acceleration
-      const sin = Math.sin(pitch);
-      const cos = Math.cos(pitch);
-      const axialForce = thrustForce + dragForce + weightForce * sin; // ロッド軸方向の力
+    // Drag force (opposite to velocity direction)
+    const dragMagnitude = dynamicPressure * spec.Cd;
+    const dragX = -dragMagnitude * velocityUnitX;
+    const dragY = -dragMagnitude * velocityUnitY;
+
+    // Normal force (perpendicular to rocket axis)
+    const normalMagnitude = dynamicPressure * spec.Cna * AoA;
+    const normalX = -normalMagnitude * Math.sin(pitch);
+    const normalY = normalMagnitude * Math.cos(pitch);
+
+    // Total force in inertial coordinates
+    const totalForceX = thrustX + gravityX + dragX + normalX;
+    const totalForceY = thrustY + gravityY + dragY + normalY;
+
+    // Check launch rod clearance
+    const distanceFromLaunch = Math.sqrt(position.x * position.x + position.y * position.y);
+    isLaunchClear = distanceFromLaunch > initialConditions.launchrodLength;
+
+    // During launch rod phase, constrain motion to rod direction
+    if (!isLaunchClear) {
+      const rodCos = Math.cos(initialConditions.launchrodElevation * Math.PI / 180);
+      const rodSin = Math.sin(initialConditions.launchrodElevation * Math.PI / 180);
+      
+      // Project total force onto rod direction
+      const forceAlongRod = totalForceX * rodCos + totalForceY * rodSin;
+      
       force = {
-        x: cos * axialForce,
-        y: sin * axialForce,
+        x: forceAlongRod * rodCos,
+        y: forceAlongRod * rodSin,
       };
+      
+      // No rotation during launch rod phase
+      const momentArm = 0;
+      omega = 0;
+    } else {
+      // Free flight - use total calculated forces
+      force = {
+        x: totalForceX,
+        y: totalForceY,
+      };
+      
+      // Calculate moment about center of gravity
+      const momentArm = spec.CPlen - CG;
+      const dampingMoment = -spec.Cmq * (PHYSICS_CONSTANTS.AIR_DENSITY * refArea * spec.ref_len * spec.ref_len / 4) * omega;
+      const normalMoment = normalMagnitude * momentArm;
+      
+      const totalMoment = normalMoment + dampingMoment;
+      
+      // Update angular velocity
+      omega += (totalMoment / spec.Iyz) * timeStep;
+    }
 
-      // Update position based on previous velocity and time step
-      position.x += velocity.x * timeStep;
-      position.y += velocity.y * timeStep;
-      // Update velocity based on acceleration and time step
-      velocity.x += (force.x * timeStep) / mass;
-      velocity.y += (force.y * timeStep) / mass;
+    // Update position and velocity (Euler integration)
+    position.x += velocity.x * timeStep;
+    position.y += velocity.y * timeStep;
+    
+    const accelerationX = force.x / mass;
+    const accelerationY = force.y / mass;
+    
+    velocity.x += accelerationX * timeStep;
+    velocity.y += accelerationY * timeStep;
 
-      // Update pitch and angular velocity (assuming no rotation during launch rod phase)
-      pitch += 0;
-      omega += 0;
+    // Update pitch angle
+    pitch += omega * timeStep;
 
-      isLaunchClear =
-        Math.pow(position.x, 2) + Math.pow(position.y, 2) >
-        Math.pow(initialConditions.launchrodLength, 2); // Launch is clear if the rocket is beyond the launch rod length
-
-      touchdown = !isCombusting && position.y <= 0; // Check if rocket has touched down
+    // Check for touchdown
+    touchdown = position.y <= 0;
+    if (touchdown) {
+      position.y = 0;
+      velocity.y = Math.min(0, velocity.y); // Prevent bouncing
     }
 
     trajectory.time.push(currentTime);
