@@ -1,0 +1,51 @@
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.backgroundLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-position 0.1s ease-out;
+}
+
+.objectsLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.skyObject {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: opacity 0.3s ease-out;
+  
+  &.star {
+    color: #ffffff;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+  }
+  
+  &.satellite {
+    color: #silver;
+    text-shadow: 0 0 2px rgba(192, 192, 192, 0.6);
+  }
+  
+  &.cloud {
+    color: #f0f0f0;
+    text-shadow: 0 0 3px rgba(240, 240, 240, 0.5);
+  }
+}

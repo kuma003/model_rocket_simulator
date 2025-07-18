@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { loadRocketParams, hasRocketParams } from "~/utils/storage/rocketStorage";
 import type { RocketParams } from "../Rocket/types";
+import AltitudeBackground from "../AltitudeBackground";
+import AltitudeBackgroundDemo from "../AltitudeBackground/AltitudeBackgroundDemo";
 
 const Launch: React.FC = () => {
   const navigate = useNavigate();
@@ -66,10 +68,10 @@ const Launch: React.FC = () => {
   }
 
   return (
-    <div>
-      <h1>Launch Component</h1>
-      <p>ロケット: {rocketParams?.name}</p>
-      <p>This is the Launch feature of the application.</p>
+    <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
+      <div style={{ position: "relative", width: "100%", height: "100%" }}>
+        <AltitudeBackgroundDemo />
+      </div>
     </div>
   );
 };
