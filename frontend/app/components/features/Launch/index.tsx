@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router";
 import {
   loadRocketParams,
@@ -16,6 +16,8 @@ const Launch: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [time, setTime] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const checkRocketCache = async () => {
@@ -58,6 +60,72 @@ const Launch: React.FC = () => {
 
     checkRocketCache();
   }, [navigate]);
+
+  // Timer control functions
+  const startTimer = useCallback(() => {
+    if (!isRunning) {
+      setTime(-5);
+      const id = setInterval(() => {
+        setTime((prevTime) => prevTime + 0.1);
+      }, 100);
+      setIntervalId(id);
+      setIsRunning(true);
+    }
+  }, [isRunning]);
+
+  const pauseTimer = useCallback(() => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      setIntervalId(null);
+    }
+    setIsRunning(false);
+  }, [intervalId]);
+
+  const resetTimer = useCallback(() => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      setIntervalId(null);
+    }
+    setTime(0);
+    setIsRunning(false);
+  }, [intervalId]);
+
+  // Keyboard event handler
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      switch (event.key) {
+        case "Enter":
+          event.preventDefault();
+          startTimer();
+          break;
+        case " ":
+          event.preventDefault();
+          if (isRunning) {
+            pauseTimer();
+          } else {
+            startTimer();
+          }
+          break;
+        case "q":
+        case "Q":
+          event.preventDefault();
+          resetTimer();
+          break;
+      }
+    },
+    [startTimer, pauseTimer, resetTimer, isRunning]
+  );
+
+  // Add keyboard event listener
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [handleKeyDown, intervalId]);
 
   if (loading) {
     return (
