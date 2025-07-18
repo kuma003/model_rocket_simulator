@@ -5,8 +5,6 @@ import styles from "./AltitudeBackground.module.scss";
 
 const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
   altitudeLevel,
-  containerHeight,
-  containerWidth,
 }) => {
   const backgroundPath = [
     "/0-50.png",
@@ -53,26 +51,30 @@ const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
   }
 
   return (
-    <div
-      className={styles.container}
-      style={{
-        width: containerWidth,
-        height: containerHeight,
-      }}
-    >
+    <div className={styles.container}>
       <div
         className={styles.backgroundLayer}
         style={{
           backgroundImage: `url(${backgroundPath[0]})`,
-          top: `calc(-${backgroundHeight * (1 - clampedAltitude(altitudeLevel))}px + 100%)`,
+          top: `calc(-${500 * (1 - clampedAltitude(altitudeLevel))}vw + 100%)`, // 画像の縦横比が1:5を利用
           bottom: 0,
+        }}
+      />
+      <img
+        className={styles.backgroundLayer}
+        src="/ground.png"
+        alt="ground"
+        style={{
+          top: `calc(-${500 * (0.09 - clampedAltitude(altitudeLevel))}vw + 100%)`, // 画像の縦横比が1:5を利用
+          bottom: 0,
+          objectFit: "cover",
         }}
       />
       <div
         className={styles.backgroundLayer}
         style={{
           backgroundImage: `url(${backgroundPath[1]})`,
-          top: `calc(-${backgroundHeight * (2 - clampedAltitude(altitudeLevel))}px + 100%)`,
+          top: `calc(-${500 * (2 - clampedAltitude(altitudeLevel))}vw + 100%)`,
           bottom: 0,
         }}
       />
@@ -80,7 +82,7 @@ const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
         className={styles.backgroundLayer}
         style={{
           backgroundImage: `url(${backgroundPath[2]})`,
-          top: `calc(-${backgroundHeight * (3 - clampedAltitude(altitudeLevel))}px + 100%)`,
+          top: `calc(-${500 * (3 - clampedAltitude(altitudeLevel))}vw + 100%)`,
           bottom: 0,
         }}
       />
@@ -88,7 +90,7 @@ const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
         className={styles.backgroundLayer}
         style={{
           backgroundImage: `url(${backgroundPath[3]})`,
-          top: `calc(-${backgroundHeight * (4 - clampedAltitude(altitudeLevel))}px + 100%)`,
+          top: `calc(-${500 * (4 - clampedAltitude(altitudeLevel))}vw + 100%)`,
           bottom: 0,
         }}
       />
@@ -96,7 +98,7 @@ const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
         className={styles.backgroundLayer}
         style={{
           backgroundImage: `url(${backgroundPath[4]})`,
-          top: `calc(-${backgroundHeight * (5 - clampedAltitude(altitudeLevel))}px + 100%)`,
+          top: `calc(-${500 * (5 - clampedAltitude(altitudeLevel))}vw + 100%)`,
           bottom: 0,
         }}
       />
@@ -108,8 +110,7 @@ const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
           className={styles.skyObject}
           style={{
             left: `${obj.left}%`,
-            transform: "translateX(-50%)",
-            top: `calc(100% - ${backgroundHeight * (obj.altLevel - clampedAltitude(altitudeLevel))}px)`,
+            top: `calc(100% - ${500 * (obj.altLevel - clampedAltitude(altitudeLevel))}vw)`,
           }}
         />
       ))}
@@ -122,7 +123,7 @@ const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
           transform: "translateX(-50%)",
           width: "600px",
           height: "600px",
-          top: `calc(100% - ${backgroundHeight * (2.5 - clampedAltitude(altitudeLevel))}px)`,
+          top: `calc(100% - ${500 * (2.5 - clampedAltitude(altitudeLevel))}vw)`,
           borderRadius: "50%",
           objectFit: "cover",
           boxShadow: "inset -30px 0 60px rgba(0,0,0,0.5)",
@@ -138,7 +139,7 @@ const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
           transform: "translateX(-50%)",
           width: "600px",
           height: "600px",
-          top: `calc(100% - ${backgroundHeight * (3 - clampedAltitude(altitudeLevel))}px)`,
+          top: `calc(100% - ${backgroundHeight * (3 - clampedAltitude(altitudeLevel))}vw)`,
           borderRadius: "50%",
           objectFit: "cover",
           boxShadow: "inset -30px 0 60px rgba(0,0,0,0.5)",

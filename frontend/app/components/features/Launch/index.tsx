@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { loadRocketParams, hasRocketParams } from "~/utils/storage/rocketStorage";
+import {
+  loadRocketParams,
+  hasRocketParams,
+} from "~/utils/storage/rocketStorage";
 import type { RocketParams } from "../Rocket/types";
-import AltitudeBackground from "../AltitudeBackground";
-import AltitudeBackgroundDemo from "../AltitudeBackground/AltitudeBackgroundDemo";
+import AltitudeBackground from "./components/AltitudeBackground";
 
 const Launch: React.FC = () => {
   const navigate = useNavigate();
@@ -16,7 +18,9 @@ const Launch: React.FC = () => {
       try {
         // Check if rocket parameters exist in cache
         if (!hasRocketParams()) {
-          setError("ロケットデータが見つかりません。デザインページからロケットを作成してください。");
+          setError(
+            "ロケットデータが見つかりません。デザインページからロケットを作成してください。"
+          );
           // Auto-redirect to previous page after 2 seconds
           setTimeout(() => {
             navigate("/design", { replace: true });
@@ -27,7 +31,9 @@ const Launch: React.FC = () => {
         // Load rocket parameters from cache
         const params = await loadRocketParams();
         if (!params) {
-          setError("ロケットデータの読み込みに失敗しました。デザインページからやり直してください。");
+          setError(
+            "ロケットデータの読み込みに失敗しました。デザインページからやり直してください。"
+          );
           setTimeout(() => {
             navigate("/design", { replace: true });
           }, 2000);
@@ -69,9 +75,7 @@ const Launch: React.FC = () => {
 
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
-      <div style={{ position: "relative", width: "100%", height: "100%" }}>
-        <AltitudeBackgroundDemo />
-      </div>
+      <AltitudeBackground altitudeLevel={0} />
     </div>
   );
 };

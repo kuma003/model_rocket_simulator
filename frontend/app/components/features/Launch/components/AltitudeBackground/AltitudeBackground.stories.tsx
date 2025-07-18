@@ -17,25 +17,28 @@ const meta: Meta<typeof AltitudeBackground> = {
       },
       description: "Current altitude level (0-5)",
     },
-    containerHeight: {
-      control: {
-        type: "range",
-        min: 200,
-        max: 800,
-        step: 50,
-      },
-      description: "Container height in pixels",
-    },
-    containerWidth: {
-      control: {
-        type: "range",
-        min: 300,
-        max: 1200,
-        step: 50,
-      },
-      description: "Container width in pixels",
-    },
   },
+  decorators: [
+    (Story) => (
+      <div style={{ 
+        width: "100vw", 
+        height: "100vh", 
+        position: "relative",
+        overflow: "hidden",
+        background: "#000"
+      }}>
+        <div style={{ 
+          width: "100%", 
+          height: "100%", 
+          position: "absolute",
+          top: 0,
+          left: 0
+        }}>
+          <Story />
+        </div>
+      </div>
+    ),
+  ],
 };
 
 export default meta;
@@ -45,8 +48,13 @@ type Story = StoryObj<typeof AltitudeBackground>;
 export const Default: Story = {
   args: {
     altitudeLevel: 0.5,
-    containerHeight: 600,
-    containerWidth: 800,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Default view showing background at altitude level 0.5",
+      },
+    },
   },
 };
 
@@ -54,8 +62,6 @@ export const Default: Story = {
 export const GroundLevel: Story = {
   args: {
     altitudeLevel: 0.1,
-    containerHeight: 600,
-    containerWidth: 800,
   },
 };
 
@@ -63,8 +69,6 @@ export const GroundLevel: Story = {
 export const LowAltitude: Story = {
   args: {
     altitudeLevel: 1.5,
-    containerHeight: 600,
-    containerWidth: 800,
   },
 };
 
@@ -72,8 +76,6 @@ export const LowAltitude: Story = {
 export const MidAltitude: Story = {
   args: {
     altitudeLevel: 2.5,
-    containerHeight: 600,
-    containerWidth: 800,
   },
 };
 
@@ -81,8 +83,6 @@ export const MidAltitude: Story = {
 export const HighAltitude: Story = {
   args: {
     altitudeLevel: 3.5,
-    containerHeight: 600,
-    containerWidth: 800,
   },
 };
 
@@ -90,8 +90,6 @@ export const HighAltitude: Story = {
 export const VeryHighAltitude: Story = {
   args: {
     altitudeLevel: 4.5,
-    containerHeight: 600,
-    containerWidth: 800,
   },
 };
 
@@ -99,8 +97,6 @@ export const VeryHighAltitude: Story = {
 export const TransitionPoint1: Story = {
   args: {
     altitudeLevel: 0.98,
-    containerHeight: 600,
-    containerWidth: 800,
   },
 };
 
@@ -108,8 +104,6 @@ export const TransitionPoint1: Story = {
 export const TransitionPoint2: Story = {
   args: {
     altitudeLevel: 1.02,
-    containerHeight: 600,
-    containerWidth: 800,
   },
 };
 
@@ -117,8 +111,6 @@ export const TransitionPoint2: Story = {
 export const FineAltitudeControl: Story = {
   args: {
     altitudeLevel: 1.25,
-    containerHeight: 600,
-    containerWidth: 800,
   },
   parameters: {
     docs: {
@@ -133,8 +125,6 @@ export const FineAltitudeControl: Story = {
 export const ExtremeAltitude: Story = {
   args: {
     altitudeLevel: 4.8,
-    containerHeight: 600,
-    containerWidth: 800,
   },
   parameters: {
     docs: {
@@ -145,17 +135,15 @@ export const ExtremeAltitude: Story = {
   },
 };
 
-// Aurora effects visible
+// Aurora effects visible at transition area
 export const AuroraEffects: Story = {
   args: {
-    altitudeLevel: 3.2,
-    containerHeight: 600,
-    containerWidth: 800,
+    altitudeLevel: 2.05,
   },
   parameters: {
     docs: {
       description: {
-        story: "Shows aurora effects at high altitude levels",
+        story: "Shows aurora effects at altitude level 2.05 where most aurora objects are positioned",
       },
     },
   },
@@ -165,33 +153,84 @@ export const AuroraEffects: Story = {
 export const SmoothTransitions: Story = {
   args: {
     altitudeLevel: 1.0,
-    containerHeight: 600,
-    containerWidth: 800,
   },
   parameters: {
     docs: {
       description: {
-        story: "Shows smooth transitions between background segments at altitude level 1.0",
+        story:
+          "Shows smooth transitions between background segments at altitude level 1.0",
       },
     },
   },
 };
 
-// Small container
-export const SmallContainer: Story = {
+// Moon visibility at high altitude
+export const MoonVisibility: Story = {
   args: {
-    altitudeLevel: 2.0,
-    containerHeight: 300,
-    containerWidth: 400,
+    altitudeLevel: 2.5,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Shows the moon at altitude level 2.5",
+      },
+    },
   },
 };
 
-// Large container
-export const LargeContainer: Story = {
+// Jupiter visibility at extreme altitude
+export const JupiterVisibility: Story = {
   args: {
-    altitudeLevel: 2.0,
-    containerHeight: 800,
-    containerWidth: 1200,
+    altitudeLevel: 3.0,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Shows Jupiter at altitude level 3.0",
+      },
+    },
+  },
+};
+
+// Aurora beginning (around 1.9)
+export const AuroraBeginning: Story = {
+  args: {
+    altitudeLevel: 1.92,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Shows the beginning of aurora effects at altitude level 1.92",
+      },
+    },
+  },
+};
+
+// Aurora peak (around 2.1)
+export const AuroraPeak: Story = {
+  args: {
+    altitudeLevel: 2.1,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Shows peak aurora effects at altitude level 2.1",
+      },
+    },
+  },
+};
+
+// Aurora ending (around 2.2)
+export const AuroraEnding: Story = {
+  args: {
+    altitudeLevel: 2.2,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Shows ending aurora effects at altitude level 2.2",
+      },
+    },
   },
 };
 
@@ -199,14 +238,12 @@ export const LargeContainer: Story = {
 export const Playground: Story = {
   args: {
     altitudeLevel: 2.0,
-    containerHeight: 600,
-    containerWidth: 800,
   },
   parameters: {
     docs: {
       description: {
         story:
-          "Interactive playground to test different altitude levels and settings. Use the controls to adjust altitude level and container size. Altitude level 0-1 shows first segment, 1-2 shows second segment, etc.",
+          "Interactive playground to test different altitude levels. Aurora effects are visible around 1.9-2.2, Moon at 2.5, Jupiter at 3.0.",
       },
     },
   },

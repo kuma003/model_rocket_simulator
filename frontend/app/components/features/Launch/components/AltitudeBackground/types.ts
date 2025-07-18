@@ -9,8 +9,6 @@ export interface SkyObject {
 
 export interface AltitudeBackgroundProps {
   altitudeLevel: number;
-  containerHeight: number;
-  containerWidth: number;
 }
 
 export interface BackgroundSegment {
