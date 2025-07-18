@@ -1,5 +1,5 @@
-import type { Route } from "./+types/_index";
+import Launch from "~/components/features/Launch";
 
 export default function Home() {
-  return <div>this is launch page</div>;
+  return <Launch />;
 }

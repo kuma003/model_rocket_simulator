@@ -20,8 +20,8 @@ const LaunchButton: React.FC<LaunchButtonProps> = ({
     // Save current rocket parameters to localStorage
     saveRocketParams(rocketParams);
     
-    // Navigate to launch page
-    navigate("/launch");
+    // Navigate to launch page without history
+    navigate("/launch", { replace: true });
   };
 
   return (

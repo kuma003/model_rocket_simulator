@@ -25,7 +25,7 @@ export const Top: React.FC = () => {
           {
             label: "ゲームスタート",
             leftIcon: <PlayArrow />,
-            onClick: () => navigate("/design"),
+            onClick: () => navigate("/design", { replace: true }),
           },
           {
             label: "ランキング",
@@ -37,6 +37,7 @@ export const Top: React.FC = () => {
             onClick: () =>
               navigate("/", {
                 state: { showModal: "settings" },
+                replace: true,
               }),
           },
           {
