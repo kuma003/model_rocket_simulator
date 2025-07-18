@@ -8,18 +8,17 @@ const Rocket = () => {
     useMotorExtractor();
 
   useEffect(() => {
-    console.log("Rocket component mounted, starting motor extraction...");
     extractAllMotors();
   }, []);
 
-  useEffect(() => {
-    console.log("Motor data updated:", {
-      motorCount: motorData.length,
-      loading,
-      error,
-      motors: motorData.map((m) => m.header.name),
-    });
-  }, [motorData, loading, error]);
+  // useEffect(() => {
+  //   console.log("Motor data updated:", {
+  //     motorCount: motorData.length,
+  //     loading,
+  //     error,
+  //     motors: motorData.map((m) => m.header.name),
+  //   });
+  // }, [motorData, loading, error]);
 
   return <></>;
 };

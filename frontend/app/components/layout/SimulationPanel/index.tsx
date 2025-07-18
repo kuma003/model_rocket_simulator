@@ -61,14 +61,11 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
             <Card shadow="sm" padding="md" radius="md">
               <Group justify="space-between">
                 <Text size="sm" c="white">
-                  慣性モーメント
+                  機体全長
                 </Text>
                 <Text size="sm" c="white" fw={600}>
-                  {(
-                    rocketProperties.inertiaMoment /
-                    (G_TO_KG * CM_TO_M * CM_TO_M)
-                  ).toFixed(2) + " "}
-                  g·cm²
+                  {(rocketProperties.specs.ref_len / CM_TO_M).toFixed(1) + " "}
+                  cm
                 </Text>
               </Group>
             </Card>

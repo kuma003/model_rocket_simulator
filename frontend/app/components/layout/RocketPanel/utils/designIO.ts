@@ -1,3 +1,4 @@
+import { loadMotorData } from "~/utils/motorParser";
 import type { RocketParams } from "../../../features/Rocket/types";
 import { Materials } from "../../../features/Rocket/types";
 
@@ -12,17 +13,17 @@ export const exportDesignData = (rocketParams: RocketParams): void => {
     version: "1.0",
     units: "SI", // meters, kg, seconds
     exported: new Date().toISOString(),
-    data: rocketParams
+    data: { ...rocketParams, engine: { name: rocketParams.engine.name } }, // Remove Engine thrust data
   };
-  
+
   const dataStr = JSON.stringify(exportData, null, 2);
   const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`;
-  
+
   const exportFileDefaultName = `${rocketParams.name || "rocket_design"}.json`;
-  
-  const linkElement = document.createElement('a');
-  linkElement.setAttribute('href', dataUri);
-  linkElement.setAttribute('download', exportFileDefaultName);
+
+  const linkElement = document.createElement("a");
+  linkElement.setAttribute("href", dataUri);
+  linkElement.setAttribute("download", exportFileDefaultName);
   linkElement.click();
 };
 
@@ -35,31 +36,47 @@ export const exportDesignData = (rocketParams: RocketParams): void => {
 export const importDesignData = (file: File): Promise<RocketParams> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    
-    reader.onload = (e) => {
+
+    reader.onload = async (e) => {
       try {
         const content = e.target?.result as string;
         const parsedData = JSON.parse(content);
-        
+
         // Expect new format with metadata
         if (parsedData.version && parsedData.units && parsedData.data) {
           if (parsedData.units === "SI") {
-            resolve(parsedData.data as RocketParams);
+            const fetchMotor = async () => {
+              try {
+                const data = await loadMotorData(parsedData.data.engine.name);
+
+                if (data) {
+                  parsedData.data.engine = data; // Replace with full engine data
+                  resolve(parsedData.data as RocketParams);
+                }
+              } catch (error) {
+                console.error("Failed to load motor data:", error);
+              }
+            };
+            fetchMotor();
           } else {
             reject(new Error("Unsupported unit system. Expected SI units."));
           }
         } else {
-          reject(new Error("Invalid file format. Expected versioned format with metadata."));
+          reject(
+            new Error(
+              "Invalid file format. Expected versioned format with metadata."
+            )
+          );
         }
       } catch (error) {
         reject(new Error("Invalid JSON format"));
       }
     };
-    
+
     reader.onerror = () => {
       reject(new Error("Failed to read file"));
     };
-    
+
     reader.readAsText(file);
   });
 };
@@ -101,7 +118,6 @@ export const validateRocketParams = (data: any): data is RocketParams => {
 
   return true;
 };
-
 
 /**
  * Validates nose section
@@ -149,15 +165,14 @@ const validateFins = (fins: any): boolean => {
     return false;
   }
 
-  const baseValid = (
+  const baseValid =
     typeof fins.thickness === "number" &&
     typeof fins.material === "string" &&
     fins.material in Materials &&
     typeof fins.color === "string" &&
     typeof fins.count === "number" &&
     typeof fins.offset === "number" &&
-    typeof fins.type === "string"
-  );
+    typeof fins.type === "string";
 
   if (!baseValid) {
     return false;
@@ -174,14 +189,14 @@ const validateFins = (fins: any): boolean => {
       );
     case "elliptical":
       return (
-        typeof fins.rootChord === "number" &&
-        typeof fins.height === "number"
+        typeof fins.rootChord === "number" && typeof fins.height === "number"
       );
     case "freedom":
       return (
         Array.isArray(fins.points) &&
-        fins.points.every((point: any) => 
-          typeof point.x === "number" && typeof point.y === "number"
+        fins.points.every(
+          (point: any) =>
+            typeof point.x === "number" && typeof point.y === "number"
         )
       );
     default:

@@ -161,9 +161,9 @@ const run4DoFSimulation = (
     trajectory.omega.push(omega);
     trajectory.isCombusting.push(isCombusting);
 
-    console.log(
-      `Time: ${currentTime.toFixed(2)}s, Position: (${position.x.toFixed(2)}, ${position.y.toFixed(2)}) m, Velocity: (${velocity.x.toFixed(2)}, ${velocity.y.toFixed(2)}) m/s, Mass: ${mass.toFixed(2)} kg, Force: (${force.x.toFixed(2)}, ${force.y.toFixed(2)}) N, Pitch: ${pitch.toFixed(2)} rad, Omega: ${omega.toFixed(2)} rad/s`
-    );
+    // console.log(
+    //   `Time: ${currentTime.toFixed(2)}s, Position: (${position.x.toFixed(2)}, ${position.y.toFixed(2)}) m, Velocity: (${velocity.x.toFixed(2)}, ${velocity.y.toFixed(2)}) m/s, Mass: ${mass.toFixed(2)} kg, Force: (${force.x.toFixed(2)}, ${force.y.toFixed(2)}) N, Pitch: ${pitch.toFixed(2)} rad, Omega: ${omega.toFixed(2)} rad/s`
+    // );
     // Increment time
     currentTime += timeStep;
     if (touchdown) break;

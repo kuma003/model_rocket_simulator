@@ -1,4 +1,5 @@
 import type { RocketParams } from "../../components/features/Rocket/types";
+import { loadMotorData } from "../motorParser";
 
 const ROCKET_PARAMS_KEY = "rocket_design_params";
 
@@ -8,7 +9,11 @@ const ROCKET_PARAMS_KEY = "rocket_design_params";
  */
 export function saveRocketParams(params: RocketParams): void {
   try {
-    const serialized = JSON.stringify(params);
+    const serialized = JSON.stringify({
+      ...params,
+      engine: { name: params.engine.name },
+      // Only save engine name to reduce size, full data can be fetched later
+    });
     localStorage.setItem(ROCKET_PARAMS_KEY, serialized);
     console.log("Rocket parameters saved to localStorage");
   } catch (error) {
@@ -24,15 +29,26 @@ export function loadRocketParams(): RocketParams | null {
   try {
     const serialized = localStorage.getItem(ROCKET_PARAMS_KEY);
     if (serialized) {
-      const params = JSON.parse(serialized) as RocketParams;
+      const json = JSON.parse(serialized);
+      const fetchMotor = async () => {
+        try {
+          const data = await loadMotorData(json.engine.name);
+
+          if (data) {
+            json.engine = data; // Replace with full engine data
+          }
+        } catch (error) {
+          console.error("Failed to load motor data:", error);
+        }
+      };
+      fetchMotor();
       console.log("Rocket parameters loaded from localStorage");
-      return params;
+      return json;
     }
-    return null;
   } catch (error) {
-    console.error("Failed to load rocket parameters:", error);
-    return null;
+    console.error("Failed to load motor data:", error);
   }
+  return null;
 }
 
 /**

@@ -67,7 +67,6 @@ function generateFinVertices(
 
       points.push({ x, y });
     }
-    console.log(points);
 
     // // ボディチューブ接続線を追加して閉じたポリゴンにする
     // const orderedPoints: Point2D[] = [
@@ -240,7 +239,6 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
   const payloadOffset = payload.offset * pixelsPerM;
   const payloadDiameter = payload.diameter * pixelsPerM;
   const payloadLength = payload.length * pixelsPerM;
-  console.log(payload);
 
   // 全体の高さを計算
   const totalHeight = noseHeight + bodyHeight;
