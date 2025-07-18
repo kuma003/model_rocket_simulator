@@ -80,4 +80,6 @@ export interface RocketSpecs {
 
   vel_1st: number; // Velocity at first stage separation (m/s)
   op_time: number; // Operational time of the rocket (seconds)
+
+  engine: MotorData; // Engine data used for calculations
 }

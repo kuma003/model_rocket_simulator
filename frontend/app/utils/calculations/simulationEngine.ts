@@ -8,6 +8,7 @@ import { calculateFinProperties } from "./finCalculations";
 
 import { UNIT_CONVERSIONS, PHYSICS_CONSTANTS } from "../physics/constants";
 import { loadMotorData } from "../motorParser";
+import run4DoFSimulation from "./4DoF";
 
 export interface RocketProperties {
   dryMass: number; // g
@@ -92,8 +93,8 @@ export function calculateRocketProperties(
     ref_len: refLength,
     diam: params.body.diameter,
     mass_dry: dryMass,
-    mass_i: dryMass + 100, // DUMMY: 推進剤重量
-    mass_f: dryMass,
+    mass_i: mass_i, // DUMMY: 推進剤重量
+    mass_f: mass_f,
     CGlen_i: CG_i, // Use actual center of gravity
     CGlen_f: CG_f, // Use actual center of gravity
     Iyz: inertiaMoment,
@@ -103,6 +104,7 @@ export function calculateRocketProperties(
     Cmq: pitchMomentCoefficient,
     vel_1st: 0, // DUMMY: 1段目分離速度
     op_time: 0, // Will be set by trajectory calculation
+    engine: params.engine,
   };
 
   // Calculate stability margin: (CP - CG) / RefLength
@@ -126,94 +128,22 @@ export function calculateRocketProperties(
 export function calculateTrajectory(
   properties: RocketProperties
 ): TrajectoryData {
-  const { dryMass, specs } = properties;
-  const totalCd = specs.Cd;
+  const trajectory = run4DoFSimulation(properties.specs, {
+    lauchrodElevation: 89, // Launch rod elevation
+    launchrodLength: 1, // DUMMY: Launch rod length
+  });
 
-  // 飛行軌道計算
-  const maxAltitude = calculateMaxAltitude(dryMass, totalCd);
-  const flightTime = calculateFlightTime(maxAltitude);
-  const altitudeData = generateAltitudeData(maxAltitude, flightTime);
+  const maxAltitude = Math.max(...trajectory.position.map((p) => p.y)); // Find maximum altitude from trajectory data
+
+  const flightTime = trajectory.time[trajectory.time.length - 1]; // Total flight time
+  const altitudeData = trajectory.position.map((pos, index) => ({
+    time: trajectory.time[index],
+    altitude: pos.y,
+  }));
 
   return {
     flightTime,
     maxAltitude,
     altitudeData,
   };
-}
-
-/**
- * Complete simulation including both rocket properties and trajectory calculation
- * @param params - Rocket parameters
- * @returns Complete simulation results
- */
-export function runSimulation(params: RocketParams): SimulationResults {
-  const properties = calculateRocketProperties(params);
-  const trajectory = calculateTrajectory(properties);
-
-  // Update specs with flight time
-  const updatedSpecs = {
-    ...properties.specs,
-    op_time: trajectory.flightTime,
-  };
-
-  return {
-    ...properties,
-    ...trajectory,
-    specs: updatedSpecs,
-  };
-}
-
-// DUMMY: 最高高度計算（実装予定）
-function calculateMaxAltitude(
-  massGrams: number,
-  dragCoefficient: number
-): number {
-  // 簡易的な計算式
-  const thrustToWeightRatio = 5.0; // DUMMY: 推力重量比
-  const burnTime = 2.0; // DUMMY: 燃焼時間
-
-  // 理想的な場合の最高高度の簡易計算
-  const baseAltitude = Math.max(50, massGrams * 0.5);
-  const dragFactor = Math.max(0.5, 1 - dragCoefficient);
-
-  return baseAltitude * dragFactor * thrustToWeightRatio;
-}
-
-// DUMMY: 飛行時間計算（実装予定）
-function calculateFlightTime(maxAltitude: number): number {
-  // 自由落下時間の簡易計算
-  const { GRAVITY } = PHYSICS_CONSTANTS;
-  return Math.sqrt((2 * maxAltitude) / GRAVITY) * 1.5; // 上昇時間も考慮
-}
-
-// DUMMY: 高度データ生成（実装予定）
-function generateAltitudeData(
-  maxAltitude: number,
-  totalFlightTime: number
-): Array<{ time: number; altitude: number }> {
-  const dataPoints = 20;
-  const altitudeData = [];
-
-  for (let i = 0; i <= dataPoints; i++) {
-    const timeRatio = i / dataPoints;
-    const time = timeRatio * totalFlightTime;
-
-    let altitude = 0;
-    if (timeRatio <= 0.2) {
-      // 加速上昇フェーズ
-      altitude = maxAltitude * Math.pow(timeRatio * 5, 2) * 0.04;
-    } else if (timeRatio <= 0.4) {
-      // 減速上昇フェーズ
-      const adjustedRatio = (timeRatio - 0.2) * 5;
-      altitude = maxAltitude * (0.04 + adjustedRatio * 0.96);
-    } else {
-      // 下降フェーズ
-      const adjustedRatio = (timeRatio - 0.4) / 0.6;
-      altitude = maxAltitude * (1 - Math.pow(adjustedRatio, 2));
-    }
-
-    altitudeData.push({ time, altitude: Math.max(0, altitude) });
-  }
-
-  return altitudeData;
 }
