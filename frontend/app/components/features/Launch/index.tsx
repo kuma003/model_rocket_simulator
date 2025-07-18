@@ -8,10 +8,17 @@ import type { RocketParams } from "../Rocket/types";
 import AltitudeBackground from "./components/AltitudeBackground";
 import AltitudeMeter from "./components/AltitudeMeter";
 import Timer from "./components/Timer";
+import {
+  calculateRocketProperties,
+  calculateTrajectory,
+  type TrajectoryData,
+} from "~/utils/calculations/simulationEngine";
 
 const Launch: React.FC = () => {
   const navigate = useNavigate();
   const [rocketParams, setRocketParams] = useState<RocketParams | null>(null);
+  const [trajectoryData, setTrajectoryData] = useState<TrajectoryData>(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,6 +67,16 @@ const Launch: React.FC = () => {
 
     checkRocketCache();
   }, [navigate]);
+
+  useEffect(() => {
+    if (!rocketParams) return;
+    const properties = calculateRocketProperties(rocketParams);
+    setTrajectoryData(calculateTrajectory(properties, 0.025));
+  }, [rocketParams]);
+
+  useEffect(() => {
+    console.log("Trajectory Data:", trajectoryData);
+  }, [trajectoryData]);
 
   // Timer control functions
   const startTimer = useCallback(() => {
@@ -148,6 +165,7 @@ const Launch: React.FC = () => {
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
       <AltitudeBackground altitudeLevel={0} />
+      <RocketCarts 
       <AltitudeMeter alt={0} step={50} />
       <Timer time={time} />
     </div>

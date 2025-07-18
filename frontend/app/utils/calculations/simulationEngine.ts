@@ -145,12 +145,17 @@ export function calculateRocketProperties(
  * @returns Trajectory data including flight time, max altitude, and altitude data
  */
 export function calculateTrajectory(
-  properties: RocketProperties
+  properties: RocketProperties,
+  timestep: number = 0.1
 ): TrajectoryData {
-  const trajectory = run4DoFSimulation(properties.specs, {
-    lauchrodElevation: 89, // Launch rod elevation
-    launchrodLength: 1, // DUMMY: Launch rod length
-  });
+  const trajectory = run4DoFSimulation(
+    properties.specs,
+    {
+      lauchrodElevation: 89, // Launch rod elevation
+      launchrodLength: 1, // DUMMY: Launch rod length
+    },
+    timestep
+  );
 
   const maxAltitude = Math.max(...trajectory.position.map((p) => p.y)); // Find maximum altitude from trajectory data
 
