@@ -16,6 +16,7 @@ import ImportExportButtons from "./components/ImportExportButtons";
 import NoseSection from "./sections/NoseSection";
 import BodySection from "./sections/BodySection";
 import FinSection from "./sections/FinSection";
+import PayloadSection from "./sections/PayloadSection";
 import EngineSection from "./sections/EngineSection";
 
 export interface RocketPanelProps {
@@ -53,6 +54,12 @@ const defaultRocketParams: RocketParams = {
     sweepLength: 0.03,
     height: 0.04,
   },
+  payload: {
+    offset: 0.05,
+    diameter: 0.02,
+    length: 0.03,
+    mass: 0.01,
+  },
   engine: {
     name: "Estes A10",
     peakThrust: 0,
@@ -73,13 +80,18 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
   rocketParams = defaultRocketParams,
   setRocketParams,
 }) => {
-  const sections = [
+  // タブを2段に分ける
+  const primarySections = [
     { label: "ノーズ", value: "nose" },
     { label: "ボディ", value: "body" },
     { label: "フィン", value: "fins" },
+  ];
+  
+  const secondarySections = [
+    { label: "ペイロード", value: "payload" },
     { label: "エンジン", value: "engine" },
   ];
-  const [activeSection, setActiveSection] = useState(sections[0].value);
+  const [activeSection, setActiveSection] = useState(primarySections[0].value);
   const [params, setParams] = useState<RocketParams>(rocketParams);
   const [motorData, setMotorData] = useState<MotorData | null>(null);
   const [loadingMotorData, setLoadingMotorData] = useState(false);
@@ -136,6 +148,8 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
         return <BodySection params={params} updateParams={updateParams} />;
       case "fins":
         return <FinSection params={params} updateParams={updateParams} />;
+      case "payload":
+        return <PayloadSection params={params} updateParams={updateParams} />;
       case "engine":
         return <EngineSection params={params} updateParams={updateParams} />;
       default:
@@ -156,12 +170,20 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
 
         <Divider />
 
-        <SegmentedControl
-          value={activeSection}
-          onChange={setActiveSection}
-          data={sections}
-          className={styles.segmentedControl}
-        />
+        <Stack gap="xs">
+          <SegmentedControl
+            value={activeSection}
+            onChange={setActiveSection}
+            data={primarySections}
+            className={styles.segmentedControl}
+          />
+          <SegmentedControl
+            value={activeSection}
+            onChange={setActiveSection}
+            data={secondarySections}
+            className={styles.segmentedControl}
+          />
+        </Stack>
 
         <ScrollArea className={styles.scrollArea}>
           {renderActiveSection()}

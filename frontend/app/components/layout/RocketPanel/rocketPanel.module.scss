@@ -1,7 +1,7 @@
 .panel {
   display: flex;
   flex-direction: column;
-  width: 350px;
+  width: 400px;
   height: calc(100vh - 10px); // Adjust height to fit below header
   position: relative;
   background: linear-gradient(
@@ -100,6 +100,7 @@
     color: rgba(255, 255, 255, 0.7);
     // font-family: 'Comic Sans MS', 'Hiragino Kaku Gothic ProN', cursive, sans-serif;
     font-weight: 600;
+    font-size: 0.75rem;
     transition: all 0.3s ease;
 
     &:hover {
@@ -112,6 +113,22 @@
     color: white !important;
     box-shadow: 0 4px 15px rgba(255, 152, 27, 0.3);
     transform: translateY(-1px);
+  }
+
+  // 第2段のタブのスタイリング
+  &:nth-of-type(2) {
+    :global(.mantine-SegmentedControl-root) {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    :global(.mantine-SegmentedControl-control) {
+      color: rgba(255, 255, 255, 0.6) !important;
+    }
+    
+    :global(.mantine-SegmentedControl-control[data-active]) {
+      background: linear-gradient(45deg, #ed64a6, #ff981b) !important;
+    }
   }
 }
 
