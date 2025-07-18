@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import type { AltitudeBackgroundProps } from "./types";
-import { getBackgroundStyle } from "./backgroundUtils";
+import { getBackgroundLayers } from "./backgroundUtils";
 import { 
   calculateObjectPosition, 
   getVisibleObjects, 
@@ -16,8 +16,8 @@ const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
   containerHeight,
   containerWidth,
 }) => {
-  const backgroundStyle = useMemo(() => 
-    getBackgroundStyle(altitude, stepInterval, containerHeight),
+  const backgroundLayers = useMemo(() => 
+    getBackgroundLayers(altitude, stepInterval, containerHeight),
     [altitude, stepInterval, containerHeight]
   );
 
@@ -42,14 +42,21 @@ const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
         height: containerHeight,
       }}
     >
-      <div
-        className={styles.backgroundLayer}
-        style={{
-          backgroundImage: backgroundStyle.backgroundImage,
-          backgroundPosition: backgroundStyle.backgroundPosition,
-          backgroundSize: "cover",
-        }}
-      />
+      {backgroundLayers.map((layer, index) => (
+        <div
+          key={`${layer.imagePath}-${index}`}
+          className={styles.backgroundLayer}
+          style={{
+            backgroundImage: `url(${layer.imagePath})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center top",
+            backgroundRepeat: "no-repeat",
+            top: layer.top,
+            height: layer.height,
+            zIndex: layer.zIndex,
+          }}
+        />
+      ))}
       
       <div className={styles.objectsLayer}>
         {objectPositions.map((obj, index) => (
@@ -87,8 +94,12 @@ const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
           <div>Altitude: {altitude.toFixed(1)}m</div>
           <div>Step: {stepInterval}m</div>
           <div>Objects: {visibleObjects.length}</div>
-          <div>Image: {backgroundStyle.backgroundImage}</div>
-          <div>Position: {backgroundStyle.backgroundPosition}</div>
+          <div>Layers: {backgroundLayers.length}</div>
+          {backgroundLayers.map((layer, index) => (
+            <div key={index} style={{ fontSize: "10px" }}>
+              Layer {index}: {layer.imagePath} (top: {layer.top.toFixed(1)})
+            </div>
+          ))}
         </div>
       )}
     </div>

@@ -52,25 +52,64 @@ export function calculateBackgroundPosition(
   }
 }
 
-export function getBackgroundStyle(
+export interface BackgroundLayer {
+  imagePath: string;
+  top: number;
+  height: number;
+  zIndex: number;
+}
+
+export function getBackgroundLayers(
   altitude: number,
   stepInterval: number,
   containerHeight: number
-): { backgroundImage: string; backgroundPosition: string } {
+): BackgroundLayer[] {
   const segments = createBackgroundSegments(stepInterval);
-  const currentSegment = getCurrentBackgroundSegment(altitude, segments);
-  
-  if (!currentSegment) {
-    return {
-      backgroundImage: `url(${segments[0].imagePath})`,
-      backgroundPosition: "center bottom",
-    };
-  }
+  const layers: BackgroundLayer[] = [];
 
-  const positionPercent = calculateBackgroundPosition(altitude, currentSegment, stepInterval);
-  
-  return {
-    backgroundImage: `url(${currentSegment.imagePath})`,
-    backgroundPosition: `center ${100 - positionPercent}%`,
-  };
+  // Calculate scroll amount: altitude / stepInterval = number of images scrolled
+  const scrollAmount = altitude / stepInterval;
+
+  // Create layers for all segments that might be visible
+  segments.forEach((segment, index) => {
+    let imagePath = segment.imagePath;
+    
+    // For repeating segments (150m+), we need to handle multiple copies
+    if (segment.isRepeating && scrollAmount >= 3) {
+      // Calculate how many additional copies we need
+      const additionalCopies = Math.floor(scrollAmount - 3);
+      
+      // Add multiple copies of the repeating image
+      for (let copyIndex = 0; copyIndex <= additionalCopies + 1; copyIndex++) {
+        const layerIndex = 3 + copyIndex;
+        const layerTop = layerIndex * containerHeight - scrollAmount * containerHeight;
+        
+        // Only add if the layer might be visible
+        if (layerTop > -containerHeight && layerTop < containerHeight * 2) {
+          layers.push({
+            imagePath,
+            top: layerTop,
+            height: containerHeight,
+            zIndex: 1,
+          });
+        }
+      }
+    } else if (!segment.isRepeating) {
+      // Normal segments - calculate position
+      // Each image starts at its index position, then moves down by scrollAmount
+      const layerTop = index * containerHeight - scrollAmount * containerHeight;
+      
+      // Only add if the layer might be visible
+      if (layerTop > -containerHeight && layerTop < containerHeight * 2) {
+        layers.push({
+          imagePath,
+          top: layerTop,
+          height: containerHeight,
+          zIndex: 1,
+        });
+      }
+    }
+  });
+
+  return layers;
 }
