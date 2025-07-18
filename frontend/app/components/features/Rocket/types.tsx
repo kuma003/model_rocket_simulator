@@ -1,3 +1,5 @@
+import type { MotorData } from "~/utils/motorParser";
+
 // Material densities in kg/m^3 (SI units)
 export const Materials = {
   plastic: {
@@ -57,9 +59,7 @@ export interface RocketParams {
           }[];
         }
     );
-  engine: {
-    name: string;
-  };
+  engine: MotorData;
 }
 
 // RocketSpecs interface for calculations (SI units)

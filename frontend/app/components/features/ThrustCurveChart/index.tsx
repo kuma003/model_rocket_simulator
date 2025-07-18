@@ -37,6 +37,14 @@ const ThrustCurveChart: React.FC<ThrustCurveChartProps> = ({
     );
   }
 
+  if (!motorData.thrustCurve || motorData.thrustCurve.length === 0) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.noData}>スラストカーブデータが見つかりません</div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>

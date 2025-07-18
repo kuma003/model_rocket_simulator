@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import type { RocketParams } from "../../features/Rocket/types";
 import styles from "./rocketPanel.module.scss";
 import { SegmentedControl, Stack, Divider, ScrollArea } from "@mantine/core";
@@ -55,6 +55,17 @@ const defaultRocketParams: RocketParams = {
   },
   engine: {
     name: "Estes A10",
+    peakThrust: 0,
+    averageThrust: 0,
+    burnTime: 0,
+    totalImpulse: 0,
+    thrustCurve: [],
+    diameter: 18,
+    length: 70,
+    delays: "3-5-7",
+    propMass: 0.0038,
+    totalMass: 0.0087,
+    manufacturer: "Estes",
   },
 };
 
@@ -72,33 +83,21 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
   const [params, setParams] = useState<RocketParams>(rocketParams);
   const [motorData, setMotorData] = useState<MotorData | null>(null);
   const [loadingMotorData, setLoadingMotorData] = useState(false);
+  const [engineName, setEngineName] = useState<string>(
+    rocketParams.engine.name
+  );
 
-  const updateParams = (newParams: Partial<RocketParams>) => {
-    const updatedParams = { ...params, ...newParams };
-    setParams(updatedParams);
-    setRocketParams(updatedParams);
-  };
+  const updateParams = useCallback((newParams: Partial<RocketParams>) => {
+    setParams((prevParams) => {
+      const updatedParams = { ...prevParams, ...newParams };
+      return updatedParams;
+    });
+  }, []);
 
+  // Update parent component when params change
   useEffect(() => {
-    const loadMotor = async () => {
-      if (params.engine.name) {
-        setLoadingMotorData(true);
-        try {
-          const data = await loadMotorData(params.engine.name);
-          setMotorData(data);
-        } catch (error) {
-          console.error("Failed to load motor data:", error);
-          setMotorData(null);
-        } finally {
-          setLoadingMotorData(false);
-        }
-      } else {
-        setMotorData(null);
-      }
-    };
-
-    loadMotor();
-  }, [params.engine]);
+    setRocketParams(params);
+  }, [params, setRocketParams]);
 
   const handleImport = () => {
     const input = document.createElement("input");
@@ -138,14 +137,7 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
       case "fins":
         return <FinSection params={params} updateParams={updateParams} />;
       case "engine":
-        return (
-          <EngineSection
-            params={params}
-            updateParams={updateParams}
-            motorData={motorData}
-            loadingMotorData={loadingMotorData}
-          />
-        );
+        return <EngineSection params={params} updateParams={updateParams} />;
       default:
         return null;
     }

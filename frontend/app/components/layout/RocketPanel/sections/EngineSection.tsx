@@ -1,28 +1,46 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Stack, Select } from "@mantine/core";
 import type { RocketParams } from "../../../features/Rocket/types";
 import ThrustCurveChart from "../../../features/ThrustCurveChart";
-import type { MotorData } from "../../../../utils/motorParser";
+import { loadMotorData, type MotorData } from "../../../../utils/motorParser";
 
 interface EngineSectionProps {
   params: RocketParams;
   updateParams: (newParams: Partial<RocketParams>) => void;
-  motorData: MotorData | null;
-  loadingMotorData: boolean;
+  loading: boolean;
 }
 
 const EngineSection: React.FC<EngineSectionProps> = ({
   params,
   updateParams,
-  motorData,
-  loadingMotorData,
+  loading,
 }) => {
+  const [engineName, setEngineName] = React.useState(params.engine.name);
+  const [motorData, setMotorData] = React.useState<MotorData | null>(null);
+
+  useEffect(() => {
+    const fetchMotor = async () => {
+      if (engineName) {
+        try {
+          const data = await loadMotorData(engineName);
+          setMotorData(data);
+          if (data) {
+            updateParams({ engine: data });
+          }
+        } catch (error) {
+          console.error("Failed to load motor data:", error);
+          setMotorData(null);
+        }
+      }
+    };
+    fetchMotor();
+  }, [engineName]);
   return (
     <Stack>
       <Select
         label="エンジン"
-        value={params.engine.name}
-        onChange={(value) => updateParams({ engine: { name: value || "" } })}
+        value={engineName}
+        onChange={(value) => setEngineName(value || "")}
         data={[
           { value: "Estes A10", label: "Estes A10" },
           { value: "Estes A3", label: "Estes A3" },
@@ -31,7 +49,7 @@ const EngineSection: React.FC<EngineSectionProps> = ({
         ]}
         allowDeselect={false}
       />
-      <ThrustCurveChart motorData={motorData} loading={loadingMotorData} />
+      <ThrustCurveChart motorData={motorData} loading={loading} />
     </Stack>
   );
 };
