@@ -122,7 +122,9 @@ export async function loadMotorData(
     }
 
     const content = await response.text();
-    return parseMotorFile(content);
+    const parsedData = parseMotorFile(content);
+    if (!parsedData) return null;
+    return { ...parsedData, name: motorName }; // Ensure name is set correctly
   } catch (error) {
     console.error("Error loading motor data:", error);
     return null;

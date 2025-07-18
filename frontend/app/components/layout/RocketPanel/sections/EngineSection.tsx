@@ -7,13 +7,11 @@ import { loadMotorData, type MotorData } from "../../../../utils/motorParser";
 interface EngineSectionProps {
   params: RocketParams;
   updateParams: (newParams: Partial<RocketParams>) => void;
-  loading: boolean;
 }
 
 const EngineSection: React.FC<EngineSectionProps> = ({
   params,
   updateParams,
-  loading,
 }) => {
   const [engineName, setEngineName] = React.useState(params.engine.name);
   const [motorData, setMotorData] = React.useState<MotorData | null>(null);
@@ -49,7 +47,7 @@ const EngineSection: React.FC<EngineSectionProps> = ({
         ]}
         allowDeselect={false}
       />
-      <ThrustCurveChart motorData={motorData} loading={loading} />
+      <ThrustCurveChart motorData={motorData} loading={motorData == null} />
     </Stack>
   );
 };
