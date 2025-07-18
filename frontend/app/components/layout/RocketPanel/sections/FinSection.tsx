@@ -130,6 +130,8 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
         max={8}
         stepHoldDelay={500}
         stepHoldInterval={100}
+        clampBehavior="strict"
+        allowNegative={false}
       />
       <UnitNumberInput
         label="フィン取り付け位置"
