@@ -130,6 +130,12 @@ const defaultParams: RocketParams = {
     height: 4,
     offset: 0,
   },
+  payload: {
+    offset: 0.05,
+    diameter: 0.02,
+    length: 0.03,
+    mass: 0.01,
+  },
   engine: {
     name: "Estes A10",
     peakThrust: 0,
@@ -223,6 +229,12 @@ export const EmptyRocket: Story = {
         sweepLength: 0,
         height: 0,
         offset: 0,
+      },
+      payload: {
+        offset: 0,
+        diameter: 0,
+        length: 0,
+        mass: 0,
       },
       engine: {
         name: "",

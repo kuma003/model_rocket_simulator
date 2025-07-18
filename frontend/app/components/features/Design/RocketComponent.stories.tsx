@@ -33,6 +33,12 @@ const defaultParams: RocketParams = {
     height: 0.04, // Convert to meters
     offset: 0.0, // Convert to meters
   },
+  payload: {
+    offset: 0.05,
+    diameter: 0.02,
+    length: 0.03,
+    mass: 0.01,
+  },
   engine: {
     name: "Estes A10",
     peakThrust: 0,
@@ -272,6 +278,15 @@ export const FourFins: Story = {
         color: "#00FF99",
       },
     },
+    rocketProperties: calculateRocketProperties({
+      ...defaultParams,
+      name: "4枚フィンロケット",
+      fins: {
+        ...defaultParams.fins,
+        count: 4,
+        color: "#00FF99",
+      },
+    }),
     scale: 2,
     pitchAngle: 0,
     rollAngle: 0,
@@ -418,6 +433,10 @@ export const FinOffsetComparison: Story = {
               ...defaultParams,
               fins: { ...defaultParams.fins, offset: 3, color: "#FF6600" },
             }}
+            rocketProperties={calculateRocketProperties({
+              ...defaultParams,
+              fins: { ...defaultParams.fins, offset: 3, color: "#FF6600" },
+            })}
             scale={1.5}
             pitchAngle={0}
             rollAngle={0}
@@ -432,6 +451,10 @@ export const FinOffsetComparison: Story = {
               ...defaultParams,
               fins: { ...defaultParams.fins, offset: 6, color: "#9966FF" },
             }}
+            rocketProperties={calculateRocketProperties({
+              ...defaultParams,
+              fins: { ...defaultParams.fins, offset: 6, color: "#9966FF" },
+            })}
             scale={1.5}
             pitchAngle={0}
             rollAngle={0}
@@ -446,6 +469,10 @@ export const FinOffsetComparison: Story = {
               ...defaultParams,
               fins: { ...defaultParams.fins, offset: 9, color: "#66FFFF" },
             }}
+            rocketProperties={calculateRocketProperties({
+              ...defaultParams,
+              fins: { ...defaultParams.fins, offset: 9, color: "#66FFFF" },
+            })}
             scale={1.5}
             pitchAngle={0}
             rollAngle={0}
@@ -485,6 +512,11 @@ export const ComparisonView: Story = {
               nose: { ...defaultParams.nose, type: "ogive", color: "#FF6600" },
               body: { ...defaultParams.body, color: "#66FF66" },
             }}
+            rocketProperties={calculateRocketProperties({
+              ...defaultParams,
+              nose: { ...defaultParams.nose, type: "ogive", color: "#FF6600" },
+              body: { ...defaultParams.body, color: "#66FF66" },
+            })}
             scale={1.5}
             pitchAngle={0}
             rollAngle={0}
@@ -502,6 +534,16 @@ export const ComparisonView: Story = {
               body: { ...defaultParams.body, color: "#FF66FF" },
               fins: { ...defaultParams.fins, count: 4, color: "#66FFFF" },
             }}
+            rocketProperties={calculateRocketProperties({
+              ...defaultParams,
+              nose: {
+                ...defaultParams.nose,
+                type: "elliptical",
+                color: "#9966FF",
+              },
+              body: { ...defaultParams.body, color: "#FF66FF" },
+              fins: { ...defaultParams.fins, count: 4, color: "#66FFFF" },
+            })}
             scale={1.5}
             pitchAngle={0}
             rollAngle={0}
