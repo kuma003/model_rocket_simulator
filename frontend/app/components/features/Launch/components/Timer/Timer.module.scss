@@ -1,0 +1,37 @@
+.timer {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 550px;
+  height: 80px;
+  background: rgba(179, 179, 179, 0.99);
+  color: rgb(49, 49, 49);
+  padding: 12px 16px;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  font-size: 50px;
+  font-weight: 500;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  border: 3px solid rgb(37, 37, 37);
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  fill: currentColor;
+}
+
+.timer p {
+  margin: 0;
+  line-height: 1;
+}
+
+.timer ruby rt {
+  font-size: 18px;
+}

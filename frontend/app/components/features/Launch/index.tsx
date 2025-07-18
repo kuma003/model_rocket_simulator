@@ -6,12 +6,16 @@ import {
 } from "~/utils/storage/rocketStorage";
 import type { RocketParams } from "../Rocket/types";
 import AltitudeBackground from "./components/AltitudeBackground";
+import AltitudeMeter from "./components/AltitudeMeter";
+import Timer from "./components/Timer";
 
 const Launch: React.FC = () => {
   const navigate = useNavigate();
   const [rocketParams, setRocketParams] = useState<RocketParams | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [time, setTime] = useState(0);
 
   useEffect(() => {
     const checkRocketCache = async () => {
@@ -76,6 +80,8 @@ const Launch: React.FC = () => {
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
       <AltitudeBackground altitudeLevel={0} />
+      <AltitudeMeter alt={0} step={50} />
+      <Timer time={time} />
     </div>
   );
 };
