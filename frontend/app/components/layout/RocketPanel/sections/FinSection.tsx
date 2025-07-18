@@ -139,6 +139,7 @@ const FinSection: React.FC<FinSectionProps> = ({ params, updateParams }) => {
         onChange={(value) =>
           updateParams({ fins: { ...params.fins, offset: value } })
         }
+        min={0}
       />
       <Select
         label="フィンタイプ"

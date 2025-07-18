@@ -229,7 +229,7 @@ export const useMotorExtractor = () => {
         );
       }
 
-      const [
+      let [
         name,
         diameterMm,
         lengthMm,
