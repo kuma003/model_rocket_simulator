@@ -7,6 +7,7 @@ import { calculateBodyProperties } from "./bodyCalculations";
 import { calculateFinProperties } from "./finCalculations";
 
 import { UNIT_CONVERSIONS, PHYSICS_CONSTANTS } from "../physics/constants";
+import { loadMotorData } from "../motorParser";
 
 export interface RocketProperties {
   dryMass: number; // g
@@ -39,36 +40,52 @@ export function calculateRocketProperties(
   console.log("Nose Results:", noseResults);
   console.log("Body Results:", bodyResults);
   console.log("Fin Results:", finResults);
+  console.log("Engine Data:", params.engine);
 
   // 総重量計算
   const dryMass = noseResults.mass + bodyResults.mass + finResults.mass;
-
-  // 慣性モーメント計算
-  const totalInertiaMoment = noseResults.Iyx + bodyResults.Iyx;
-  const inertiaMoment = totalInertiaMoment;
+  const mass_i = dryMass + params.engine.totalMass;
+  const mass_f = mass_i - params.engine.propMass;
 
   // 空力計算
-  const refLength = params.nose.length + params.body.length;
   const totalCd = noseResults.Cd + bodyResults.Cd + finResults.Cd;
   const totalCna = noseResults.Cna + bodyResults.Cna + finResults.Cna;
+  const refLength = params.nose.length + params.body.length;
 
   // Calculate actual center of gravity and pressure center
-  const CG =
+  const CG_i =
     (noseResults.Cg * noseResults.mass +
       bodyResults.Cg * bodyResults.mass +
-      finResults.Cg * finResults.mass) /
-    dryMass;
+      finResults.Cg * finResults.mass +
+      (refLength - params.engine.length / 2) * params.engine.totalMass) /
+    mass_i;
+  const CG_f =
+    (noseResults.Cg * noseResults.mass +
+      bodyResults.Cg * bodyResults.mass +
+      finResults.Cg * finResults.mass +
+      (refLength - params.engine.length / 2) *
+        (params.engine.totalMass - params.engine.propMass)) /
+    mass_f;
+
   const CP =
     (noseResults.Cp * noseResults.Cna +
       bodyResults.Cp * bodyResults.Cna +
       finResults.Cp * finResults.Cna) /
     totalCna;
 
+  // 慣性モーメント計算
+  const motorIyx =
+    refLength * params.nose.length +
+    params.body.length -
+    params.engine.length / 2;
+  const totalInertiaMoment = noseResults.Iyx + bodyResults.Iyx;
+  const inertiaMoment = totalInertiaMoment;
+
   const pitchMomentCoefficient =
     -2 *
-    ((noseResults.Cna * (noseResults.Cg - CG)) / refLength +
-      (bodyResults.Cna * (bodyResults.Cg - CG)) / refLength +
-      (finResults.Cna * (finResults.Cg - CG)) / refLength);
+    ((noseResults.Cna * (noseResults.Cg - CG_i)) / refLength +
+      (bodyResults.Cna * (bodyResults.Cg - CG_i)) / refLength +
+      (finResults.Cna * (finResults.Cg - CG_i)) / refLength);
 
   // RocketSpecs の計算
   const specs: RocketSpecs = {
@@ -77,8 +94,8 @@ export function calculateRocketProperties(
     mass_dry: dryMass,
     mass_i: dryMass + 100, // DUMMY: 推進剤重量
     mass_f: dryMass,
-    CGlen_i: CG, // Use actual center of gravity
-    CGlen_f: CG, // Use actual center of gravity
+    CGlen_i: CG_i, // Use actual center of gravity
+    CGlen_f: CG_f, // Use actual center of gravity
     Iyz: inertiaMoment,
     CPlen: CP, // Use actual center of pressure
     Cd: totalCd,
@@ -89,7 +106,7 @@ export function calculateRocketProperties(
   };
 
   // Calculate stability margin: (CP - CG) / RefLength
-  const stabilityMargin = (CP - CG) / refLength;
+  const stabilityMargin = (CP - CG_i) / refLength;
 
   console.log("Rocket Specs:", specs);
   console.log("Stability Margin:", stabilityMargin);

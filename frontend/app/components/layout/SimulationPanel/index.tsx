@@ -49,7 +49,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
                   乾燥重量
                 </Text>
                 <Text size="sm" c="white" fw={600}>
-                  {(rocketProperties.dryMass / G_TO_KG).toFixed(1)}g
+                  {(rocketProperties.dryMass / G_TO_KG).toFixed(1) + " "}g
                 </Text>
               </Group>
             </Card>
@@ -65,8 +65,8 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
                 <Text size="sm" c="white" fw={600}>
                   {(
                     rocketProperties.inertiaMoment /
-                    (CM_TO_M * CM_TO_M * CM_TO_M)
-                  ).toFixed(2)}
+                    (G_TO_KG * CM_TO_M * CM_TO_M)
+                  ).toFixed(2) + " "}
                   g·cm²
                 </Text>
               </Group>
@@ -78,7 +78,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
                   飛行時間
                 </Text>
                 <Text size="sm" c="white" fw={600}>
-                  {trajectoryData.flightTime.toFixed(1)}秒
+                  {trajectoryData.flightTime.toFixed(1) + " "}秒
                 </Text>
               </Group>
             </Card>
@@ -89,7 +89,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
                   最高高度
                 </Text>
                 <Text size="sm" c="white" fw={600}>
-                  {trajectoryData.maxAltitude.toFixed(1)}m
+                  {trajectoryData.maxAltitude.toFixed(1) + " "}m
                 </Text>
               </Group>
             </Card>
@@ -104,7 +104,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
                   c={rocketProperties.stabilityMargin > 0 ? "white" : "red"}
                   fw={600}
                 >
-                  {(rocketProperties.stabilityMargin * 100).toFixed(1)}%
+                  {(rocketProperties.stabilityMargin * 100).toFixed(1) + " "}%
                 </Text>
               </Group>
             </Card>
