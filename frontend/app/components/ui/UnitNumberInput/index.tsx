@@ -1,6 +1,14 @@
 import React from "react";
 import { NumberInput, type NumberInputProps } from "@mantine/core";
-import { getUnitLabel, toSILength, fromSILength } from "~/utils/units";
+import {
+  getUnitLabel,
+  toSILength,
+  fromSILength,
+  toSIVolume,
+  toSIMass,
+  fromSIVolume,
+  fromSIMass,
+} from "~/utils/units";
 
 interface UnitNumberInputProps
   extends Omit<NumberInputProps, "label" | "onChange"> {
@@ -25,7 +33,14 @@ const UnitNumberInput: React.FC<UnitNumberInputProps> = ({
   const displayLabel = `${label} (${unitLabel})`;
 
   // Convert SI value to display value
-  const displayValue = unitType === "length" ? fromSILength(value) : value;
+  let displayValue = value;
+  if (unitType === "length") {
+    displayValue = fromSILength(value, "cm");
+  } else if (unitType === "mass") {
+    displayValue = fromSIMass(value, "g"); // Mass is already in SI (grams)
+  } else if (unitType === "volume") {
+    displayValue = fromSIVolume(value, "cm³");
+  }
 
   const handleChange = (val: string | number) => {
     const numValue = typeof val === "string" ? parseFloat(val) : val;
@@ -34,8 +49,15 @@ const UnitNumberInput: React.FC<UnitNumberInputProps> = ({
       return;
     }
 
+    let siValue = 0;
     // Convert display value to SI value
-    let siValue = unitType === "length" ? toSILength(numValue) : numValue;
+    if (unitType === "length") {
+      siValue = toSILength(numValue, "cm");
+    } else if (unitType === "mass") {
+      siValue = toSIMass(numValue, "g"); // No conversion needed
+    } else if (unitType === "volume") {
+      siValue = toSIVolume(numValue, "cm³");
+    }
     onChange(siValue);
   };
 
@@ -50,6 +72,7 @@ const UnitNumberInput: React.FC<UnitNumberInputProps> = ({
       allowNegative={false}
       min={0.1}
       step={0.1}
+      max={100}
       decimalScale={1}
       fixedDecimalScale
       {...props}
