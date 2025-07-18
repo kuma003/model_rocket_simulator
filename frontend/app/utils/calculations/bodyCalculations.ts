@@ -22,11 +22,12 @@ export function calculateBodyProperties(
       Math.pow(bodyParams.length, 2) / 12);
 
   const Cg = bodyParams.length / 2 + param.nose.length; // m from nose tip
-  const Cd = calculateSkinFrictionCd(
-    bodyParams.length,
-    Math.PI * bodyParams.diameter * bodyParams.length,
-    Math.PI * Math.pow(bodyParams.diameter, 2)
-  );
+  const Cd =
+    calculateSkinFrictionCd(
+      bodyParams.length + param.nose.length,
+      Math.PI * bodyParams.diameter * bodyParams.length,
+      Math.PI * Math.pow(bodyParams.diameter, 2)
+    ) + 0.15; // Aft End Correction
   const Cna = 0; // for Barrowman method, Cna is typically 0 for cylindrical bodies
   const Cp = 0; // since Cna is 0, Cp is not defined for cylindrical bodies
 

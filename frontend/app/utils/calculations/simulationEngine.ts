@@ -44,7 +44,9 @@ export function calculateRocketProperties(
   console.log("Engine Data:", params.engine);
 
   // ペイロード重心位置計算（ノーズ先端からの距離）
-  const payloadCG = params.nose.length + params.payload.length / 2;
+  const payloadCG =
+    params.nose.length + params.payload.offset + params.payload.length / 2;
+  console.log("Payload CG:", payloadCG);
 
   // 総重量計算
   const dryMass =
@@ -95,7 +97,10 @@ export function calculateRocketProperties(
     refLength * params.nose.length +
     params.body.length -
     params.engine.length / 2;
-  const totalInertiaMoment = noseResults.Iyx + bodyResults.Iyx;
+  const totalInertiaMoment =
+    noseResults.Iyx +
+    noseResults.mass * Math.pow(CG_i - params.nose.length, 2) +
+    bodyResults.Iyx;
 
   const pitchMomentCoefficient =
     -2 *
@@ -142,7 +147,7 @@ export function calculateRocketProperties(
  */
 export function calculateTrajectory(
   properties: RocketProperties,
-  timestep: number = 0.01
+  timestep: number = 0.0025
 ): TrajectoryData {
   const trajectory = run4DoFSimulation(
     properties.specs,

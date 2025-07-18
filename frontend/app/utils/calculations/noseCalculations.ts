@@ -35,7 +35,7 @@ export function calculateNoseProperties(
       surfaceArea = Math.PI * radius * (length + radius);
 
       mass = volume * Materials[noseParams.material].density;
-      Cg = length / 4;
+      Cg = length * (2 / 3);
 
       // 円錐殻の慣性モーメント（簡易計算）
       Iyz = mass * (Math.pow(radius, 2) / 10 + Math.pow(length, 2) / 18);
