@@ -1,5 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { PlayArrow, Settings, SimpleRocket, Info, Rocket } from "./index";
+import { 
+  PlayArrow, 
+  Settings, 
+  SimpleRocket, 
+  Info, 
+  Rocket,
+  ArrowLeft,
+  Hourglass,
+  Home,
+  Planet,
+  Satellite
+} from "./index";
 
 // PlayArrow
 const playArrowMeta: Meta<typeof PlayArrow> = {
@@ -114,6 +125,105 @@ export const AllIcons: StoryObj = {
         <Rocket size={32} />
         <div>Rocket</div>
       </div>
+      <div style={{ textAlign: "center" }}>
+        <ArrowLeft size={32} />
+        <div>ArrowLeft</div>
+      </div>
+      <div style={{ textAlign: "center" }}>
+        <Hourglass size={32} />
+        <div>Hourglass</div>
+      </div>
+      <div style={{ textAlign: "center" }}>
+        <Home size={32} />
+        <div>Home</div>
+      </div>
+      <div style={{ textAlign: "center" }}>
+        <Planet size={32} />
+        <div>Planet</div>
+      </div>
+      <div style={{ textAlign: "center" }}>
+        <Satellite size={32} />
+        <div>Satellite</div>
+      </div>
     </div>
   ),
+};
+
+// ArrowLeft
+export const ArrowLeftStories: Meta<typeof ArrowLeft> = {
+  title: "Icons/ArrowLeft",
+  component: ArrowLeft,
+  parameters: { layout: "centered" },
+  argTypes: {
+    size: { control: { type: "number" } },
+    color: { control: { type: "color" } },
+    strokeWidth: { control: { type: "range", min: 0.5, max: 5, step: 0.5 } },
+  },
+};
+
+export const ArrowLeftDefault: StoryObj<typeof ArrowLeft> = {
+  args: { size: 24, color: "currentColor", strokeWidth: 2 },
+};
+
+// Hourglass (filled icon)
+export const HourglassStories: Meta<typeof Hourglass> = {
+  title: "Icons/Hourglass",
+  component: Hourglass,
+  parameters: { layout: "centered" },
+  argTypes: {
+    size: { control: { type: "number" } },
+    color: { control: { type: "color" } },
+  },
+};
+
+export const HourglassDefault: StoryObj<typeof Hourglass> = {
+  args: { size: 24, color: "currentColor" },
+};
+
+// Home
+export const HomeStories: Meta<typeof Home> = {
+  title: "Icons/Home",
+  component: Home,
+  parameters: { layout: "centered" },
+  argTypes: {
+    size: { control: { type: "number" } },
+    color: { control: { type: "color" } },
+    strokeWidth: { control: { type: "range", min: 0.5, max: 5, step: 0.5 } },
+  },
+};
+
+export const HomeDefault: StoryObj<typeof Home> = {
+  args: { size: 24, color: "currentColor", strokeWidth: 2 },
+};
+
+// Planet
+export const PlanetStories: Meta<typeof Planet> = {
+  title: "Icons/Planet",
+  component: Planet,
+  parameters: { layout: "centered" },
+  argTypes: {
+    size: { control: { type: "number" } },
+    color: { control: { type: "color" } },
+    strokeWidth: { control: { type: "range", min: 0.5, max: 5, step: 0.5 } },
+  },
+};
+
+export const PlanetDefault: StoryObj<typeof Planet> = {
+  args: { size: 24, color: "currentColor", strokeWidth: 2 },
+};
+
+// Satellite
+export const SatelliteStories: Meta<typeof Satellite> = {
+  title: "Icons/Satellite",
+  component: Satellite,
+  parameters: { layout: "centered" },
+  argTypes: {
+    size: { control: { type: "number" } },
+    color: { control: { type: "color" } },
+    strokeWidth: { control: { type: "range", min: 0.5, max: 5, step: 0.5 } },
+  },
+};
+
+export const SatelliteDefault: StoryObj<typeof Satellite> = {
+  args: { size: 24, color: "currentColor", strokeWidth: 2 },
 };

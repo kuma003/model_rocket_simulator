@@ -1,19 +1,15 @@
 import React from "react";
-
-interface ArrowLeftIconProps {
-  size?: number;
-  color?: string;
-  className?: string;
-}
+import { type StrokeIconProps } from "./types";
 
 /**
  * Arrow Left Icon Component
  * Based on Tabler Icons arrow-left
  */
-const ArrowLeftIcon: React.FC<ArrowLeftIconProps> = ({ 
-  size = 24, 
+const ArrowLeft: React.FC<StrokeIconProps> = ({
+  className,
+  size = undefined,
   color = "currentColor",
-  className 
+  strokeWidth = 2,
 }) => {
   return (
     <svg
@@ -23,7 +19,7 @@ const ArrowLeftIcon: React.FC<ArrowLeftIconProps> = ({
       viewBox="0 0 24 24"
       fill="none"
       stroke={color}
-      strokeWidth="2"
+      strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
@@ -36,4 +32,4 @@ const ArrowLeftIcon: React.FC<ArrowLeftIconProps> = ({
   );
 };
 
-export default ArrowLeftIcon;
+export default ArrowLeft;

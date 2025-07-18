@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@mantine/core";
-import ArrowLeftIcon from "../icons/ArrowLeftIcon";
+import { ArrowLeft } from "../../ui/Icons";
 
 interface BackButtonProps {
   onClick?: () => void;
@@ -10,10 +10,7 @@ interface BackButtonProps {
 /**
  * Back button component for navigation
  */
-const BackButton: React.FC<BackButtonProps> = ({ 
-  onClick, 
-  label = "戻る" 
-}) => {
+const BackButton: React.FC<BackButtonProps> = ({ onClick, label = "戻る" }) => {
   const handleClick = () => {
     if (onClick) {
       onClick();
@@ -25,12 +22,13 @@ const BackButton: React.FC<BackButtonProps> = ({
 
   return (
     <Button
-      leftSection={<ArrowLeftIcon size={16} />}
+      leftSection={<ArrowLeft size={16} />}
       variant="light"
       onClick={handleClick}
       size="sm"
       style={{
-        background: "linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
+        background:
+          "linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
         border: "1px solid rgba(255, 255, 255, 0.2)",
         color: "white",
         backdropFilter: "blur(8px)",
