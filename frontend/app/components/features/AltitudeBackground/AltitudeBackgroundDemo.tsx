@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import AltitudeBackground from "./index";
-import { sampleSkyObjects } from "./skyObjectUtils";
 
 const AltitudeBackgroundDemo: React.FC = () => {
   const [altitude, setAltitude] = useState(0);
@@ -10,7 +9,7 @@ const AltitudeBackgroundDemo: React.FC = () => {
   useEffect(() => {
     if (isAnimating) {
       const interval = setInterval(() => {
-        setAltitude(prev => {
+        setAltitude((prev) => {
           const newAltitude = prev + 2;
           if (newAltitude >= 500) {
             setIsAnimating(false);
@@ -28,7 +27,7 @@ const AltitudeBackgroundDemo: React.FC = () => {
     <div style={{ padding: "20px" }}>
       <div style={{ marginBottom: "20px" }}>
         <h2>Altitude Background Demo</h2>
-        
+
         <div style={{ marginBottom: "10px" }}>
           <label>
             Altitude: {altitude.toFixed(1)}m
@@ -73,7 +72,7 @@ const AltitudeBackgroundDemo: React.FC = () => {
           >
             {isAnimating ? "Stop Animation" : "Start Animation"}
           </button>
-          
+
           <button
             onClick={() => setAltitude(0)}
             style={{
@@ -101,9 +100,7 @@ const AltitudeBackgroundDemo: React.FC = () => {
         }}
       >
         <AltitudeBackground
-          altitude={altitude}
-          stepInterval={stepInterval}
-          objects={sampleSkyObjects}
+          altitudeLevel={altitude / stepInterval}
           containerHeight={600}
           containerWidth={800}
         />

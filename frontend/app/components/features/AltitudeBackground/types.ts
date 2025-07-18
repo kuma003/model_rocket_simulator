@@ -8,9 +8,7 @@ export interface SkyObject {
 }
 
 export interface AltitudeBackgroundProps {
-  altitude: number;
-  stepInterval?: number;
-  objects?: SkyObject[];
+  altitudeLevel: number;
   containerHeight: number;
   containerWidth: number;
 }
