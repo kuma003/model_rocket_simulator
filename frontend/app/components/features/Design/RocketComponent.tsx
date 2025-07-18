@@ -48,40 +48,38 @@ function generateFinVertices(
   } else if (finParams.type === "elliptical") {
     const rootChord = finParams.rootChord * pixelsPerM;
     const height = finParams.height * pixelsPerM;
-    
+
     // 楕円形フィンの頂点を計算（10点で近似）
     const points: Point2D[] = [];
     const numPoints = 10;
-    
+
     // 楕円の中心と半径
-    const centerX = height * 0.6; // 楕円の中心をやや外側に
     const centerY = rootChord / 2;
-    const radiusX = height * 0.8; // X方向の半径
-    const radiusY = rootChord / 2; // Y方向の半径
-    
+
     // 楕円の外周上の点を計算（時計回り）
     for (let i = 0; i <= numPoints; i++) {
-      const angle = (Math.PI * 2 * i) / numPoints;
-      let x = centerX + radiusX * Math.cos(angle);
-      let y = centerY + radiusY * Math.sin(angle);
-      
+      const angle = (Math.PI * i) / numPoints - Math.PI / 2;
+      let x = height * Math.cos(angle);
+      let y = centerY - centerY * Math.sin(angle);
+
       // X座標を0以上に制限（ボディチューブより外側のみ）
-      x = Math.max(0, x);
-      
+      // x = Math.max(0, x);
+
       points.push({ x, y });
     }
-    
-    // ボディチューブ接続線を追加して閉じたポリゴンにする
-    const orderedPoints: Point2D[] = [
-      { x: 0, y: 0 }, // leading edge (前端)
-      ...points.filter((p, i) => i <= numPoints / 2).sort((a, b) => a.y - b.y), // 上半分
-      ...points.filter((p, i) => i > numPoints / 2).sort((a, b) => b.y - a.y), // 下半分
-      { x: 0, y: rootChord }, // trailing edge (後端)
-    ];
-    
-    return orderedPoints;
+    console.log(points);
+
+    // // ボディチューブ接続線を追加して閉じたポリゴンにする
+    // const orderedPoints: Point2D[] = [
+    //   { x: 0, y: 0 }, // leading edge (前端)
+    //   ...points.filter((p, i) => i <= numPoints / 2).sort((a, b) => a.y - b.y), // 上半分
+    //   ...points.filter((p, i) => i > numPoints / 2).sort((a, b) => b.y - a.y), // 下半分
+    //   { x: 0, y: rootChord }, // trailing edge (後端)
+    // ];
+
+    return points;
   }
-  
+
   return [];
 }
 
@@ -133,19 +131,19 @@ function projectFinTo2D(
  */
 function calculateGhostOpacity(zOrder: number, ghostMode: boolean): number {
   if (!ghostMode) return 1.0;
-  
+
   // Base opacity for ghost mode
   const baseOpacity = 0.4;
   const minOpacity = 0.15;
-  
+
   // For back fins (negative zOrder), reduce opacity further
   if (zOrder < 0) {
     const backOpacity = baseOpacity * (0.5 + Math.abs(zOrder) * 0.3);
     return Math.max(minOpacity, backOpacity);
   }
-  
+
   // For front fins (positive zOrder), use higher opacity
-  return baseOpacity + (zOrder * 0.2);
+  return baseOpacity + zOrder * 0.2;
 }
 
 /**
@@ -156,22 +154,22 @@ function calculateGhostOpacity(zOrder: number, ghostMode: boolean): number {
  */
 function getColorWithOpacity(color: string, opacity: number): string {
   // Convert hex color to rgba if needed
-  if (color.startsWith('#')) {
+  if (color.startsWith("#")) {
     const r = parseInt(color.slice(1, 3), 16);
     const g = parseInt(color.slice(3, 5), 16);
     const b = parseInt(color.slice(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
   }
-  
+
   // If already rgba/rgb, modify opacity
-  if (color.includes('rgba')) {
+  if (color.includes("rgba")) {
     return color.replace(/,\s*[\d.]+\)$/, `, ${opacity})`);
   }
-  
-  if (color.includes('rgb')) {
-    return color.replace('rgb(', 'rgba(').replace(')', `, ${opacity})`);
+
+  if (color.includes("rgb")) {
+    return color.replace("rgb(", "rgba(").replace(")", `, ${opacity})`);
   }
-  
+
   return color;
 }
 
@@ -233,7 +231,10 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
   const noseWidth = nose.diameter * pixelsPerM;
   const bodyHeight = body.length * pixelsPerM;
   const bodyWidth = body.diameter * pixelsPerM;
-  const finHeight = (fins.type === "trapozoidal" || fins.type === "elliptical") ? fins.height * pixelsPerM : 0;
+  const finHeight =
+    fins.type === "trapozoidal" || fins.type === "elliptical"
+      ? fins.height * pixelsPerM
+      : 0;
   const finOffset = fins.offset * pixelsPerM;
 
   // 全体の高さを計算
@@ -363,8 +364,8 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
       {backFins.map((fin) => {
         const opacity = calculateGhostOpacity(fin.zOrder, ghostMode);
         const fillColor = getColorWithOpacity(fins.color, opacity);
-        const strokeColor = getColorWithOpacity("#000", opacity);
-        
+        const strokeColor = "#000";
+
         return (
           <polygon
             key={fin.index}
@@ -393,8 +394,8 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
       {frontFins.map((fin) => {
         const opacity = calculateGhostOpacity(fin.zOrder, ghostMode);
         const fillColor = getColorWithOpacity(fins.color, opacity);
-        const strokeColor = getColorWithOpacity("#000", opacity);
-        
+        const strokeColor = "#000";
+
         return (
           <polygon
             key={fin.index}
