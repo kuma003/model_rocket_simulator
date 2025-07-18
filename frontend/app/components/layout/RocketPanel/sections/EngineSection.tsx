@@ -16,6 +16,13 @@ const EngineSection: React.FC<EngineSectionProps> = ({
   const [engineName, setEngineName] = React.useState(params.engine.name);
   const [motorData, setMotorData] = React.useState<MotorData | null>(null);
 
+  // Update local state when params.engine.name changes (e.g., from import)
+  useEffect(() => {
+    if (params.engine.name !== engineName) {
+      setEngineName(params.engine.name);
+    }
+  }, [params.engine.name]);
+
   useEffect(() => {
     const fetchMotor = async () => {
       if (engineName) {
