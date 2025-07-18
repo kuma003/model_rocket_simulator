@@ -3,15 +3,22 @@ import RocketPanel from "~/components/layout/RocketPanel";
 import SimulationPanel from "~/components/layout/SimulationPanel";
 import RocketVisualization from "./RocketVisualization";
 import type { RocketParams } from "../Rocket/types";
-import { calculateRocketProperties, calculateTrajectory, type RocketProperties, type TrajectoryData } from "../../../utils/calculations/simulationEngine";
+import {
+  calculateRocketProperties,
+  calculateTrajectory,
+  type RocketProperties,
+  type TrajectoryData,
+} from "../../../utils/calculations/simulationEngine";
 import styles from "./design.module.scss";
+import type { MotorData } from "../../../utils/motorParser";
+import { defaultMotorData } from "../../../utils/motorParser";
 
 const Design: React.FC = () => {
   const [rocketParams, setRocketParams] = React.useState<RocketParams>({
     name: "新しいロケット",
     designer: "",
     nose: {
-      length: 0.10,
+      length: 0.1,
       diameter: 0.024,
       thickness: 0.001,
       material: "plastic",
@@ -19,7 +26,7 @@ const Design: React.FC = () => {
       type: "conical",
     },
     body: {
-      length: 0.30,
+      length: 0.3,
       diameter: 0.024,
       thickness: 0.001,
       material: "cardboard",
@@ -30,7 +37,7 @@ const Design: React.FC = () => {
       material: "balsa",
       color: "#0000FF",
       count: 3,
-      offset: 0.02,
+      offset: 0,
       type: "trapozoidal",
       rootChord: 0.05,
       tipChord: 0.02,
@@ -38,6 +45,7 @@ const Design: React.FC = () => {
       height: 0.04,
     },
     engine: {
+      ...defaultMotorData,
       name: "Estes A10",
     },
   });
@@ -56,13 +64,13 @@ const Design: React.FC = () => {
         setRocketParams={setRocketParams}
       />
       <div className={styles.centerArea}>
-        <RocketVisualization 
-          rocketParams={rocketParams} 
+        <RocketVisualization
+          rocketParams={rocketParams}
           rocketProperties={rocketProperties}
-          showCenterMarkers={true} 
+          showCenterMarkers={true}
         />
       </div>
-      <SimulationPanel 
+      <SimulationPanel
         rocketParams={rocketParams}
         rocketProperties={rocketProperties}
         trajectoryData={trajectoryData}

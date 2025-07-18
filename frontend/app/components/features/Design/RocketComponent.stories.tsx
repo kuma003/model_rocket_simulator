@@ -7,7 +7,7 @@ const defaultParams: RocketParams = {
   name: "サンプルロケット",
   designer: "テスト設計者",
   nose: {
-    length: 0.10, // Convert to meters
+    length: 0.1, // Convert to meters
     diameter: 0.024, // Convert to meters
     thickness: 0.001, // Convert to meters
     material: "plastic",
@@ -15,7 +15,7 @@ const defaultParams: RocketParams = {
     type: "conical",
   },
   body: {
-    length: 0.30, // Convert to meters
+    length: 0.3, // Convert to meters
     diameter: 0.024, // Convert to meters
     thickness: 0.001, // Convert to meters
     material: "cardboard",
@@ -31,10 +31,21 @@ const defaultParams: RocketParams = {
     tipChord: 0.02, // Convert to meters
     sweepLength: 0.03, // Convert to meters
     height: 0.04, // Convert to meters
-    offset: 0.02, // Convert to meters
+    offset: 0.0, // Convert to meters
   },
   engine: {
     name: "Estes A10",
+    peakThrust: 0,
+    averageThrust: 0,
+    burnTime: 0,
+    totalImpulse: 0,
+    thrustCurve: [],
+    diameter: 18,
+    length: 70,
+    delays: "3-5-7",
+    propMass: 0.0038,
+    totalMass: 0.0087,
+    manufacturer: "Estes",
   },
 };
 
@@ -288,7 +299,7 @@ export const HighPowerRocket: Story = {
       },
       body: {
         ...defaultParams.body,
-        length: 0.60, // Convert to meters
+        length: 0.6, // Convert to meters
         diameter: 0.038, // Convert to meters
         color: "#1E90FF",
       },
@@ -317,7 +328,7 @@ export const HighPowerRocket: Story = {
       },
       body: {
         ...defaultParams.body,
-        length: 0.60,
+        length: 0.6,
         diameter: 0.038,
         color: "#1E90FF",
       },
@@ -374,7 +385,8 @@ export const FinOffset: Story = {
   parameters: {
     docs: {
       description: {
-        story: "フィンのオフセットを5cmに設定。フィンの位置が後方に移動している。",
+        story:
+          "フィンのオフセットを5cmに設定。フィンの位置が後方に移動している。",
       },
     },
   },
@@ -445,7 +457,8 @@ export const FinOffsetComparison: Story = {
   parameters: {
     docs: {
       description: {
-        story: "異なるフィンオフセット値を持つロケットを並べて表示。オフセットがフィンの位置に与える影響を確認できる。",
+        story:
+          "異なるフィンオフセット値を持つロケットを並べて表示。オフセットがフィンの位置に与える影響を確認できる。",
       },
     },
   },

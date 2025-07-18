@@ -26,12 +26,12 @@ const mockMotorData = {
       { time: 0.76, thrust: 1.273 },
       { time: 0.811, thrust: 1.268 },
       { time: 0.828, thrust: 0.689 },
-      { time: 0.85, thrust: 0 }
+      { time: 0.85, thrust: 0 },
     ],
     totalImpulse: 2.5,
     averageThrust: 2.94,
     burnTime: 0.85,
-    peakThrust: 12.64
+    peakThrust: 12.64,
   },
   "Estes A3": {
     name: "Estes A3",
@@ -59,12 +59,12 @@ const mockMotorData = {
       { time: 0.966, thrust: 1.719 },
       { time: 0.977, thrust: 1.173 },
       { time: 0.993, thrust: 0.547 },
-      { time: 1.01, thrust: 0 }
+      { time: 1.01, thrust: 0 },
     ],
     totalImpulse: 2.5,
     averageThrust: 2.48,
     burnTime: 1.01,
-    peakThrust: 5.83
+    peakThrust: 5.83,
   },
   "Estes C6": {
     name: "Estes C6",
@@ -86,17 +86,17 @@ const mockMotorData = {
       { time: 1.5, thrust: 4.2 },
       { time: 1.8, thrust: 2.8 },
       { time: 2.0, thrust: 1.5 },
-      { time: 2.2, thrust: 0 }
+      { time: 2.2, thrust: 0 },
     ],
     totalImpulse: 10.0,
     averageThrust: 4.55,
     burnTime: 2.2,
-    peakThrust: 18.5
-  }
+    peakThrust: 18.5,
+  },
 };
 
 // Mock the loadMotorData function for Storybook
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   (window as any).__mockMotorData = mockMotorData;
 }
 
@@ -132,6 +132,17 @@ const defaultParams: RocketParams = {
   },
   engine: {
     name: "Estes A10",
+    peakThrust: 0,
+    averageThrust: 0,
+    burnTime: 0,
+    totalImpulse: 0,
+    thrustCurve: [],
+    diameter: 18,
+    length: 70,
+    delays: "3-5-7",
+    propMass: 0.0038,
+    totalMass: 0.0087,
+    manufacturer: "Estes",
   },
 };
 
@@ -150,7 +161,8 @@ const meta: Meta<typeof RocketPanel> = {
         },
         {
           name: "cosmic",
-          value: "radial-gradient(ellipse at center, #1a0f3a 0%, #0d051a 70%, #000000 100%)",
+          value:
+            "radial-gradient(ellipse at center, #1a0f3a 0%, #0d051a 70%, #000000 100%)",
         },
       ],
     },
@@ -214,6 +226,17 @@ export const EmptyRocket: Story = {
       },
       engine: {
         name: "",
+        peakThrust: 0,
+        averageThrust: 0,
+        burnTime: 0,
+        totalImpulse: 0,
+        thrustCurve: [],
+        diameter: 0,
+        length: 0,
+        delays: "",
+        propMass: 0,
+        totalMass: 0,
+        manufacturer: "",
       },
     },
   },
@@ -272,6 +295,17 @@ export const HighPowerRocket: Story = {
       },
       engine: {
         name: "Estes C6",
+        peakThrust: 0,
+        averageThrust: 0,
+        burnTime: 0,
+        totalImpulse: 0,
+        thrustCurve: [],
+        diameter: 18,
+        length: 70,
+        delays: "3-5-7",
+        propMass: 0.0085,
+        totalMass: 0.0241,
+        manufacturer: "Estes",
       },
     },
   },
@@ -284,7 +318,8 @@ export const Interactive: Story = {
   parameters: {
     docs: {
       description: {
-        story: "インタラクティブなロケットパネル。各パラメータを変更して、コールバック関数の動作を確認できます。",
+        story:
+          "インタラクティブなロケットパネル。各パラメータを変更して、コールバック関数の動作を確認できます。",
       },
     },
   },
@@ -297,20 +332,34 @@ export const WithThrustCurve: Story = {
       name: "スラストカーブ表示テスト",
       engine: {
         name: "Estes A10",
+        peakThrust: 0,
+        averageThrust: 0,
+        burnTime: 0,
+        totalImpulse: 0,
+        thrustCurve: [],
+        diameter: 18,
+        length: 70,
+        delays: "3-5-7",
+        propMass: 0.0038,
+        totalMass: 0.0087,
+        manufacturer: "Estes",
       },
     },
   },
   parameters: {
     docs: {
       description: {
-        story: "エンジンセクションでスラストカーブの表示をテストできます。エンジンを変更すると異なるスラストカーブが表示されます。",
+        story:
+          "エンジンセクションでスラストカーブの表示をテストできます。エンジンを変更すると異なるスラストカーブが表示されます。",
       },
     },
   },
   play: async ({ canvasElement }) => {
     // Auto-select the engine section to show the thrust curve
     const canvas = canvasElement;
-    const engineButton = canvas.querySelector('[data-value="エンジン"]') as HTMLElement;
+    const engineButton = canvas.querySelector(
+      '[data-value="エンジン"]'
+    ) as HTMLElement;
     if (engineButton) {
       engineButton.click();
     }
