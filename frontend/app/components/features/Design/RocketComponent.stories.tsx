@@ -300,6 +300,49 @@ export const FourFins: Story = {
   },
 };
 
+export const EllipticalFins: Story = {
+  args: {
+    rocketParams: {
+      ...defaultParams,
+      name: "楕円フィンロケット",
+      fins: {
+        thickness: 0.001,
+        material: "balsa",
+        color: "#FF6600",
+        count: 3,
+        type: "elliptical",
+        rootChord: 0.06,
+        height: 0.05,
+        offset: 0,
+      },
+    },
+    rocketProperties: calculateRocketProperties({
+      ...defaultParams,
+      name: "楕円フィンロケット",
+      fins: {
+        thickness: 0.001,
+        material: "balsa",
+        color: "#FF6600",
+        count: 3,
+        type: "elliptical",
+        rootChord: 0.06,
+        height: 0.05,
+        offset: 0,
+      },
+    }),
+    scale: 2,
+    pitchAngle: 0,
+    rollAngle: 0,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "楕円形フィンを使用したロケット。滑らかな楕円曲線でエアロダイナミクスが向上。",
+      },
+    },
+  },
+};
+
 export const HighPowerRocket: Story = {
   args: {
     rocketParams: {
@@ -486,6 +529,84 @@ export const FinOffsetComparison: Story = {
       description: {
         story:
           "異なるフィンオフセット値を持つロケットを並べて表示。オフセットがフィンの位置に与える影響を確認できる。",
+      },
+    },
+  },
+};
+
+export const GhostMode: Story = {
+  args: {
+    rocketParams: defaultParams,
+    rocketProperties: defaultRocketProperties,
+    scale: 2,
+    pitchAngle: 0,
+    rollAngle: 0,
+    ghostMode: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "ゴーストモード表示。半透明で表示され、背面のフィンほど透明度が高い。",
+      },
+    },
+  },
+};
+
+export const GhostModeWithAngles: Story = {
+  args: {
+    rocketParams: defaultParams,
+    rocketProperties: defaultRocketProperties,
+    scale: 2,
+    pitchAngle: 30,
+    rollAngle: 45,
+    ghostMode: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "ゴーストモードでピッチ角とロール角を適用。3D感覚でフィンの透明度変化を確認できる。",
+      },
+    },
+  },
+};
+
+export const ComparisonNormalVsGhost: Story = {
+  args: {
+    rocketParams: defaultParams,
+    rocketProperties: defaultRocketProperties,
+    scale: 1.5,
+    pitchAngle: 0,
+    rollAngle: 45,
+  },
+  decorators: [
+    (Story) => (
+      <svg width="600" height="300" viewBox="0 0 600 300">
+        <text x="150" y="30" textAnchor="middle" fontSize="14" fill="#333">
+          通常モード
+        </text>
+        <g transform="translate(50, 50)">
+          <Story />
+        </g>
+        <text x="450" y="30" textAnchor="middle" fontSize="14" fill="#333">
+          ゴーストモード
+        </text>
+        <g transform="translate(350, 50)">
+          <RocketComponent
+            rocketParams={defaultParams}
+            rocketProperties={defaultRocketProperties}
+            scale={1.5}
+            pitchAngle={0}
+            rollAngle={45}
+            ghostMode={true}
+          />
+        </g>
+      </svg>
+    ),
+  ],
+  parameters: {
+    docs: {
+      description: {
+        story: "通常モードとゴーストモードの比較表示。ロール角45度でフィンの透明度差を確認できる。",
       },
     },
   },

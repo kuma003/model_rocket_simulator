@@ -2,6 +2,7 @@ import React from "react";
 import { Stack } from "@mantine/core";
 import UnitNumberInput from "~/components/ui/UnitNumberInput";
 import type { RocketParams } from "../../../features/Rocket/types";
+import { fromSILength } from "~/utils/units";
 
 interface PayloadSectionProps {
   params: RocketParams;
@@ -33,6 +34,10 @@ const PayloadSection: React.FC<PayloadSectionProps> = ({
         }
         min={0}
         step={0.1}
+        max={fromSILength(
+          params.body.diameter - params.body.thickness * 2,
+          "cm"
+        )} // Ensure payload diameter is less than body diameter
       />
       <UnitNumberInput
         label="長さ"
@@ -43,6 +48,7 @@ const PayloadSection: React.FC<PayloadSectionProps> = ({
         }
         min={0}
         step={0.1}
+        max={fromSILength(params.body.length - params.payload.offset, "cm")} // Ensure payload length fits within body
       />
       <UnitNumberInput
         label="質量"

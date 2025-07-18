@@ -18,6 +18,7 @@ import {
   Line,
 } from "recharts";
 import { UNIT_CONVERSIONS } from "~/utils/physics/constants";
+import LaunchButton from "~/components/common/LaunchButton/LaunchButton";
 
 export interface SimulationPanelProps {
   rocketParams: RocketParams;
@@ -150,6 +151,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
           </Stack>
         </ScrollArea>
       </Stack>
+      <LaunchButton rocketParams={rocketParams} />
     </div>
   );
 };

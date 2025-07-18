@@ -29,25 +29,60 @@ function generateFinVertices(
   finParams: RocketParams["fins"],
   pixelsPerM: number
 ): Point2D[] {
-  if (finParams.type !== "trapozoidal") {
-    return [];
+  if (finParams.type === "trapozoidal") {
+    const rootChord = finParams.rootChord * pixelsPerM;
+    const tipChord = finParams.tipChord * pixelsPerM;
+    const height = finParams.height * pixelsPerM;
+    const sweepLength = finParams.sweepLength * pixelsPerM;
+
+    // フィンの頂点を定義（ローカル座標系）
+    // X軸：ボディチューブから外向き（chord方向）
+    // Y軸：上向き（高さ方向）
+    // 原点：root chordの先端（ボディチューブ表面）
+    return [
+      { x: 0, y: 0 }, // root leading edge (ボディ接続点)
+      { x: 0, y: rootChord }, // root trailing edge
+      { x: height, y: sweepLength + tipChord }, // tip trailing edge
+      { x: height, y: sweepLength }, // tip leading edge
+    ];
+  } else if (finParams.type === "elliptical") {
+    const rootChord = finParams.rootChord * pixelsPerM;
+    const height = finParams.height * pixelsPerM;
+    
+    // 楕円形フィンの頂点を計算（10点で近似）
+    const points: Point2D[] = [];
+    const numPoints = 10;
+    
+    // 楕円の中心と半径
+    const centerX = height * 0.6; // 楕円の中心をやや外側に
+    const centerY = rootChord / 2;
+    const radiusX = height * 0.8; // X方向の半径
+    const radiusY = rootChord / 2; // Y方向の半径
+    
+    // 楕円の外周上の点を計算（時計回り）
+    for (let i = 0; i <= numPoints; i++) {
+      const angle = (Math.PI * 2 * i) / numPoints;
+      let x = centerX + radiusX * Math.cos(angle);
+      let y = centerY + radiusY * Math.sin(angle);
+      
+      // X座標を0以上に制限（ボディチューブより外側のみ）
+      x = Math.max(0, x);
+      
+      points.push({ x, y });
+    }
+    
+    // ボディチューブ接続線を追加して閉じたポリゴンにする
+    const orderedPoints: Point2D[] = [
+      { x: 0, y: 0 }, // leading edge (前端)
+      ...points.filter((p, i) => i <= numPoints / 2).sort((a, b) => a.y - b.y), // 上半分
+      ...points.filter((p, i) => i > numPoints / 2).sort((a, b) => b.y - a.y), // 下半分
+      { x: 0, y: rootChord }, // trailing edge (後端)
+    ];
+    
+    return orderedPoints;
   }
-
-  const rootChord = finParams.rootChord * pixelsPerM;
-  const tipChord = finParams.tipChord * pixelsPerM;
-  const height = finParams.height * pixelsPerM;
-  const sweepLength = finParams.sweepLength * pixelsPerM;
-
-  // フィンの頂点を定義（ローカル座標系）
-  // X軸：ボディチューブから外向き（chord方向）
-  // Y軸：上向き（高さ方向）
-  // 原点：root chordの先端（ボディチューブ表面）
-  return [
-    { x: 0, y: 0 }, // root leading edge (ボディ接続点)
-    { x: 0, y: rootChord }, // root trailing edge
-    { x: height, y: sweepLength + tipChord }, // tip trailing edge
-    { x: height, y: sweepLength }, // tip leading edge
-  ];
+  
+  return [];
 }
 
 /**
@@ -91,6 +126,56 @@ function projectFinTo2D(
 }
 
 /**
+ * Calculate opacity for ghost mode based on z-order
+ * @param {number} zOrder - Z-order value (-1 to 1, negative is back)
+ * @param {boolean} ghostMode - Whether ghost mode is enabled
+ * @returns {number} Opacity value (0-1)
+ */
+function calculateGhostOpacity(zOrder: number, ghostMode: boolean): number {
+  if (!ghostMode) return 1.0;
+  
+  // Base opacity for ghost mode
+  const baseOpacity = 0.4;
+  const minOpacity = 0.15;
+  
+  // For back fins (negative zOrder), reduce opacity further
+  if (zOrder < 0) {
+    const backOpacity = baseOpacity * (0.5 + Math.abs(zOrder) * 0.3);
+    return Math.max(minOpacity, backOpacity);
+  }
+  
+  // For front fins (positive zOrder), use higher opacity
+  return baseOpacity + (zOrder * 0.2);
+}
+
+/**
+ * Get color with opacity for ghost mode
+ * @param {string} color - Original color
+ * @param {number} opacity - Opacity value (0-1)
+ * @returns {string} Color with opacity
+ */
+function getColorWithOpacity(color: string, opacity: number): string {
+  // Convert hex color to rgba if needed
+  if (color.startsWith('#')) {
+    const r = parseInt(color.slice(1, 3), 16);
+    const g = parseInt(color.slice(3, 5), 16);
+    const b = parseInt(color.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
+  
+  // If already rgba/rgb, modify opacity
+  if (color.includes('rgba')) {
+    return color.replace(/,\s*[\d.]+\)$/, `, ${opacity})`);
+  }
+  
+  if (color.includes('rgb')) {
+    return color.replace('rgb(', 'rgba(').replace(')', `, ${opacity})`);
+  }
+  
+  return color;
+}
+
+/**
  * Props for RocketComponent
  * @interface RocketComponentProps
  * @property {RocketParams} rocketParams - Rocket design parameters
@@ -99,6 +184,7 @@ function projectFinTo2D(
  * @property {number} [pitchAngle=0] - Pitch angle in degrees
  * @property {number} [rollAngle=0] - Roll angle in degrees
  * @property {boolean} [showCenterMarkers=false] - Whether to show center of gravity and pressure center markers
+ * @property {boolean} [ghostMode=false] - Whether to render in ghost mode (semi-transparent)
  */
 interface RocketComponentProps {
   rocketParams: RocketParams;
@@ -107,6 +193,7 @@ interface RocketComponentProps {
   pitchAngle?: number;
   rollAngle?: number;
   showCenterMarkers?: boolean;
+  ghostMode?: boolean;
 }
 
 /**
@@ -134,6 +221,7 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
   pitchAngle = 0,
   rollAngle = 0,
   showCenterMarkers = false,
+  ghostMode = false,
 }) => {
   const { nose, body, fins } = rocketParams;
 
@@ -145,7 +233,7 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
   const noseWidth = nose.diameter * pixelsPerM;
   const bodyHeight = body.length * pixelsPerM;
   const bodyWidth = body.diameter * pixelsPerM;
-  const finHeight = fins.type === "trapozoidal" ? fins.height * pixelsPerM : 0;
+  const finHeight = (fins.type === "trapozoidal" || fins.type === "elliptical") ? fins.height * pixelsPerM : 0;
   const finOffset = fins.offset * pixelsPerM;
 
   // 全体の高さを計算
@@ -161,9 +249,6 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
 
   // フィンデータを事前計算し、z-order順にソート
   const { backFins, frontFins } = useMemo(() => {
-    if (fins.type === "elliptical") {
-      return { backFins: [], frontFins: [] };
-    }
     let baseVertices: Point2D[] = [];
     let finAttachmentY = 0;
 
@@ -171,6 +256,11 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
     if (fins.type === "trapozoidal") {
       baseVertices = generateFinVertices(fins, pixelsPerM);
       // フィンの取り付け位置
+      finAttachmentY =
+        noseHeight + bodyHeight - finOffset - fins.rootChord * pixelsPerM;
+    } else if (fins.type === "elliptical") {
+      baseVertices = generateFinVertices(fins, pixelsPerM);
+      // フィンの取り付け位置（楕円形フィンの場合）
       finAttachmentY =
         noseHeight + bodyHeight - finOffset - fins.rootChord * pixelsPerM;
     } else if (fins.type === "freedom") {
@@ -245,15 +335,15 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
         {nose.type === "conical" ? (
           <polygon
             points={`${noseWidth / 2},0 0,${noseHeight} ${noseWidth},${noseHeight}`}
-            fill={nose.color}
-            stroke="#000"
+            fill={ghostMode ? getColorWithOpacity(nose.color, 0.4) : nose.color}
+            stroke={ghostMode ? getColorWithOpacity("#000", 0.4) : "#000"}
             strokeWidth="1"
           />
         ) : nose.type === "ogive" ? (
           <path
             d={`M ${noseWidth / 2} 0 Q 0 ${noseHeight * 0.3} 0 ${noseHeight} L ${noseWidth} ${noseHeight} Q ${noseWidth} ${noseHeight * 0.3} ${noseWidth / 2} 0 Z`}
-            fill={nose.color}
-            stroke="#000"
+            fill={ghostMode ? getColorWithOpacity(nose.color, 0.4) : nose.color}
+            stroke={ghostMode ? getColorWithOpacity("#000", 0.4) : "#000"}
             strokeWidth="1"
           />
         ) : (
@@ -262,23 +352,29 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
             cy={noseHeight}
             rx={noseWidth / 2}
             ry={noseHeight}
-            fill={nose.color}
-            stroke="#000"
+            fill={ghostMode ? getColorWithOpacity(nose.color, 0.4) : nose.color}
+            stroke={ghostMode ? getColorWithOpacity("#000", 0.4) : "#000"}
             strokeWidth="1"
           />
         )}
       </g>
 
       {/* フィン（後方のもののみ先に描画） */}
-      {backFins.map((fin) => (
-        <polygon
-          key={fin.index}
-          points={fin.points}
-          fill={fins.color}
-          stroke="#000"
-          strokeWidth="1"
-        />
-      ))}
+      {backFins.map((fin) => {
+        const opacity = calculateGhostOpacity(fin.zOrder, ghostMode);
+        const fillColor = getColorWithOpacity(fins.color, opacity);
+        const strokeColor = getColorWithOpacity("#000", opacity);
+        
+        return (
+          <polygon
+            key={fin.index}
+            points={fin.points}
+            fill={fillColor}
+            stroke={strokeColor}
+            strokeWidth="1"
+          />
+        );
+      })}
 
       {/* ボディチューブ */}
       <g
@@ -287,22 +383,28 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
         <rect
           width={bodyWidth}
           height={bodyHeight}
-          fill={body.color}
-          stroke="#000"
+          fill={ghostMode ? getColorWithOpacity(body.color, 0.4) : body.color}
+          stroke={ghostMode ? getColorWithOpacity("#000", 0.4) : "#000"}
           strokeWidth="1"
         />
       </g>
 
       {/* フィン（前方のもののみ後で描画） */}
-      {frontFins.map((fin) => (
-        <polygon
-          key={fin.index}
-          points={fin.points}
-          fill={fins.color}
-          stroke="#000"
-          strokeWidth="1"
-        />
-      ))}
+      {frontFins.map((fin) => {
+        const opacity = calculateGhostOpacity(fin.zOrder, ghostMode);
+        const fillColor = getColorWithOpacity(fins.color, opacity);
+        const strokeColor = getColorWithOpacity("#000", opacity);
+        
+        return (
+          <polygon
+            key={fin.index}
+            points={fin.points}
+            fill={fillColor}
+            stroke={strokeColor}
+            strokeWidth="1"
+          />
+        );
+      })}
 
       {/* 重心と圧力中心のマーカー */}
       {showCenterMarkers && (

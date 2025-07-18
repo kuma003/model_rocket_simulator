@@ -1,8 +1,7 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import RocketPanel from "~/components/layout/RocketPanel";
 import SimulationPanel from "~/components/layout/SimulationPanel";
 import RocketVisualization from "./RocketVisualization";
-import LaunchButton from "~/components/common/LaunchButton/LaunchButton";
 import type { RocketParams } from "../Rocket/types";
 import {
   calculateRocketProperties,
@@ -11,7 +10,6 @@ import {
   type TrajectoryData,
 } from "../../../utils/calculations/simulationEngine";
 import styles from "./design.module.scss";
-import type { MotorData } from "../../../utils/motorParser";
 import { defaultMotorData } from "../../../utils/motorParser";
 
 const Design: React.FC = () => {
@@ -56,6 +54,19 @@ const Design: React.FC = () => {
       name: "Estes A10",
     },
   });
+  // タブを2段に分ける
+  const primarySections = [
+    { label: "ノーズ", value: "nose" },
+    { label: "ボディ", value: "body" },
+    { label: "フィン", value: "fins" },
+  ];
+
+  const secondarySections = [
+    { label: "ペイロード", value: "payload" },
+    { label: "エンジン", value: "engine" },
+  ];
+  const [activeSection, setActiveSection] = useState(primarySections[0].value);
+  const [params, setParams] = useState<RocketParams>(rocketParams);
 
   // Calculate rocket properties and trajectory once at the parent level
   const { rocketProperties, trajectoryData } = useMemo(() => {
@@ -82,7 +93,6 @@ const Design: React.FC = () => {
         rocketProperties={rocketProperties}
         trajectoryData={trajectoryData}
       />
-      <LaunchButton rocketParams={rocketParams} />
     </div>
   );
 };

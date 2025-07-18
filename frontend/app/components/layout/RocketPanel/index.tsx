@@ -58,7 +58,7 @@ const defaultRocketParams: RocketParams = {
     offset: 0.05,
     diameter: 0.02,
     length: 0.03,
-    mass: 0.01,
+    mass: 0.0,
   },
   engine: {
     name: "Estes A10",
@@ -80,18 +80,14 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
   rocketParams = defaultRocketParams,
   setRocketParams,
 }) => {
-  // タブを2段に分ける
-  const primarySections = [
+  const sections = [
     { label: "ノーズ", value: "nose" },
     { label: "ボディ", value: "body" },
     { label: "フィン", value: "fins" },
-  ];
-  
-  const secondarySections = [
     { label: "ペイロード", value: "payload" },
     { label: "エンジン", value: "engine" },
   ];
-  const [activeSection, setActiveSection] = useState(primarySections[0].value);
+  const [activeSection, setActiveSection] = useState(sections[0].value);
   const [params, setParams] = useState<RocketParams>(rocketParams);
   const [motorData, setMotorData] = useState<MotorData | null>(null);
   const [loadingMotorData, setLoadingMotorData] = useState(false);
@@ -105,6 +101,17 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
       return updatedParams;
     });
   }, []);
+  // タブを2段に分ける
+  const primarySections = [
+    { label: "ノーズ", value: "nose" },
+    { label: "ボディ", value: "body" },
+    { label: "フィン", value: "fins" },
+  ];
+
+  const secondarySections = [
+    { label: "ペイロード", value: "payload" },
+    { label: "エンジン", value: "engine" },
+  ];
 
   // Update parent component when params change
   useEffect(() => {
@@ -170,18 +177,22 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
 
         <Divider />
 
-        <Stack gap="xs">
+        <Stack style={{ gap: 0 }}>
           <SegmentedControl
             value={activeSection}
             onChange={setActiveSection}
             data={primarySections}
             className={styles.segmentedControl}
+            radius={"5px 5px 0 0"}
+            transitionDuration={0}
           />
           <SegmentedControl
             value={activeSection}
             onChange={setActiveSection}
             data={secondarySections}
             className={styles.segmentedControl}
+            radius={"0 0 5px 5px"}
+            transitionDuration={0}
           />
         </Stack>
 
