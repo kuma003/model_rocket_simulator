@@ -31,7 +31,7 @@ export interface RocketTrajectory {
   velocity: Point2D[]; // [vx, vy] in m/s
   mass: number[]; // mass in kg
   force: Point2D[]; // [ax, ay] in m/s²
-  pich: number[]; // pitch angle in radians
+  pitch: number[]; // pitch angle in radians
   omega: number[]; // angular velocity in rad/s
   isCombusting: boolean[]; // combustion state
 }
@@ -39,7 +39,7 @@ export interface RocketTrajectory {
 const run4DoFSimulation = (
   spec: RocketSpecs,
   initialConditions: {
-    lauchrodElevation: number; // degrees
+    launchrodElevation: number; // degrees
     launchrodLength: number; // meters
   },
 
@@ -53,7 +53,7 @@ const run4DoFSimulation = (
     velocity: [],
     mass: [],
     force: [],
-    pich: [],
+    pitch: [],
     omega: [],
     isCombusting: [],
   };
@@ -63,7 +63,7 @@ const run4DoFSimulation = (
   let currentTime = 0;
   let position: Point2D = { x: 0, y: 0 };
   let velocity: Point2D = { x: 0, y: 0 };
-  let pitch = initialConditions.lauchrodElevation * (Math.PI / 180); // Convert to radians
+  let pitch = initialConditions.launchrodElevation * (Math.PI / 180); // Convert to radians
   let omega = 0; // Initial angular velocity
   let mass = spec.mass_i; // Initial mass in kg
   let force: Point2D = { x: 0, y: 0 }; // Initial force vector
@@ -77,18 +77,17 @@ const run4DoFSimulation = (
 
   while (currentTime <= maxTime) {
     // Calculate forces and torques
-    const velocityMagnitude = Math.sqrt(
-      Math.pow(velocity.x, 2) + Math.pow(velocity.y, 2)
-    );
+    const velocityMagnitude2 =
+      Math.pow(velocity.x, 2) + Math.pow(velocity.y, 2);
     const AoA = pitch - Math.atan2(velocity.y, velocity.x);
     const thrustForce = isCombusting ? thrustForceFunction(currentTime) : 0;
     const preForceCalc =
-      0.5 * PHYSICS_CONSTANTS.AIR_DENSITY * velocityMagnitude * refArea;
+      0.5 * PHYSICS_CONSTANTS.AIR_DENSITY * velocityMagnitude2 * refArea;
     const dragForce = -preForceCalc * spec.Cd;
     const normalForce = -preForceCalc * spec.Cna * AoA;
     mass = isCombusting
       ? spec.mass_i -
-        (spec.mass_f - spec.mass_i) * (currentTime / spec.engine.burnTime)
+        (spec.mass_i - spec.mass_f) * (currentTime / spec.engine.burnTime)
       : spec.mass_f;
     const weightForce = -mass * PHYSICS_CONSTANTS.GRAVITY; // kg⋅m/s²
 
@@ -96,17 +95,15 @@ const run4DoFSimulation = (
       // Calculate acceleration
       const sin = Math.sin(pitch);
       const cos = Math.cos(pitch);
-      force = {
-        x: -sin * normalForce + cos * (thrustForce + dragForce),
-        y: cos * normalForce + sin * (thrustForce + dragForce) + weightForce,
-      };
+      const axialForce = thrustForce + dragForce + weightForce * sin;
+      const axialAcceleration = axialForce / mass;
 
       // Update position based on previous velocity and time step
       position.x += velocity.x * timeStep;
       position.y += velocity.y * timeStep;
       // Update velocity based on acceleration and time step
-      velocity.x += (force.x * timeStep) / mass;
-      velocity.y += (force.y * timeStep) / mass;
+      velocity.x += axialAcceleration * cos * timeStep;
+      velocity.y += axialAcceleration * sin * timeStep;
 
       const preMomentCalc =
         (PHYSICS_CONSTANTS.AIR_DENSITY *
@@ -121,9 +118,11 @@ const run4DoFSimulation = (
         : spec.CGlen_f;
 
       // Update pitch and angular velocity
-      pitch += omega * timeStep; // update pich angle before update omega
+      pitch += omega * timeStep; // update pitchangle before update omega
       omega +=
-        (spec.Cmq * preMomentCalc + normalForce * (spec.CPlen - CG)) * timeStep;
+        ((spec.Cmq * preMomentCalc + normalForce * (spec.CPlen - CG)) *
+          timeStep) /
+        spec.Iyz;
 
       touchdown = position.y <= 0; // Check if rocket has touched down
       if (touchdown) position.y = 0; // Reset position to ground level
@@ -131,9 +130,10 @@ const run4DoFSimulation = (
       // Calculate acceleration
       const sin = Math.sin(pitch);
       const cos = Math.cos(pitch);
+      const axialForce = thrustForce + dragForce + weightForce * sin; // ロッド軸方向の力
       force = {
-        x: cos * (thrustForce + dragForce + weightForce * sin), // weight force acts along the launch rod
-        y: sin * (thrustForce + dragForce + weightForce * sin),
+        x: cos * axialForce,
+        y: sin * axialForce,
       };
 
       // Update position based on previous velocity and time step
@@ -150,6 +150,8 @@ const run4DoFSimulation = (
       isLaunchClear =
         Math.pow(position.x, 2) + Math.pow(position.y, 2) >
         Math.pow(initialConditions.launchrodLength, 2); // Launch is clear if the rocket is beyond the launch rod length
+
+      touchdown = !isCombusting && position.y <= 0; // Check if rocket has touched down
     }
 
     trajectory.time.push(currentTime);
@@ -157,7 +159,7 @@ const run4DoFSimulation = (
     trajectory.velocity.push({ ...velocity });
     trajectory.mass.push(mass);
     trajectory.force.push({ ...force });
-    trajectory.pich.push(pitch);
+    trajectory.pitch.push(pitch);
     trajectory.omega.push(omega);
     trajectory.isCombusting.push(isCombusting);
 
@@ -165,7 +167,8 @@ const run4DoFSimulation = (
     //   `Time: ${currentTime.toFixed(2)}s, Position: (${position.x.toFixed(2)}, ${position.y.toFixed(2)}) m, Velocity: (${velocity.x.toFixed(2)}, ${velocity.y.toFixed(2)}) m/s, Mass: ${mass.toFixed(2)} kg, Force: (${force.x.toFixed(2)}, ${force.y.toFixed(2)}) N, Pitch: ${pitch.toFixed(2)} rad, Omega: ${omega.toFixed(2)} rad/s`
     // );
     // Increment time
-    currentTime += timeStep;
+    currentTime += timeStep; // increment time by time step
+    isCombusting = currentTime <= spec.engine.burnTime; // Check if combustion is still active
     if (touchdown) break;
   }
 

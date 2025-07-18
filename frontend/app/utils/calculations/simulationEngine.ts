@@ -44,8 +44,7 @@ export function calculateRocketProperties(
   console.log("Engine Data:", params.engine);
 
   // ペイロード重心位置計算（ノーズ先端からの距離）
-  const payloadCG =
-    params.nose.length + params.payload.offset + params.payload.length / 2;
+  const payloadCG = params.nose.length + params.payload.length / 2;
 
   // 総重量計算
   const dryMass =
@@ -59,18 +58,15 @@ export function calculateRocketProperties(
   const refLength = params.nose.length + params.body.length;
 
   // Calculate actual center of gravity and pressure center
-  const totalMassKg_i =
-    noseResults.mass +
-    bodyResults.mass +
-    finResults.mass +
-    params.payload.mass +
-    params.engine.totalMass;
-  const totalMassKg_f =
-    noseResults.mass +
-    bodyResults.mass +
-    finResults.mass +
-    params.payload.mass +
-    (params.engine.totalMass - params.engine.propMass);
+  console.log(
+    (noseResults.Cg * noseResults.mass +
+      bodyResults.Cg * bodyResults.mass +
+      finResults.Cg * finResults.mass +
+      payloadCG * params.payload.mass) /
+      dryMass
+  );
+
+  console.log(refLength - params.engine.length / 2);
 
   const CG_i =
     (noseResults.Cg * noseResults.mass +
@@ -78,7 +74,7 @@ export function calculateRocketProperties(
       finResults.Cg * finResults.mass +
       payloadCG * params.payload.mass +
       (refLength - params.engine.length / 2) * params.engine.totalMass) /
-    totalMassKg_i;
+    mass_i;
   const CG_f =
     (noseResults.Cg * noseResults.mass +
       bodyResults.Cg * bodyResults.mass +
@@ -86,7 +82,7 @@ export function calculateRocketProperties(
       payloadCG * params.payload.mass +
       (refLength - params.engine.length / 2) *
         (params.engine.totalMass - params.engine.propMass)) /
-    totalMassKg_f;
+    mass_f;
 
   const CP =
     (noseResults.Cp * noseResults.Cna +
@@ -146,12 +142,12 @@ export function calculateRocketProperties(
  */
 export function calculateTrajectory(
   properties: RocketProperties,
-  timestep: number = 0.1
+  timestep: number = 0.01
 ): TrajectoryData {
   const trajectory = run4DoFSimulation(
     properties.specs,
     {
-      lauchrodElevation: 89, // Launch rod elevation
+      launchrodElevation: 89, // Launch rod elevation
       launchrodLength: 1, // DUMMY: Launch rod length
     },
     timestep

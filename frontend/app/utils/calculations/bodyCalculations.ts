@@ -11,11 +11,7 @@ export function calculateBodyProperties(
 
   // 円筒殻の体積計算
   const volume =
-    2 *
-    Math.PI *
-    bodyParams.diameter *
-    bodyParams.length *
-    bodyParams.thickness;
+    Math.PI * bodyParams.diameter * bodyParams.length * bodyParams.thickness;
 
   const mass = volume * Materials[bodyParams.material].density;
 

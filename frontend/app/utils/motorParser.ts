@@ -44,8 +44,8 @@ export function parseMotorFile(content: string): MotorData | null {
   // Parse header line (format: NAME diameter length delays propMass totalMass manufacturer)
   const headerParts = lines[0].split(" ");
   const name = headerParts[0];
-  const diameter = toSILength(parseFloat(headerParts[1]), "cm");
-  const length = toSILength(parseFloat(headerParts[2]), "cm");
+  const diameter = toSILength(parseFloat(headerParts[1]), "mm");
+  const length = toSILength(parseFloat(headerParts[2]), "mm");
   const delays = headerParts[3];
   const propMass = parseFloat(headerParts[4]);
   const totalMass = parseFloat(headerParts[5]);
