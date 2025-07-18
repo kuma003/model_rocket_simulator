@@ -221,7 +221,7 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
   showCenterMarkers = false,
   ghostMode = false,
 }) => {
-  const { nose, body, fins } = rocketParams;
+  const { nose, body, fins, payload } = rocketParams;
 
   // 物理寸法をピクセルに変換（メートル単位）
   const pixelsPerM = scale;
@@ -236,6 +236,11 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
       ? fins.height * pixelsPerM
       : 0;
   const finOffset = fins.offset * pixelsPerM;
+
+  const payloadOffset = payload.offset * pixelsPerM;
+  const payloadDiameter = payload.diameter * pixelsPerM;
+  const payloadLength = payload.length * pixelsPerM;
+  console.log(payload);
 
   // 全体の高さを計算
   const totalHeight = noseHeight + bodyHeight;
@@ -406,18 +411,35 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
           />
         );
       })}
+      {/* ペイロードセクション */}
+      <g
+        transform={`translate(${(totalWidth - bodyWidth) / 2}, ${noseHeight})`}
+      >
+        <rect
+          x={(bodyWidth - payloadDiameter) / 2}
+          y={payloadOffset}
+          width={payloadDiameter}
+          height={payloadLength}
+          fill={"None"}
+          stroke={ghostMode ? getColorWithOpacity("#000", 0.8) : "#000"}
+          strokeWidth="3"
+          strokeDasharray="3.5,3.5"
+          rx="5"
+          ry="5"
+        />
+      </g>
 
       {/* 重心と圧力中心のマーカー */}
       {showCenterMarkers && (
         <g>
-          {/* 重心マーカー（工学用シンボル） */}
+          {/* 重心マーカー */}
           <g transform={`translate(${totalWidth / 2}, ${cgPosition})`}>
-            <CenterMarker color="#FF0000" />
+            <CenterMarker color="#0000FF" />
           </g>
 
-          {/* 圧力中心マーカー（青色） */}
+          {/* 圧力中心マーカー */}
           <g transform={`translate(${totalWidth / 2}, ${cpPosition})`}>
-            <CenterMarker color="#0000FF" />
+            <CenterMarker color="#FF0000" />
           </g>
         </g>
       )}

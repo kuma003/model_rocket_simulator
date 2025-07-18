@@ -89,11 +89,6 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
   ];
   const [activeSection, setActiveSection] = useState(sections[0].value);
   const [params, setParams] = useState<RocketParams>(rocketParams);
-  const [motorData, setMotorData] = useState<MotorData | null>(null);
-  const [loadingMotorData, setLoadingMotorData] = useState(false);
-  const [engineName, setEngineName] = useState<string>(
-    rocketParams.engine.name
-  );
 
   const updateParams = useCallback((newParams: Partial<RocketParams>) => {
     setParams((prevParams) => {
@@ -117,6 +112,21 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
   useEffect(() => {
     setRocketParams(params);
   }, [params, setRocketParams]);
+
+  useEffect(() => {
+    const fetchMotor = async () => {
+      try {
+        const data = await loadMotorData(params.engine.name);
+
+        if (data) {
+          updateParams({ engine: data });
+        }
+      } catch (error) {
+        console.error("Failed to load motor data:", error);
+      }
+    };
+    fetchMotor();
+  }, []);
 
   const handleImport = () => {
     const input = document.createElement("input");

@@ -135,6 +135,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
                       tick={{ fill: "white", fontSize: 10 }}
                       axisLine={{ stroke: "rgba(255,255,255,0.3)" }}
                       tickFormatter={(value) => value.toFixed(0)}
+                      domain={[0, "dataMax"]}
                     />
                     <Line
                       type="monotone"
