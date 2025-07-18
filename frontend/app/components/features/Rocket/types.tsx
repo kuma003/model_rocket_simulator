@@ -26,6 +26,14 @@ interface RocketBaseParam {
   color: string;
 }
 
+// Payload interface for rocket payloads
+export interface PayloadParams {
+  offset: number; // offset from body top (meters)
+  diameter: number; // payload diameter (meters)
+  length: number; // payload length (meters)
+  mass: number; // payload mass (kg)
+}
+
 // RocketParams interface using SI units (meters) for internal storage
 // Display components handle unit conversion for user interface
 export interface RocketParams {
@@ -59,6 +67,7 @@ export interface RocketParams {
           }[];
         }
     );
+  payload: PayloadParams;
   engine: MotorData;
 }
 
