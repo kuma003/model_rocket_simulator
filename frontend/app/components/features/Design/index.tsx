@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import RocketPanel from "~/components/layout/RocketPanel";
 import SimulationPanel from "~/components/layout/SimulationPanel";
 import RocketVisualization from "./RocketVisualization";
+import LaunchButton from "~/components/common/LaunchButton/LaunchButton";
 import type { RocketParams } from "../Rocket/types";
 import {
   calculateRocketProperties,
@@ -44,6 +45,12 @@ const Design: React.FC = () => {
       sweepLength: 0.03,
       height: 0.04,
     },
+    payload: {
+      offset: 0.05,
+      diameter: 0.02,
+      length: 0.03,
+      mass: 0.01,
+    },
     engine: {
       ...defaultMotorData,
       name: "Estes A10",
@@ -75,6 +82,7 @@ const Design: React.FC = () => {
         rocketProperties={rocketProperties}
         trajectoryData={trajectoryData}
       />
+      <LaunchButton rocketParams={rocketParams} />
     </div>
   );
 };
