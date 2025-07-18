@@ -18,6 +18,7 @@ import BodySection from "./sections/BodySection";
 import FinSection from "./sections/FinSection";
 import PayloadSection from "./sections/PayloadSection";
 import EngineSection from "./sections/EngineSection";
+import BackButton from "../../common/BackButton/BackButton";
 
 export interface RocketPanelProps {
   rocketParams?: RocketParams;
@@ -175,10 +176,15 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
   };
 
   return (
-    <div className={styles.panel}>
-      <PanelHeader />
+    <div className={styles.panelContainer}>
+      <div className={styles.topButtonArea}>
+        <BackButton />
+      </div>
+      
+      <div className={styles.panel}>
+        <PanelHeader />
 
-      <Stack className={styles.content}>
+        <Stack className={styles.content}>
         <BasicInfo params={params} updateParams={updateParams} />
 
         <Divider />
@@ -210,6 +216,7 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
           {renderActiveSection()}
         </ScrollArea>
       </Stack>
+      </div>
     </div>
   );
 };

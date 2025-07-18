@@ -22,6 +22,7 @@ const NoseSection: React.FC<NoseSectionProps> = ({ params, updateParams }) => {
           { value: "ogive", label: "オジャイブ型" },
           { value: "elliptical", label: "楕円型" },
         ]}
+        allowDeselect={false}
       />
       <UnitNumberInput
         label="長さ"

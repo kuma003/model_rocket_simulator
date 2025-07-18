@@ -34,13 +34,18 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
   const { G_TO_KG, CM_TO_M } = UNIT_CONVERSIONS;
 
   return (
-    <div className={styles.panel}>
-      <div className={styles.header}>
-        <div className={styles.icon}>📊</div>
-        <h2>シミュレーション結果</h2>
+    <div className={styles.panelContainer}>
+      <div className={styles.topButtonArea}>
+        <LaunchButton rocketParams={rocketParams} />
       </div>
+      
+      <div className={styles.panel}>
+        <div className={styles.header}>
+          <div className={styles.icon}>📊</div>
+          <h2>シミュレーション結果</h2>
+        </div>
 
-      <Stack className={styles.content}>
+        <Stack className={styles.content}>
         <ScrollArea className={styles.scrollArea}>
           <Stack gap="md">
             {/* 重量セクション */}
@@ -149,7 +154,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
           </Stack>
         </ScrollArea>
       </Stack>
-      <LaunchButton rocketParams={rocketParams} />
+      </div>
     </div>
   );
 };
