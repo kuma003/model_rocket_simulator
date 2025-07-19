@@ -132,7 +132,7 @@ const RocketSelectionModal: React.FC<RocketSelectionModalProps> = ({
                           targetWidth={350}
                           targetHeight={150}
                           referenceLength={maxLength / 2}
-                          pitchAngle={90}
+                          pitchAngle={0}
                           marginPercent={0.9}
                         />
                       </div>
@@ -172,7 +172,11 @@ const RocketSelectionModal: React.FC<RocketSelectionModalProps> = ({
             </Card>
 
             <Group justify="flex-end" mt="md">
-              <Button variant="light" onClick={onClose}>
+              <Button
+                variant="light"
+                onClick={onClose}
+                className={styles.cancelButton}
+              >
                 キャンセル
               </Button>
             </Group>
