@@ -8,7 +8,8 @@ export interface SkyObject {
 }
 
 export interface AltitudeBackgroundProps {
-  altitudeLevel: number;
+  altitude: number;
+  step: number;
 }
 
 export interface BackgroundSegment {

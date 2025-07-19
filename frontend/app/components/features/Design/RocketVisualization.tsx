@@ -18,6 +18,7 @@ import styles from "./rocketVisualization.module.scss";
  * @property {number} [referenceLength] - Reference rocket length for consistent scaling across multiple rockets
  * @property {number} [fixedScale] - Fixed scale value to override automatic scaling
  * @property {number} [marginPercent=0.8] - Margin percentage for automatic scaling (0.8 = 80% of container)
+ * @property {boolean} [isGhost=false] - Whether to render as ghost/transparent for rival rockets
  */
 interface RocketVisualizationProps {
   rocketParams: RocketParams;
@@ -31,6 +32,7 @@ interface RocketVisualizationProps {
   referenceLength?: number;
   fixedScale?: number;
   marginPercent?: number;
+  isGhost?: boolean;
 }
 
 /**
@@ -54,6 +56,7 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   referenceLength,
   fixedScale,
   marginPercent = 0.8,
+  isGhost = false,
 }) => {
   const { nose, body, fins } = rocketParams;
 
@@ -121,8 +124,8 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   return (
     <div>
       <svg
-        width={svgWidth}
-        height={svgHeight}
+        width={Math.max(svgWidth, svgHeight)}
+        height={Math.max(svgWidth, svgHeight)}
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
       >
         <g transform={`translate(${rocketOffsetX}, ${rocketOffsetY})`}>
@@ -133,7 +136,7 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
             pitchAngle={pitchAngle}
             rollAngle={rollAngle}
             showCenterMarkers={showCenterMarkers}
-            showPayload={showPayload}
+            isGhost={isGhost}
           />
         </g>
       </svg>

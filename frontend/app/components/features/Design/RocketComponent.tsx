@@ -125,15 +125,15 @@ function projectFinTo2D(
 /**
  * Calculate opacity for ghost mode based on z-order
  * @param {number} zOrder - Z-order value (-1 to 1, negative is back)
- * @param {boolean} ghostMode - Whether ghost mode is enabled
+ * @param {boolean} isGhost - Whether ghost mode is enabled
  * @returns {number} Opacity value (0-1)
  */
-function calculateGhostOpacity(zOrder: number, ghostMode: boolean): number {
-  if (!ghostMode) return 1.0;
+function calculateGhostOpacity(zOrder: number, isGhost: boolean): number {
+  if (!isGhost) return 1.0;
 
   // Base opacity for ghost mode
-  const baseOpacity = 0.4;
-  const minOpacity = 0.15;
+  const baseOpacity = 0.7;
+  const minOpacity = 0.4;
 
   // For back fins (negative zOrder), reduce opacity further
   if (zOrder < 0) {
@@ -182,7 +182,7 @@ function getColorWithOpacity(color: string, opacity: number): string {
  * @property {number} [rollAngle=0] - Roll angle in degrees
  * @property {boolean} [showCenterMarkers=false] - Whether to show center of gravity and pressure center markers
  * @property {boolean} [showPayload=false] - Whether to show payload section
- * @property {boolean} [ghostMode=false] - Whether to render in ghost mode (semi-transparent)
+ * @property {boolean} [isGhost=false] - Whether to render in ghost mode (semi-transparent)
  */
 interface RocketComponentProps {
   rocketParams: RocketParams;
@@ -192,7 +192,7 @@ interface RocketComponentProps {
   rollAngle?: number;
   showCenterMarkers?: boolean;
   showPayload?: boolean;
-  ghostMode?: boolean;
+  isGhost?: boolean;
 }
 
 /**
@@ -221,7 +221,7 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
   rollAngle = 0,
   showCenterMarkers = false,
   showPayload = false,
-  ghostMode = false,
+  isGhost = false,
 }) => {
   const { nose, body, fins, payload } = rocketParams;
 
@@ -350,15 +350,15 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
         {nose.type === "conical" ? (
           <polygon
             points={`${noseWidth / 2},0 0,${noseHeight} ${noseWidth},${noseHeight}`}
-            fill={ghostMode ? getColorWithOpacity(nose.color, 0.4) : nose.color}
-            stroke={ghostMode ? getColorWithOpacity("#000", 0.4) : "#000"}
+            fill={isGhost ? getColorWithOpacity(nose.color, 0.9) : nose.color}
+            stroke={isGhost ? getColorWithOpacity("#000", 0.9) : "#000"}
             strokeWidth="1"
           />
         ) : nose.type === "ogive" ? (
           <path
             d={`M ${noseWidth / 2} 0 Q 0 ${noseHeight * 0.3} 0 ${noseHeight} L ${noseWidth} ${noseHeight} Q ${noseWidth} ${noseHeight * 0.3} ${noseWidth / 2} 0 Z`}
-            fill={ghostMode ? getColorWithOpacity(nose.color, 0.4) : nose.color}
-            stroke={ghostMode ? getColorWithOpacity("#000", 0.4) : "#000"}
+            fill={isGhost ? getColorWithOpacity(nose.color, 0.9) : nose.color}
+            stroke={isGhost ? getColorWithOpacity("#000", 0.9) : "#000"}
             strokeWidth="1"
           />
         ) : (
@@ -367,8 +367,8 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
             cy={noseHeight}
             rx={noseWidth / 2}
             ry={noseHeight}
-            fill={ghostMode ? getColorWithOpacity(nose.color, 0.4) : nose.color}
-            stroke={ghostMode ? getColorWithOpacity("#000", 0.4) : "#000"}
+            fill={isGhost ? getColorWithOpacity(nose.color, 0.9) : nose.color}
+            stroke={isGhost ? getColorWithOpacity("#000", 0.9) : "#000"}
             strokeWidth="1"
           />
         )}
@@ -376,7 +376,7 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
 
       {/* フィン（後方のもののみ先に描画） */}
       {backFins.map((fin) => {
-        const opacity = calculateGhostOpacity(fin.zOrder, ghostMode);
+        const opacity = calculateGhostOpacity(fin.zOrder, isGhost);
         const fillColor = getColorWithOpacity(fins.color, opacity);
         const strokeColor = "#000";
 
@@ -385,7 +385,9 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
             key={fin.index}
             points={fin.points}
             fill={fillColor}
-            stroke={strokeColor}
+            stroke={
+              isGhost ? getColorWithOpacity(strokeColor, 0.9) : strokeColor
+            }
             strokeWidth="1"
           />
         );
@@ -398,15 +400,15 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
         <rect
           width={bodyWidth}
           height={bodyHeight}
-          fill={ghostMode ? getColorWithOpacity(body.color, 0.4) : body.color}
-          stroke={ghostMode ? getColorWithOpacity("#000", 0.4) : "#000"}
+          fill={isGhost ? getColorWithOpacity(body.color, 0.9) : body.color}
+          stroke={isGhost ? getColorWithOpacity("#000", 0.9) : "#000"}
           strokeWidth="1"
         />
       </g>
 
       {/* フィン（前方のもののみ後で描画） */}
       {frontFins.map((fin) => {
-        const opacity = calculateGhostOpacity(fin.zOrder, ghostMode);
+        const opacity = calculateGhostOpacity(fin.zOrder, isGhost);
         const fillColor = getColorWithOpacity(fins.color, opacity);
         const strokeColor = "#000";
 
@@ -415,7 +417,9 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
             key={fin.index}
             points={fin.points}
             fill={fillColor}
-            stroke={strokeColor}
+            stroke={
+              isGhost ? getColorWithOpacity(strokeColor, 0.9) : strokeColor
+            }
             strokeWidth="1"
           />
         );
@@ -431,7 +435,7 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
             width={payloadDiameter}
             height={payloadLength}
             fill={"None"}
-            stroke={ghostMode ? getColorWithOpacity("#000", 0.8) : "#000"}
+            stroke={isGhost ? getColorWithOpacity("#000", 0.9) : "#000"}
             strokeWidth="3"
             strokeDasharray="3.5,3.5"
             rx="5"

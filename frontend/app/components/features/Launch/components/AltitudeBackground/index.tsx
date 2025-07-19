@@ -4,7 +4,8 @@ import type { AltitudeBackgroundProps } from "./types";
 import styles from "./AltitudeBackground.module.scss";
 
 const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
-  altitudeLevel,
+  altitude,
+  step,
 }) => {
   const backgroundPath = [
     "/0-50.png",
@@ -43,6 +44,8 @@ const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
     // { path: "/objects/aurora2.png", altLevel: 2.24, left: 20 },
   ];
   const backgroundHeight = 5121;
+
+  const altitudeLevel = altitude / step;
 
   function clampedAltitude(altLevel: number): number {
     if (altLevel < 0) return 0;

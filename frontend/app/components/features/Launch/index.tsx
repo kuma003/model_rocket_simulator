@@ -1,25 +1,31 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import {
   loadRocketParams,
   hasRocketParams,
 } from "~/utils/storage/rocketStorage";
-import type { RocketParams } from "../Rocket/types";
+import type { RocketParams, RocketSpecs } from "../Rocket/types";
 import AltitudeBackground from "./components/AltitudeBackground";
 import AltitudeMeter from "./components/AltitudeMeter";
 import Timer from "./components/Timer";
 import {
   calculateRocketProperties,
-  calculateTrajectory,
-  type TrajectoryData,
+  type RocketProperties,
 } from "~/utils/calculations/simulationEngine";
 import presetRockets from "~/data/presetRockets.json";
 import { loadFromJson } from "~/utils/storage/rocketFileAdapter";
+import type { RocketTrajectory } from "~/utils/calculations/4DoF";
+import run4DoFSimulation from "~/utils/calculations/4DoF";
+import RocketComponent from "../Design/RocketComponent";
+import RocketVisualization from "../Design/RocketVisualization";
+import TrajectoryPath from "./components/TrajectoryPath";
 
 const Launch: React.FC = () => {
   const navigate = useNavigate();
   const [rocketParams, setRocketParams] = useState<RocketParams | null>(null);
-  const [trajectoryData, setTrajectoryData] = useState<TrajectoryData | null>(
+  const [rocketProperties, setRocketProperties] =
+    useState<RocketProperties | null>(null);
+  const [trajectoryData, setTrajectoryData] = useState<RocketTrajectory | null>(
     null
   );
 
@@ -27,9 +33,23 @@ const Launch: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [time, setTime] = useState(0);
+  const [altitude, setAltitude] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
-  const [rivalRocket, setRivalRocket] = useState<Set<string>>(new Set());
+
+  const [rivalRocketParams, setRivalRocketParams] = useState<RocketParams[]>(
+    []
+  );
+  const [rivalRocketTrajectory, setRivalRocketTrajectory] = useState<
+    RocketTrajectory[]
+  >([]);
+
+  let maxLength = 0.1;
+  let [flightTime, setFlightTime] = useState(0);
+
+  const dt = 0.0005;
+  const step = 50; // meters
 
   useEffect(() => {
     // check query parameters for rocket selection
@@ -59,6 +79,24 @@ const Launch: React.FC = () => {
             return;
           }
           setRocketParams(params);
+
+          const rivals = presetRockets.filter((rocket) => rocket.id !== preset);
+          const randomRivals = rivals
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 2);
+          const rivalParams = await Promise.all(
+            randomRivals.map((rival) => loadFromJson(rival.rocketParams))
+          );
+          setRivalRocketParams(rivalParams.filter((param) => param !== null));
+          console.log("userRocket:", userRocket);
+          console.log("Rival Rockets:", rivalParams);
+
+          maxLength = Math.max(
+            params.nose.length + params.body.length,
+            ...rivalParams.map(
+              (rocket) => rocket.nose.length + rocket.body.length
+            )
+          );
         } catch (err) {
           console.error("Error loading rocket parameters:", err);
           setError("ロケットデータの読み込み中にエラーが発生しました。");
@@ -97,7 +135,23 @@ const Launch: React.FC = () => {
             return;
           }
 
+          const rivals = presetRockets;
+          const randomRivals = rivals
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 2);
+          const rivalParams = await Promise.all(
+            randomRivals.map((rival) => loadFromJson(rival.rocketParams))
+          );
+          setRivalRocketParams(rivalParams.filter((param) => param !== null));
+
           setRocketParams(params);
+
+          maxLength = Math.max(
+            params.nose.length + params.body.length,
+            ...rivalParams.map(
+              (rocket) => rocket.nose.length + rocket.body.length
+            )
+          );
         } catch (err) {
           console.error("Error loading rocket parameters:", err);
           setError("ロケットデータの読み込み中にエラーが発生しました。");
@@ -117,20 +171,87 @@ const Launch: React.FC = () => {
     if (!rocketParams) return;
     console.log("Rocket Params:", rocketParams);
     const properties = calculateRocketProperties(rocketParams);
-    setTrajectoryData(calculateTrajectory(properties, 0.025));
-  }, [rocketParams]);
+    setRocketProperties(properties);
+    const trajectory = run4DoFSimulation(
+      properties.specs,
+      { launchrodElevation: 85, launchrodLength: 1 },
+      dt
+    );
+    setTrajectoryData(trajectory);
+    
+    // Set initial flight time, will be updated when rival rockets are calculated
+    const initialFlightTime = trajectory.time[trajectory.time.length - 1];
+    if (rivalRocketTrajectory.length === 0) {
+      setFlightTime(initialFlightTime);
+    } else {
+      // Calculate max flight time including rival rockets
+      const allFlightTimes = [
+        initialFlightTime,
+        ...rivalRocketTrajectory.map(traj => traj.time[traj.time.length - 1])
+      ];
+      const maxFlightTime = Math.max(...allFlightTimes);
+      setFlightTime(maxFlightTime);
+    }
+  }, [rocketParams, rivalRocketTrajectory]);
 
   useEffect(() => {
-    console.log("Trajectory Data:", trajectoryData);
-  }, [trajectoryData]);
+    if (rivalRocketParams.length === 0) return;
+
+    const rivalTrajectories = rivalRocketParams.map((params) => {
+      const properties = calculateRocketProperties(params);
+      return run4DoFSimulation(
+        properties.specs,
+        { launchrodElevation: 80, launchrodLength: 1 },
+        dt
+      );
+    });
+
+    setRivalRocketTrajectory(rivalTrajectories);
+    
+    // Update flight time to maximum among all rockets
+    if (trajectoryData) {
+      const allFlightTimes = [
+        trajectoryData.time[trajectoryData.time.length - 1],
+        ...rivalTrajectories.map(traj => traj.time[traj.time.length - 1])
+      ];
+      const maxFlightTime = Math.max(...allFlightTimes);
+      setFlightTime(maxFlightTime);
+    }
+  }, [rivalRocketParams, trajectoryData]);
+
+  useEffect(() => {
+    const idx = time < 0 ? 0 : Math.floor(time / dt);
+    setCurrentIndex(idx); // Assume that dt is quite small
+    setAltitude(
+      trajectoryData
+        ? Math.max(
+            trajectoryData.position[
+              Math.min(idx, trajectoryData.position.length - 1)
+            ].y,
+            0
+          )
+        : 0
+    );
+  }, [time, dt, trajectoryData]);
 
   // Timer control functions
   const startTimer = useCallback(() => {
     if (!isRunning) {
       setTime(-5);
       const id = setInterval(() => {
-        setTime((prevTime) => prevTime + 0.1);
-      }, 100);
+        setTime((prevTime) => {
+          if (prevTime >= flightTime) {
+            clearInterval(id);
+            setIsRunning(false);
+            return flightTime; // Stop at flight time
+          }
+          if (prevTime < 0) {
+            return prevTime + 0.01;
+          } else {
+            return prevTime + 0.005; // little bit slow
+          }
+        });
+      }, 10);
       setIntervalId(id);
       setIsRunning(true);
     }
@@ -210,10 +331,113 @@ const Launch: React.FC = () => {
 
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
-      <AltitudeBackground altitudeLevel={0} />
-      <AltitudeMeter alt={0} step={50} />
+      <AltitudeBackground altitude={altitude} step={50} />
+      {/* {trajectoryData && (
+        <TrajectoryPath 
+          trajectoryData={trajectoryData} 
+          altitude={altitude} 
+          step={50} 
+        />
+      )} */}
+      <AltitudeMeter alt={altitude} step={50} />
+      {rocketParams && rocketProperties && trajectoryData && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 10,
+          }}
+        >
+          <RocketVisualization
+            rocketParams={rocketParams}
+            rocketProperties={rocketProperties}
+            targetWidth={120}
+            targetHeight={120}
+            referenceLength={maxLength * 2}
+            pitchAngle={
+              (trajectoryData.pitch[
+                Math.min(currentIndex, trajectoryData.pitch.length - 1)
+              ] *
+                180) /
+              Math.PI
+            }
+            marginPercent={0.9}
+          />
+        </div>
+      )}
+      {/* Rival rockets with ghost effect */}
+      {rivalRocketParams.length > 0 && rivalRocketTrajectory.length > 0 && (
+        <div
+          style={{
+            overflow: "hidden",
+          }}
+        >
+          {rivalRocketParams.map((rivalParams, index) => {
+            const rivalProperties = calculateRocketProperties(rivalParams);
+            const rivalTrajectory = rivalRocketTrajectory[index];
+            const rivalCurrentIndex = Math.min(
+              currentIndex,
+              rivalTrajectory.position.length - 1
+            );
+            const rivalAltitude = Math.max(
+              rivalTrajectory.position[rivalCurrentIndex].y,
+              0
+            );
+            const altitudeDiff = rivalAltitude - altitude;
+
+            return (
+              <div
+                key={`rival-${index}`}
+                style={{
+                  position: "absolute",
+                  top: `calc(50% - ${(altitudeDiff / step) * 500}vw)`,
+                  left: index === 0 ? "20%" : "80%", // Left and right positions
+                  transform: "translate(-50%, -50%)",
+                  zIndex: 8,
+                  opacity: 0.85, // Ghost effect
+                  filter: "brightness(0.85) saturate(0.7)", // Additional ghost styling
+                }}
+              >
+                <RocketVisualization
+                  rocketParams={rivalParams}
+                  rocketProperties={rivalProperties}
+                  targetWidth={100}
+                  targetHeight={100}
+                  referenceLength={maxLength * 2}
+                  pitchAngle={
+                    (rivalTrajectory.pitch[rivalCurrentIndex] * 180) / Math.PI
+                  }
+                  marginPercent={0.9}
+                  isGhost={true}
+                />
+              </div>
+            );
+          })}
+        </div>
+      )}
       <Timer time={time} />
     </div>
   );
 };
 export default Launch;
+
+const RocketWrapper: React.FC<{
+  rocketParams: RocketParams;
+  rocketProperties: RocketProperties;
+  trajectory: RocketTrajectory;
+  idx: number;
+}> = ({ rocketParams, rocketProperties, trajectory, idx }) => {
+  if (idx < 0) idx = 0;
+  idx = Math.min(idx, trajectory.position.length - 1);
+  const pitch = trajectory.pitch[idx];
+
+  return (
+    <RocketComponent
+      rocketParams={rocketParams}
+      rocketProperties={rocketProperties}
+      pitchAngle={pitch}
+    ></RocketComponent>
+  );
+};
