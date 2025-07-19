@@ -36,8 +36,16 @@ const LaunchButton: React.FC<LaunchButtonProps> = ({
       onClick={handleLaunch}
       disabled={disabled}
       className={styles.launchButton}
+      variant="light"
       size="lg"
       leftSection={<span className={styles.rocketIcon}>🚀</span>}
+      style={{
+        background:
+          "linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
+        border: "1px solid rgba(255, 255, 255, 0.2)",
+        color: "white",
+        backdropFilter: "blur(8px)",
+      }}
     >
       打ち上げ
     </Button>

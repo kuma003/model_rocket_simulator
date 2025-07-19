@@ -10,7 +10,7 @@ interface BackButtonProps {
   showWarning?: boolean;
   warningTitle?: string;
   warningMessage?: string;
-  style: React.CSSProperties;
+  style?: React.CSSProperties;
 }
 
 /**
