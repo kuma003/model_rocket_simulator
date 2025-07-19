@@ -7,6 +7,9 @@ interface BackButtonProps {
   onClick?: () => void;
   label?: string;
   to?: string;
+  showWarning?: boolean;
+  warningTitle?: string;
+  warningMessage?: string;
 }
 
 /**
@@ -16,10 +19,24 @@ const BackButton: React.FC<BackButtonProps> = ({
   onClick,
   label = "戻る",
   to = "/",
+  showWarning = false,
+  warningTitle = "進捗が保存されていません",
+  warningMessage = "現在の進捗が保存されていません。このページを離れてもよろしいですか？",
 }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
+    if (showWarning) {
+      // Use browser native confirm dialog
+      if (window.confirm(warningMessage)) {
+        performNavigation();
+      }
+    } else {
+      performNavigation();
+    }
+  };
+
+  const performNavigation = () => {
     if (onClick) {
       onClick();
     } else {

@@ -181,6 +181,7 @@ function getColorWithOpacity(color: string, opacity: number): string {
  * @property {number} [pitchAngle=0] - Pitch angle in degrees
  * @property {number} [rollAngle=0] - Roll angle in degrees
  * @property {boolean} [showCenterMarkers=false] - Whether to show center of gravity and pressure center markers
+ * @property {boolean} [showPayload=false] - Whether to show payload section
  * @property {boolean} [ghostMode=false] - Whether to render in ghost mode (semi-transparent)
  */
 interface RocketComponentProps {
@@ -190,6 +191,7 @@ interface RocketComponentProps {
   pitchAngle?: number;
   rollAngle?: number;
   showCenterMarkers?: boolean;
+  showPayload?: boolean;
   ghostMode?: boolean;
 }
 
@@ -218,6 +220,7 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
   pitchAngle = 0,
   rollAngle = 0,
   showCenterMarkers = false,
+  showPayload = false,
   ghostMode = false,
 }) => {
   const { nose, body, fins, payload } = rocketParams;
@@ -242,14 +245,22 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
 
   // 全体の高さを計算
   const totalHeight = noseHeight + bodyHeight;
-  const totalWidth = Math.max(bodyWidth, 200);
+
+  // フィンを考慮した全体の幅を計算
+  const finExtension =
+    fins.type === "trapozoidal" || fins.type === "elliptical"
+      ? finHeight
+      : fins.type === "freedom"
+        ? Math.max(...fins.points.map((p) => p.x)) * pixelsPerM
+        : 0;
+  const totalWidth = Math.max(bodyWidth, bodyWidth + finExtension * 2);
 
   // 回転の中心点を計算
   const centerX = totalWidth / 2;
   const centerY = totalHeight / 2;
 
   // ピッチ角による回転変換
-  const pitchTransform = `rotate(${pitchAngle}, ${centerX}, ${centerY})`;
+  const pitchTransform = `rotate(${-pitchAngle + 90}, ${centerX}, ${centerY})`;
 
   // フィンデータを事前計算し、z-order順にソート
   const { backFins, frontFins } = useMemo(() => {
@@ -410,22 +421,24 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
         );
       })}
       {/* ペイロードセクション */}
-      <g
-        transform={`translate(${(totalWidth - bodyWidth) / 2}, ${noseHeight})`}
-      >
-        <rect
-          x={(bodyWidth - payloadDiameter) / 2}
-          y={payloadOffset}
-          width={payloadDiameter}
-          height={payloadLength}
-          fill={"None"}
-          stroke={ghostMode ? getColorWithOpacity("#000", 0.8) : "#000"}
-          strokeWidth="3"
-          strokeDasharray="3.5,3.5"
-          rx="5"
-          ry="5"
-        />
-      </g>
+      {showPayload && payload.length > 0 && (
+        <g
+          transform={`translate(${(totalWidth - bodyWidth) / 2}, ${noseHeight})`}
+        >
+          <rect
+            x={(bodyWidth - payloadDiameter) / 2}
+            y={payloadOffset}
+            width={payloadDiameter}
+            height={payloadLength}
+            fill={"None"}
+            stroke={ghostMode ? getColorWithOpacity("#000", 0.8) : "#000"}
+            strokeWidth="3"
+            strokeDasharray="3.5,3.5"
+            rx="5"
+            ry="5"
+          />
+        </g>
+      )}
 
       {/* 重心と圧力中心のマーカー */}
       {showCenterMarkers && (

@@ -165,7 +165,6 @@ const Launch: React.FC = () => {
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
       <AltitudeBackground altitudeLevel={0} />
-      <RocketCarts />
       <AltitudeMeter alt={0} step={50} />
       <Timer time={time} />
     </div>

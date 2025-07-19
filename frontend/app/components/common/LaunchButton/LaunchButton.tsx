@@ -8,15 +8,22 @@ import styles from "./LaunchButton.module.scss";
 interface LaunchButtonProps {
   rocketParams: RocketParams;
   disabled?: boolean;
+  onNavigate?: () => void;
 }
 
 const LaunchButton: React.FC<LaunchButtonProps> = ({ 
   rocketParams, 
-  disabled = false 
+  disabled = false,
+  onNavigate
 }) => {
   const navigate = useNavigate();
 
   const handleLaunch = () => {
+    // Allow next navigation to bypass warning
+    if (onNavigate) {
+      onNavigate();
+    }
+    
     // Save current rocket parameters to localStorage
     saveRocketParams(rocketParams);
     

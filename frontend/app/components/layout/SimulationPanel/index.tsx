@@ -24,19 +24,24 @@ export interface SimulationPanelProps {
   rocketParams: RocketParams;
   rocketProperties: RocketProperties;
   trajectoryData: TrajectoryData;
+  allowNextNavigation?: () => void;
 }
 
 const SimulationPanel: React.FC<SimulationPanelProps> = ({
   rocketParams,
   rocketProperties,
   trajectoryData,
+  allowNextNavigation,
 }) => {
   const { G_TO_KG, CM_TO_M } = UNIT_CONVERSIONS;
 
   return (
     <div className={styles.panelContainer}>
       <div className={styles.topButtonArea}>
-        <LaunchButton rocketParams={rocketParams} />
+        <LaunchButton 
+          rocketParams={rocketParams} 
+          onNavigate={allowNextNavigation}
+        />
       </div>
       
       <div className={styles.panel}>

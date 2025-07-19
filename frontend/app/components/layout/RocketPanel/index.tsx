@@ -178,7 +178,7 @@ const RocketPanel: React.FC<RocketPanelProps> = ({
   return (
     <div className={styles.panelContainer}>
       <div className={styles.topButtonArea}>
-        <BackButton />
+        <BackButton showWarning={true} />
       </div>
       
       <div className={styles.panel}>

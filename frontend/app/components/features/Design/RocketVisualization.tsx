@@ -12,6 +12,7 @@ import styles from "./rocketVisualization.module.scss";
  * @property {number} [pitchAngle=0] - Pitch angle in degrees
  * @property {number} [rollAngle=0] - Roll angle in degrees
  * @property {boolean} [showCenterMarkers=false] - Whether to show center markers
+ * @property {boolean} [showPayload=false] - Whether to show payload section
  * @property {number} [targetWidth] - Target width in pixels (defaults to 500)
  * @property {number} [targetHeight] - Target height in pixels (defaults to 800)
  * @property {number} [referenceLength] - Reference rocket length for consistent scaling across multiple rockets
@@ -24,6 +25,7 @@ interface RocketVisualizationProps {
   pitchAngle?: number;
   rollAngle?: number;
   showCenterMarkers?: boolean;
+  showPayload?: boolean;
   targetWidth?: number;
   targetHeight?: number;
   referenceLength?: number;
@@ -46,7 +48,8 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   pitchAngle = 0,
   rollAngle = 0,
   showCenterMarkers = false,
-  targetWidth = 500,
+  showPayload = false,
+  targetWidth = 800,
   targetHeight = 800,
   referenceLength,
   fixedScale,
@@ -58,12 +61,12 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   const { totalHeightM, scale, svgWidth, svgHeight } = useMemo(() => {
     const totalHeightM = nose.length + body.length;
     const totalWidthM = body.diameter;
-    
+
     // Use reference length for consistent scaling across multiple rockets
     const lengthForScaling = referenceLength || totalHeightM;
 
     let calculatedScale: number;
-    
+
     if (fixedScale !== undefined) {
       // Use fixed scale if provided
       calculatedScale = fixedScale;
@@ -71,14 +74,14 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
       // Calculate scale based on dimensions (pixels per meter)
       const scaleByHeight = targetHeight / lengthForScaling;
       const scaleByWidth = targetWidth / totalWidthM;
-      calculatedScale = Math.min(scaleByHeight, scaleByWidth) * marginPercent;
+      calculatedScale = Math.min(scaleByHeight, scaleByWidth);
     }
 
     // Calculate actual SVG dimensions with margin
     const marginPx = 40;
     const rocketWidthPx = totalWidthM * calculatedScale;
     const rocketHeightPx = totalHeightM * calculatedScale;
-    
+
     const svgWidth = Math.max(targetWidth, rocketWidthPx + marginPx);
     const svgHeight = Math.max(targetHeight, rocketHeightPx + marginPx);
 
@@ -89,23 +92,27 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
       svgHeight,
     };
   }, [
-    nose.length, 
-    body.length, 
-    body.diameter, 
-    fins, 
-    targetWidth, 
-    targetHeight, 
-    referenceLength, 
-    fixedScale, 
-    marginPercent
+    nose.length,
+    body.length,
+    body.diameter,
+    fins,
+    targetWidth,
+    targetHeight,
+    referenceLength,
+    fixedScale,
+    marginPercent,
   ]);
 
   // ロケットを中央配置するためのオフセット計算
-  const finChord =
-    fins.type === "trapozoidal" ? Math.max(fins.rootChord, fins.tipChord) : 0;
+  const finExtension =
+    fins.type === "trapozoidal" || fins.type === "elliptical"
+      ? fins.height * scale
+      : fins.type === "freedom"
+        ? Math.max(...fins.points.map((p) => p.x)) * scale
+        : 0;
   const bodyWidth = body.diameter * scale;
 
-  const rocketWidth = Math.max(bodyWidth, 200);
+  const rocketWidth = Math.max(bodyWidth, bodyWidth + finExtension * 2);
   const rocketHeight = totalHeightM * scale;
 
   const rocketOffsetX = (svgWidth - rocketWidth) / 2;
@@ -126,6 +133,7 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
             pitchAngle={pitchAngle}
             rollAngle={rollAngle}
             showCenterMarkers={showCenterMarkers}
+            showPayload={showPayload}
           />
         </g>
       </svg>
