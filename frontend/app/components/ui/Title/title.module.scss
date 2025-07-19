@@ -14,6 +14,7 @@
     height: 280px;
     width: 280px;
     margin-right: 8px;
+    color: #ff6b6b;
     transition: transform 0.3s ease-in-out;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
     animation: rocketFloat 3s ease-in-out infinite;
@@ -58,15 +59,15 @@
     animation: subtitleGlow 3s ease-in-out infinite;
   }
 
-  @keyframes subtitleGlow {
-    0%,
-    100% {
-      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
-    }
-    50% {
-      text-shadow:
-        2px 2px 8px rgba(0, 0, 0, 0.3),
-        0 0 20px rgba(255, 255, 255, 0.3);
-    }
-  }
+  // @keyframes subtitleGlow {
+  //   0%,
+  //   100% {
+  //     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  //   }
+  //   50% {
+  //     text-shadow:
+  //       2px 2px 8px rgba(0, 0, 0, 0.3),
+  //       0 0 20px rgba(255, 255, 255, 0.3);
+  //   }
+  // }
 }
