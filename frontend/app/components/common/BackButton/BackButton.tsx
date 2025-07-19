@@ -10,6 +10,7 @@ interface BackButtonProps {
   showWarning?: boolean;
   warningTitle?: string;
   warningMessage?: string;
+  style: React.CSSProperties;
 }
 
 /**
@@ -22,6 +23,7 @@ const BackButton: React.FC<BackButtonProps> = ({
   showWarning = false,
   warningTitle = "進捗が保存されていません",
   warningMessage = "現在の進捗が保存されていません。このページを離れてもよろしいですか？",
+  style = {},
 }) => {
   const navigate = useNavigate();
 
@@ -52,11 +54,14 @@ const BackButton: React.FC<BackButtonProps> = ({
       onClick={handleClick}
       size="sm"
       style={{
-        background:
-          "linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
-        border: "1px solid rgba(255, 255, 255, 0.2)",
-        color: "white",
-        backdropFilter: "blur(8px)",
+        ...{
+          background:
+            "linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+          color: "white",
+          backdropFilter: "blur(8px)",
+        },
+        ...style,
       }}
     >
       {label}

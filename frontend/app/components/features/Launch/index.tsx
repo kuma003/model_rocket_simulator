@@ -19,6 +19,7 @@ import run4DoFSimulation from "~/utils/calculations/4DoF";
 import RocketComponent from "../Design/RocketComponent";
 import RocketVisualization from "../Design/RocketVisualization";
 import TrajectoryPath from "./components/TrajectoryPath";
+import BackButton from "~/components/common/BackButton/BackButton";
 
 const Launch: React.FC = () => {
   const navigate = useNavigate();
@@ -174,25 +175,25 @@ const Launch: React.FC = () => {
     setRocketProperties(properties);
     const trajectory = run4DoFSimulation(
       properties.specs,
-      { launchrodElevation: 85, launchrodLength: 1 },
+      { launchrodElevation: 89, launchrodLength: 1 },
       dt
     );
     setTrajectoryData(trajectory);
-    
-    // Set initial flight time, will be updated when rival rockets are calculated
-    const initialFlightTime = trajectory.time[trajectory.time.length - 1];
-    if (rivalRocketTrajectory.length === 0) {
-      setFlightTime(initialFlightTime);
-    } else {
-      // Calculate max flight time including rival rockets
-      const allFlightTimes = [
-        initialFlightTime,
-        ...rivalRocketTrajectory.map(traj => traj.time[traj.time.length - 1])
-      ];
-      const maxFlightTime = Math.max(...allFlightTimes);
-      setFlightTime(maxFlightTime);
-    }
-  }, [rocketParams, rivalRocketTrajectory]);
+
+    // // Set initial flight time, will be updated when rival rockets are calculated
+    // const initialFlightTime = trajectory.time[trajectory.time.length - 1];
+    // if (rivalRocketTrajectory.length === 0) {
+    //   setFlightTime(initialFlightTime);
+    // } else {
+    //   // Calculate max flight time including rival rockets
+    //   const allFlightTimes = [
+    //     initialFlightTime,
+    //     ...rivalRocketTrajectory.map((traj) => traj.time[traj.time.length - 1]),
+    //   ];
+    //   const maxFlightTime = Math.max(...allFlightTimes);
+    //   setFlightTime(maxFlightTime);
+    // }
+  }, [rocketParams]);
 
   useEffect(() => {
     if (rivalRocketParams.length === 0) return;
@@ -201,23 +202,23 @@ const Launch: React.FC = () => {
       const properties = calculateRocketProperties(params);
       return run4DoFSimulation(
         properties.specs,
-        { launchrodElevation: 80, launchrodLength: 1 },
+        { launchrodElevation: 89, launchrodLength: 1 },
         dt
       );
     });
 
     setRivalRocketTrajectory(rivalTrajectories);
-    
-    // Update flight time to maximum among all rockets
-    if (trajectoryData) {
-      const allFlightTimes = [
-        trajectoryData.time[trajectoryData.time.length - 1],
-        ...rivalTrajectories.map(traj => traj.time[traj.time.length - 1])
-      ];
-      const maxFlightTime = Math.max(...allFlightTimes);
-      setFlightTime(maxFlightTime);
-    }
-  }, [rivalRocketParams, trajectoryData]);
+
+    // // Update flight time to maximum among all rockets
+    // if (trajectoryData) {
+    //   const allFlightTimes = [
+    //     trajectoryData.time[trajectoryData.time.length - 1],
+    //     ...rivalTrajectories.map((traj) => traj.time[traj.time.length - 1]),
+    //   ];
+    //   const maxFlightTime = Math.max(...allFlightTimes);
+    //   setFlightTime(maxFlightTime);
+    // }
+  }, [rivalRocketParams]);
 
   useEffect(() => {
     const idx = time < 0 ? 0 : Math.floor(time / dt);
@@ -237,14 +238,14 @@ const Launch: React.FC = () => {
   // Timer control functions
   const startTimer = useCallback(() => {
     if (!isRunning) {
-      setTime(-5);
+      setTime(-3.0);
       const id = setInterval(() => {
         setTime((prevTime) => {
-          if (prevTime >= flightTime) {
-            clearInterval(id);
-            setIsRunning(false);
-            return flightTime; // Stop at flight time
-          }
+          // if (prevTime >= flightTime) {
+          //   clearInterval(id);
+          //   setIsRunning(false);
+          //   return flightTime; // Stop at flight time
+          // }
           if (prevTime < 0) {
             return prevTime + 0.01;
           } else {
@@ -333,12 +334,22 @@ const Launch: React.FC = () => {
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
       <AltitudeBackground altitude={altitude} step={50} />
       {/* {trajectoryData && (
-        <TrajectoryPath 
-          trajectoryData={trajectoryData} 
-          altitude={altitude} 
-          step={50} 
+        <TrajectoryPath
+          trajectoryData={trajectoryData}
+          index={currentIndex}
+          step={50}
         />
       )} */}
+      <BackButton
+        warningTitle="確認"
+        warningMessage="打ち上げを終了しますか？"
+        style={{
+          position: "absolute",
+          top: "1rem",
+          left: "1rem",
+          zIndex: 100,
+        }}
+      />
       <AltitudeMeter alt={altitude} step={50} />
       {rocketParams && rocketProperties && trajectoryData && (
         <div
@@ -364,6 +375,8 @@ const Launch: React.FC = () => {
               Math.PI
             }
             marginPercent={0.9}
+            isCombustion={0 < time && rocketParams.engine.burnTime > time}
+            shouldPlaySound={true}
           />
         </div>
       )}
@@ -411,6 +424,9 @@ const Launch: React.FC = () => {
                   }
                   marginPercent={0.9}
                   isGhost={true}
+                  isCombustion={
+                    0 < time && rivalRocketParams[index].engine.burnTime > time
+                  }
                 />
               </div>
             );
