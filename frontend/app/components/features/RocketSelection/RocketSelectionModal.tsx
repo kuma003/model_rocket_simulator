@@ -129,9 +129,9 @@ const RocketSelectionModal: React.FC<RocketSelectionModalProps> = ({
                         <RocketVisualization
                           rocketParams={rocket.rocketParams}
                           rocketProperties={rocketProperties}
-                          targetWidth={280}
-                          targetHeight={120}
-                          fixedScale={280 / maxLength}
+                          targetWidth={350}
+                          targetHeight={150}
+                          referenceLength={maxLength / 2}
                           pitchAngle={0}
                           marginPercent={0.9}
                         />
@@ -172,7 +172,11 @@ const RocketSelectionModal: React.FC<RocketSelectionModalProps> = ({
             </Card>
 
             <Group justify="flex-end" mt="md">
-              <Button variant="light" onClick={onClose}>
+              <Button
+                variant="light"
+                onClick={onClose}
+                className={styles.cancelButton}
+              >
                 キャンセル
               </Button>
             </Group>

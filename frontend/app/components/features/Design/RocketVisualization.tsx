@@ -69,10 +69,19 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   // Calculate dimensions and scaling (using meter units)
   const { totalHeightM, scale, svgWidth, svgHeight } = useMemo(() => {
     const totalHeightM = nose.length + body.length;
-    const totalWidthM = body.diameter;
-
+    
+    // Calculate actual rocket width considering fins
+    let totalWidthM = body.diameter;
+    if (fins.type === "trapozoidal" || fins.type === "elliptical") {
+      // Add fin protrusion to both sides
+      totalWidthM = body.diameter + (fins.height * 2);
+    } else if (fins.type === "freedom" && fins.points.length > 0) {
+      const maxFinX = Math.max(...fins.points.map(p => p.x));
+      totalWidthM = body.diameter + (maxFinX * 2);
+    }
     // Use reference length for consistent scaling across multiple rockets
     const lengthForScaling = referenceLength || totalHeightM;
+    const widthForScaling = totalWidthM;
 
     let calculatedScale: number;
 
@@ -80,19 +89,19 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
       // Use fixed scale if provided
       calculatedScale = fixedScale;
     } else {
-      // Calculate scale based on dimensions (pixels per meter)
-      const scaleByHeight = targetHeight / lengthForScaling;
-      const scaleByWidth = targetWidth / totalWidthM;
+      // Calculate scale based on dimensions to maximize usage of available space
+      const scaleByHeight = (targetHeight * marginPercent) / lengthForScaling;
+      const scaleByWidth = (targetWidth * marginPercent) / widthForScaling;
       calculatedScale = Math.min(scaleByHeight, scaleByWidth);
     }
 
-    // Calculate actual SVG dimensions with margin
-    const marginPx = 40;
+    // Calculate actual SVG dimensions
     const rocketWidthPx = totalWidthM * calculatedScale;
     const rocketHeightPx = totalHeightM * calculatedScale;
-
-    const svgWidth = Math.max(targetWidth, rocketWidthPx + marginPx);
-    const svgHeight = Math.max(targetHeight, rocketHeightPx + marginPx);
+    
+    // Use target dimensions or calculated minimum size
+    const svgWidth = Math.max(targetWidth, rocketWidthPx + 40);
+    const svgHeight = Math.max(targetHeight, rocketHeightPx + 40);
 
     return {
       totalHeightM,
@@ -113,15 +122,19 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   ]);
 
   // ロケットを中央配置するためのオフセット計算
-  const finExtension =
-    fins.type === "trapozoidal" || fins.type === "elliptical"
-      ? fins.height * scale
-      : fins.type === "freedom"
-        ? Math.max(...fins.points.map((p) => p.x)) * scale
-        : 0;
+  const finMaxWidth = useMemo(() => {
+    let maxFinWidth = 0;
+    if (fins.type === "trapozoidal" || fins.type === "elliptical") {
+      maxFinWidth = fins.height * scale * 1.5; // フィンの最大突出幅を估算
+    } else if (fins.type === "freedom" && fins.points.length > 0) {
+      const maxX = Math.max(...fins.points.map(p => p.x));
+      maxFinWidth = maxX * scale;
+    }
+    return maxFinWidth;
+  }, [fins, scale]);
+  
   const bodyWidth = body.diameter * scale;
-
-  const rocketWidth = Math.max(bodyWidth, bodyWidth + finExtension * 2);
+  const rocketWidth = Math.max(bodyWidth, bodyWidth + finMaxWidth);
   const rocketHeight = totalHeightM * scale;
 
   const rocketOffsetX = (svgWidth - rocketWidth) / 2;
