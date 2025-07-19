@@ -5,30 +5,16 @@
   // background: linear-gradient(to bottom, #5a3393, #354d8f, #403e80);
   background: #fbfbfb;
   background-size: 300% 300%;
-  animation: gradientShift 10s ease infinite;
   overflow: hidden;
 }
 
-.button_transparent {
-  background-color: transparent;
-  border: none;
-  color: #ffffff;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.button_gradient {
-  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
-  background-size: 200% 200%;
-  border: none;
-  color: #ffffff;
-  font-size: 24px;
-  cursor: pointer;
-  border-radius: 25px;
-  padding: 12px 24px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-}
+// .button_transparent {
+//   background-color: transparent;
+//   border: none;
+//   color: #ffffff;
+//   font-size: 24px;
+//   cursor: pointer;
+// }
 
 // .button_gradient:hover {
 //   transform: translateY(-3px);
@@ -37,14 +23,14 @@
 // }
 
 // Add gradient shift animation
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
+// @keyframes gradientShift {
+//   0% {
+//     background-position: 0% 50%;
+//   }
+//   50% {
+//     background-position: 100% 50%;
+//   }
+//   100% {
+//     background-position: 0% 50%;
+//   }
+// }
