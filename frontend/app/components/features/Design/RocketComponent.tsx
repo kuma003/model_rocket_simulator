@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import type { RocketParams } from "../Rocket/types";
 import type { RocketProperties } from "../../../utils/calculations/simulationEngine";
 import { CenterMarker } from "../../ui/CenterMarkers";
+import ExhaustEffect from "./ExhaustEffect";
 
 /**
  * Type definition for a point in 2D coordinate system
@@ -183,6 +184,8 @@ function getColorWithOpacity(color: string, opacity: number): string {
  * @property {boolean} [showCenterMarkers=false] - Whether to show center of gravity and pressure center markers
  * @property {boolean} [showPayload=false] - Whether to show payload section
  * @property {boolean} [isGhost=false] - Whether to render in ghost mode (semi-transparent)
+ * @property {boolean} [isCombustion=false] - Whether rocket engine is firing (for exhaust effect)
+ * @property {boolean} [shouldPlaySound=false] - Whether to play combustion sound (main rocket only)
  */
 interface RocketComponentProps {
   rocketParams: RocketParams;
@@ -193,6 +196,8 @@ interface RocketComponentProps {
   showCenterMarkers?: boolean;
   showPayload?: boolean;
   isGhost?: boolean;
+  isCombustion?: boolean;
+  shouldPlaySound?: boolean;
 }
 
 /**
@@ -222,6 +227,8 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
   showCenterMarkers = false,
   showPayload = false,
   isGhost = false,
+  isCombustion = false,
+  shouldPlaySound = false,
 }) => {
   const { nose, body, fins, payload } = rocketParams;
 
@@ -343,8 +350,24 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
     return { cgPosition, cpPosition };
   }, [rocketProperties, pixelsPerM]);
 
+  // Calculate exhaust position (bottom center of rocket)
+  const exhaustX = centerX;
+  const exhaustY = totalHeight; // Bottom of the rocket
+
   return (
     <g transform={pitchTransform}>
+      {/* Exhaust effect (behind rocket) */}
+      {
+        <ExhaustEffect
+          isActive={isCombustion}
+          pitchAngle={pitchAngle}
+          exhaustX={exhaustX}
+          exhaustY={exhaustY}
+          scale={pixelsPerM * 3}
+          shouldPlaySound={shouldPlaySound}
+        />
+      }
+
       {/* ノーズコーン */}
       <g transform={`translate(${(totalWidth - noseWidth) / 2}, 0)`}>
         {nose.type === "conical" ? (

@@ -19,6 +19,8 @@ import styles from "./rocketVisualization.module.scss";
  * @property {number} [fixedScale] - Fixed scale value to override automatic scaling
  * @property {number} [marginPercent=0.8] - Margin percentage for automatic scaling (0.8 = 80% of container)
  * @property {boolean} [isGhost=false] - Whether to render as ghost/transparent for rival rockets
+ * @property {boolean} [isCombustion=false] - Whether rocket engine is firing (for exhaust effect)
+ * @property {boolean} [shouldPlaySound=false] - Whether to play combustion sound (main rocket only)
  */
 interface RocketVisualizationProps {
   rocketParams: RocketParams;
@@ -33,6 +35,8 @@ interface RocketVisualizationProps {
   fixedScale?: number;
   marginPercent?: number;
   isGhost?: boolean;
+  isCombustion?: boolean;
+  shouldPlaySound?: boolean;
 }
 
 /**
@@ -57,6 +61,8 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   fixedScale,
   marginPercent = 0.8,
   isGhost = false,
+  isCombustion = false,
+  shouldPlaySound = false,
 }) => {
   const { nose, body, fins } = rocketParams;
 
@@ -122,11 +128,12 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   const rocketOffsetY = (svgHeight - rocketHeight) / 2;
 
   return (
-    <div>
+    <div style={{ overflow: "visible" }}>
       <svg
         width={Math.max(svgWidth, svgHeight)}
         height={Math.max(svgWidth, svgHeight)}
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        style={{ overflow: "visible" }}
       >
         <g transform={`translate(${rocketOffsetX}, ${rocketOffsetY})`}>
           <RocketComponent
@@ -137,6 +144,8 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
             rollAngle={rollAngle}
             showCenterMarkers={showCenterMarkers}
             isGhost={isGhost}
+            isCombustion={isCombustion}
+            shouldPlaySound={shouldPlaySound}
           />
         </g>
       </svg>
