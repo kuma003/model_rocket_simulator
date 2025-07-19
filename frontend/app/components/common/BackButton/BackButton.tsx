@@ -1,22 +1,30 @@
 import React from "react";
 import { Button } from "@mantine/core";
+import { useNavigate } from "react-router";
 import { ArrowLeft } from "../../ui/Icons";
 
 interface BackButtonProps {
   onClick?: () => void;
   label?: string;
+  to?: string;
 }
 
 /**
  * Back button component for navigation
  */
-const BackButton: React.FC<BackButtonProps> = ({ onClick, label = "戻る" }) => {
+const BackButton: React.FC<BackButtonProps> = ({
+  onClick,
+  label = "戻る",
+  to = "/",
+}) => {
+  const navigate = useNavigate();
+
   const handleClick = () => {
     if (onClick) {
       onClick();
     } else {
-      // Default behavior - go back in history
-      window.history.back();
+      // Default behavior - navigate to specified URL
+      navigate(to, { replace: true });
     }
   };
 
