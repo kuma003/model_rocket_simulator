@@ -13,11 +13,15 @@ import {
   calculateTrajectory,
   type TrajectoryData,
 } from "~/utils/calculations/simulationEngine";
+import presetRockets from "~/data/presetRockets.json";
+import { loadFromJson } from "~/utils/storage/rocketFileAdapter";
 
 const Launch: React.FC = () => {
   const navigate = useNavigate();
   const [rocketParams, setRocketParams] = useState<RocketParams | null>(null);
-  const [trajectoryData, setTrajectoryData] = useState<TrajectoryData>(null);
+  const [trajectoryData, setTrajectoryData] = useState<TrajectoryData | null>(
+    null
+  );
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,51 +29,93 @@ const Launch: React.FC = () => {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const [rivalRocket, setRivalRocket] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    const checkRocketCache = async () => {
-      try {
-        // Check if rocket parameters exist in cache
-        if (!hasRocketParams()) {
-          setError(
-            "ロケットデータが見つかりません。デザインページからロケットを作成してください。"
+    // check query parameters for rocket selection
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("preset")) {
+      const checkRocketQuery = async () => {
+        try {
+          const preset = urlParams.get("preset");
+          const userRocket = presetRockets.find(
+            (rocket) => rocket.id === preset
           );
-          // Auto-redirect to previous page after 2 seconds
+          // Check if the preset rocket exists
+          if (!userRocket) {
+            setError("指定されたプリセットロケットが見つかりません。");
+            setTimeout(() => {
+              navigate("/", { replace: true });
+            }, 5000);
+            return;
+          }
+
+          const params = await loadFromJson(userRocket.rocketParams);
+          if (!params) {
+            setError("ロケットデータの読み込みに失敗しました。");
+            setTimeout(() => {
+              navigate("/", { replace: true });
+            }, 5000);
+            return;
+          }
+          setRocketParams(params);
+        } catch (err) {
+          console.error("Error loading rocket parameters:", err);
+          setError("ロケットデータの読み込み中にエラーが発生しました。");
+          setTimeout(() => {
+            navigate("/", { replace: true });
+          }, 5000);
+        } finally {
+          setLoading(false);
+        }
+      };
+      checkRocketQuery();
+    } else {
+      const checkRocketCache = async () => {
+        try {
+          // Check if rocket parameters exist in cache
+          if (!hasRocketParams()) {
+            setError(
+              "ロケットデータが見つかりません。デザインページからロケットを作成してください。"
+            );
+            // Auto-redirect to previous page after 2 seconds
+            setTimeout(() => {
+              navigate("/design", { replace: true });
+            }, 5000);
+            return;
+          }
+
+          // Load rocket parameters from cache
+          const params = await loadRocketParams();
+          if (!params) {
+            setError(
+              "ロケットデータの読み込みに失敗しました。デザインページからやり直してください。"
+            );
+            setTimeout(() => {
+              navigate("/design", { replace: true });
+            }, 5000);
+            return;
+          }
+
+          setRocketParams(params);
+        } catch (err) {
+          console.error("Error loading rocket parameters:", err);
+          setError("ロケットデータの読み込み中にエラーが発生しました。");
           setTimeout(() => {
             navigate("/design", { replace: true });
-          }, 2000);
-          return;
+          }, 5000);
+        } finally {
+          setLoading(false);
         }
+      };
 
-        // Load rocket parameters from cache
-        const params = await loadRocketParams();
-        if (!params) {
-          setError(
-            "ロケットデータの読み込みに失敗しました。デザインページからやり直してください。"
-          );
-          setTimeout(() => {
-            navigate("/design", { replace: true });
-          }, 2000);
-          return;
-        }
-
-        setRocketParams(params);
-      } catch (err) {
-        console.error("Error loading rocket parameters:", err);
-        setError("ロケットデータの読み込み中にエラーが発生しました。");
-        setTimeout(() => {
-          navigate("/design", { replace: true });
-        }, 2000);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkRocketCache();
+      checkRocketCache();
+    }
   }, [navigate]);
 
   useEffect(() => {
     if (!rocketParams) return;
+    console.log("Rocket Params:", rocketParams);
     const properties = calculateRocketProperties(rocketParams);
     setTrajectoryData(calculateTrajectory(properties, 0.025));
   }, [rocketParams]);
@@ -157,7 +203,7 @@ const Launch: React.FC = () => {
       <div style={{ textAlign: "center", padding: "2rem", color: "red" }}>
         <h2>エラー</h2>
         <p>{error}</p>
-        <p>2秒後に前のページに戻ります...</p>
+        <p>5秒後に前のページに戻ります...</p>
       </div>
     );
   }

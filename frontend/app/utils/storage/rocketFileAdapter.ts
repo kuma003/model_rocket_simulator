@@ -1,9 +1,12 @@
 import type { RocketParams } from "../../components/features/Rocket/types";
-import { 
+import {
   createExportData,
   parseExportData,
+  validateSerializableRocketParams,
+  fromSerializableRocketParams,
   type RocketExportData,
-  type RocketExportMetadata
+  type RocketExportMetadata,
+  type SerializableRocketParams,
 } from "../rocketSerialization";
 
 /**
@@ -45,7 +48,7 @@ export function importDesignData(file: File): Promise<RocketParams> {
       try {
         const content = e.target?.result as string;
         const parsedData: RocketExportData = JSON.parse(content);
-        
+
         const rocketParams = await parseExportData(parsedData);
         resolve(rocketParams);
       } catch (error) {
@@ -62,18 +65,41 @@ export function importDesignData(file: File): Promise<RocketParams> {
 }
 
 /**
- * Loads rocket data from JSON string (useful for ghost rockets)
- * @param jsonString - JSON string containing rocket export data
+ * Loads rocket data from JSON (useful for ghost rockets and preset rockets)
+ * @param json - JSON object containing rocket export data or direct SerializableRocketParams
  * @returns Promise that resolves to the parsed rocket parameters
  */
-export async function loadFromJsonString(jsonString: string): Promise<RocketParams> {
+export async function loadFromJson(json: object): Promise<RocketParams> {
   try {
-    const parsedData: RocketExportData = JSON.parse(jsonString);
-    return await parseExportData(parsedData);
+    // Check if it's a full export format (has version, units, exported, data)
+    if (isRocketExportData(json)) {
+      return await parseExportData(json as RocketExportData);
+    }
+    
+    // Otherwise, treat it as direct SerializableRocketParams
+    if (validateSerializableRocketParams(json)) {
+      return await fromSerializableRocketParams(json as SerializableRocketParams);
+    }
+    
+    throw new Error("Invalid JSON format: not a valid rocket export data or rocket parameters");
   } catch (error) {
-    console.error("Failed to load rocket from JSON string:", error);
+    console.error("Failed to load rocket from JSON:", error);
     throw error;
   }
+}
+
+/**
+ * Type guard to check if object is RocketExportData format
+ * @param obj - Object to check
+ * @returns true if object has RocketExportData structure
+ */
+function isRocketExportData(obj: any): obj is RocketExportData {
+  return obj && 
+         typeof obj === "object" && 
+         "version" in obj && 
+         "units" in obj && 
+         "exported" in obj && 
+         "data" in obj;
 }
 
 /**

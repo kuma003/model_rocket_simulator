@@ -135,6 +135,11 @@ export function validateSerializableRocketParams(data: any): data is Serializabl
     return false;
   }
 
+  // Validate payload section
+  if (!validatePayload(data.payload)) {
+    return false;
+  }
+
   // Validate engine section (simplified)
   if (!validateSimpleEngine(data.engine)) {
     return false;
@@ -226,6 +231,22 @@ function validateFins(fins: any): boolean {
     default:
       return false;
   }
+}
+
+/**
+ * Validates payload section
+ */
+function validatePayload(payload: any): boolean {
+  if (!payload || typeof payload !== "object") {
+    return false;
+  }
+
+  return (
+    typeof payload.offset === "number" &&
+    typeof payload.diameter === "number" &&
+    typeof payload.length === "number" &&
+    typeof payload.mass === "number"
+  );
 }
 
 /**
