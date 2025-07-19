@@ -25,7 +25,7 @@ export const Top: React.FC = () => {
           {
             label: "ゲームスタート",
             leftIcon: <PlayArrow />,
-            onClick: () => navigate("/design", { replace: true }),
+            onClick: () => navigate("/", { state: { showModal: "rocketSelection" }, replace: true }),
           },
           {
             label: "ランキング",

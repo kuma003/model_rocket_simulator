@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router";
 import { useEffect, lazy, Suspense } from "react";
 
 const SettingsModal = lazy(() => import("./settings"));
+const RocketSelectionModalRoute = lazy(() => import("./rocket-selection"));
 
 export const meta: Route.MetaFunction = () => [
   { title: "Model Rocket Simulator" },
@@ -30,12 +31,19 @@ export default function Home() {
   const showSettingsModal = location.state?.showModal === "settings" || 
                            (isModalRoute && location.state?.backgroundLocation);
   
+  const showRocketSelectionModal = location.state?.showModal === "rocketSelection";
+  
   return (
     <>
       <Top />
       {showSettingsModal && (
         <Suspense fallback={null}>
           <SettingsModal />
+        </Suspense>
+      )}
+      {showRocketSelectionModal && (
+        <Suspense fallback={null}>
+          <RocketSelectionModalRoute />
         </Suspense>
       )}
     </>

@@ -1,0 +1,224 @@
+[
+  {
+    "id": "speed-demon",
+    "displayName": "スピードデーモン",
+    "description": "長い機体",
+    "rocketParams": {
+      "name": "スピードデーモン",
+      "designer": "開発チーム",
+      "nose": {
+        "type": "conical",
+        "length": 0.15,
+        "diameter": 0.05,
+        "thickness": 0.002,
+        "material": "plastic",
+        "color": "#ff4444"
+      },
+      "body": {
+        "length": 0.8,
+        "diameter": 0.05,
+        "thickness": 0.002,
+        "material": "cardboard",
+        "color": "#4444ff"
+      },
+      "fins": {
+        "type": "trapozoidal",
+        "count": 3,
+        "offset": 0.7,
+        "thickness": 0.003,
+        "material": "balsa",
+        "color": "#44ff44",
+        "rootChord": 0.12,
+        "tipChord": 0.08,
+        "sweepLength": 0.06,
+        "height": 0.15
+      },
+      "payload": {
+        "offset": 0.05,
+        "diameter": 0.04,
+        "length": 0.1,
+        "mass": 0.05
+      },
+      "engine": {
+        "designation": "C6-5",
+        "manufacturer": "Estes",
+        "diameter": 18,
+        "length": 70,
+        "delay": 5,
+        "totalImpulse": 10,
+        "maxThrust": 12.15,
+        "avgThrust": 5.02,
+        "burnTime": 1.65,
+        "propMass": 0.0123,
+        "totalMass": 0.024,
+        "thrustCurve": []
+      }
+    }
+  },
+  {
+    "id": "mini-rocket",
+    "displayName": "ミニロケット",
+    "description": "細い機体",
+    "rocketParams": {
+      "name": "ミニロケット",
+      "designer": "開発チーム",
+      "nose": {
+        "type": "ogive",
+        "length": 0.08,
+        "diameter": 0.024,
+        "thickness": 0.001,
+        "material": "plastic",
+        "color": "#ff8800"
+      },
+      "body": {
+        "length": 0.35,
+        "diameter": 0.024,
+        "thickness": 0.001,
+        "material": "cardboard",
+        "color": "#8844ff"
+      },
+      "fins": {
+        "type": "elliptical",
+        "count": 4,
+        "offset": 0.28,
+        "thickness": 0.002,
+        "material": "balsa",
+        "color": "#ff4488",
+        "rootChord": 0.08,
+        "height": 0.1
+      },
+      "payload": {
+        "offset": 0.03,
+        "diameter": 0.02,
+        "length": 0.05,
+        "mass": 0.02
+      },
+      "engine": {
+        "designation": "A8-3",
+        "manufacturer": "Estes",
+        "diameter": 18,
+        "length": 70,
+        "delay": 3,
+        "totalImpulse": 2.5,
+        "maxThrust": 9.5,
+        "avgThrust": 2.3,
+        "burnTime": 0.5,
+        "propMass": 0.004,
+        "totalMass": 0.008,
+        "thrustCurve": []
+      }
+    }
+  },
+  {
+    "id": "heavy-lifter",
+    "displayName": "ヘビーリフター",
+    "description": "太い機体",
+    "rocketParams": {
+      "name": "ヘビーリフター",
+      "designer": "開発チーム",
+      "nose": {
+        "type": "elliptical",
+        "length": 0.2,
+        "diameter": 0.08,
+        "thickness": 0.003,
+        "material": "plastic",
+        "color": "#44ff88"
+      },
+      "body": {
+        "length": 0.6,
+        "diameter": 0.08,
+        "thickness": 0.003,
+        "material": "cardboard",
+        "color": "#ff8844"
+      },
+      "fins": {
+        "type": "trapozoidal",
+        "count": 4,
+        "offset": 0.45,
+        "thickness": 0.004,
+        "material": "balsa",
+        "color": "#8844ff",
+        "rootChord": 0.15,
+        "tipChord": 0.1,
+        "sweepLength": 0.08,
+        "height": 0.18
+      },
+      "payload": {
+        "offset": 0.08,
+        "diameter": 0.06,
+        "length": 0.15,
+        "mass": 0.1
+      },
+      "engine": {
+        "designation": "D12-5",
+        "manufacturer": "Estes",
+        "diameter": 24,
+        "length": 70,
+        "delay": 5,
+        "totalImpulse": 20,
+        "maxThrust": 25.7,
+        "avgThrust": 11.5,
+        "burnTime": 1.7,
+        "propMass": 0.025,
+        "totalMass": 0.041,
+        "thrustCurve": []
+      }
+    }
+  },
+  {
+    "id": "classic-model",
+    "displayName": "クラシックモデル",
+    "description": "標準的な機体",
+    "rocketParams": {
+      "name": "クラシックモデル",
+      "designer": "開発チーム",
+      "nose": {
+        "type": "conical",
+        "length": 0.12,
+        "diameter": 0.04,
+        "thickness": 0.002,
+        "material": "plastic",
+        "color": "#ffffff"
+      },
+      "body": {
+        "length": 0.5,
+        "diameter": 0.04,
+        "thickness": 0.002,
+        "material": "cardboard",
+        "color": "#ff0000"
+      },
+      "fins": {
+        "type": "trapozoidal",
+        "count": 3,
+        "offset": 0.4,
+        "thickness": 0.002,
+        "material": "balsa",
+        "color": "#000000",
+        "rootChord": 0.1,
+        "tipChord": 0.06,
+        "sweepLength": 0.05,
+        "height": 0.12
+      },
+      "payload": {
+        "offset": 0.04,
+        "diameter": 0.035,
+        "length": 0.08,
+        "mass": 0.03
+      },
+      "engine": {
+        "designation": "B6-4",
+        "manufacturer": "Estes",
+        "diameter": 18,
+        "length": 70,
+        "delay": 4,
+        "totalImpulse": 5,
+        "maxThrust": 8.8,
+        "avgThrust": 4.5,
+        "burnTime": 1.1,
+        "propMass": 0.007,
+        "totalMass": 0.013,
+        "thrustCurve": []
+      }
+    }
+  }
+]
