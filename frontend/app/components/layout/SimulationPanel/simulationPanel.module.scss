@@ -24,20 +24,14 @@
   width: 100%;
   height: calc(100vh - 70px); // Adjust height to account for top button area
   position: relative;
-  background: linear-gradient(
-    135deg,
-    rgba(64, 147, 90, 0.95) 0%,
-    rgba(43, 143, 77, 0.95) 50%,
-    rgba(128, 62, 64, 0.95) 100%
-  );
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.3),
-    0 0 30px rgba(64, 147, 90, 0.2);
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 0 30px rgba(0, 0, 0, 0.05);
   overflow: hidden;
-  animation: panelGlow 3s ease-in-out infinite alternate;
 }
 
 @keyframes panelGlow {
@@ -60,10 +54,10 @@
   width: 100%;
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0.05) 100%
+    rgba(0, 0, 0, 0.05) 0%,
+    rgba(0, 0, 0, 0.02) 100%
   );
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
 
   .icon {
@@ -87,14 +81,10 @@
     font-size: 1.6rem;
     font-weight: bold;
     margin: 0;
-    background: linear-gradient(45deg, #4ecdc4, #45b7d1, #96c93d);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
+    color: #333;
     font-family:
       "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo",
       cursive, sans-serif;
-    text-shadow: 0 0 20px rgba(100, 200, 120, 0.3);
   }
 }
 
@@ -121,16 +111,16 @@
 
 // Card styling
 :global(.mantine-Card-root) {
-  background: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.8) !important;
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
   border-radius: 12px !important;
   transition: all 0.3s ease !important;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.15) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
   }
 }
 

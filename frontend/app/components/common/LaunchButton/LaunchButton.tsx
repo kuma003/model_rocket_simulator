@@ -41,9 +41,9 @@ const LaunchButton: React.FC<LaunchButtonProps> = ({
       leftSection={<span className={styles.rocketIcon}>🚀</span>}
       style={{
         background:
-          "linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
-        border: "1px solid rgba(255, 255, 255, 0.2)",
-        color: "white",
+          "linear-gradient(45deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.02))",
+        border: "1px solid rgba(0, 0, 0, 0.2)",
+        color: "#333",
         backdropFilter: "blur(8px)",
       }}
     >
