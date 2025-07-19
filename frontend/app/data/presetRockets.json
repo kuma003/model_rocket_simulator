@@ -24,7 +24,7 @@
       "fins": {
         "type": "trapozoidal",
         "count": 3,
-        "offset": 0.7,
+        "offset": 0,
         "thickness": 0.003,
         "material": "balsa",
         "color": "#44ff44",
@@ -80,7 +80,7 @@
       "fins": {
         "type": "elliptical",
         "count": 4,
-        "offset": 0.28,
+        "offset": 0.0028,
         "thickness": 0.002,
         "material": "balsa",
         "color": "#ff4488",
@@ -134,7 +134,7 @@
       "fins": {
         "type": "trapozoidal",
         "count": 4,
-        "offset": 0.45,
+        "offset": 0,
         "thickness": 0.004,
         "material": "balsa",
         "color": "#8844ff",
@@ -190,7 +190,7 @@
       "fins": {
         "type": "trapozoidal",
         "count": 3,
-        "offset": 0.4,
+        "offset": 0,
         "thickness": 0.002,
         "material": "balsa",
         "color": "#000000",
