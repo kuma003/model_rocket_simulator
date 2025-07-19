@@ -4,19 +4,18 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 const isStorybook = process.argv[1]?.includes("storybook");
 
-export default defineConfig(({mode}) => ({
+export default defineConfig(({ mode }) => ({
   base: mode === "production" ? "/model_rocket_simulator/" : undefined,
-  plugins: [
-    !isStorybook && reactRouter(), tsconfigPaths()],
+  plugins: [!isStorybook && reactRouter(), tsconfigPaths()],
   build: {
     assetsDir: "assets",
     copyPublicDir: true,
-  }
+  },
   server: {
     fs: {
       // Allow serving files from motors directory during development
-      allow: ['..']
-    }
+      allow: [".."],
+    },
   },
   // server: {
   //   port: 5173,
