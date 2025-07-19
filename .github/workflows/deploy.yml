@@ -33,10 +33,13 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-      # - name: List build files (debug)
-      #   run: |
-      #     echo "Build directory contents:"
-      #     find build/client -type f -name "*.js" | head -20
+      - name: Copy public assets to build
+        working-directory: ./frontend
+        run: |
+          echo "Copying public assets to build/client..."
+          cp -r public/* build/client/
+          echo "Build directory contents after copying assets:"
+          find build/client -type f | head -20
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

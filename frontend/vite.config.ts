@@ -8,6 +8,10 @@ export default defineConfig(({mode}) => ({
   base: mode === "production" ? "/model_rocket_simulator/" : undefined,
   plugins: [
     !isStorybook && reactRouter(), tsconfigPaths()],
+  build: {
+    assetsDir: "assets",
+    copyPublicDir: true,
+  }
   server: {
     fs: {
       // Allow serving files from motors directory during development
