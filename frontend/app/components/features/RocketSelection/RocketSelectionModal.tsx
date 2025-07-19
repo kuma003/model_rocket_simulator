@@ -49,6 +49,14 @@ const RocketSelectionModal: React.FC<RocketSelectionModalProps> = ({
 }) => {
   const navigate = useNavigate();
 
+  // Calculate maximum length of preset rockets for consistent scaling
+  const maxLength = Math.max(
+    ...presetRockets.map(
+      (rocket) =>
+        rocket.rocketParams.nose.length + rocket.rocketParams.body.length
+    )
+  );
+
   /**
    * Handles selection of a preset rocket
    * @param {string} rocketId - ID of the selected rocket
@@ -93,7 +101,7 @@ const RocketSelectionModal: React.FC<RocketSelectionModalProps> = ({
             ×
           </button>
         </div>
-        
+
         <div className={styles.modalBody}>
           <Stack gap="lg">
             <Text size="sm" c="dimmed">
@@ -102,8 +110,10 @@ const RocketSelectionModal: React.FC<RocketSelectionModalProps> = ({
 
             <SimpleGrid cols={2} spacing="md">
               {(presetRockets as PresetRocket[]).map((rocket) => {
-                const rocketProperties = calculateRocketProperties(rocket.rocketParams);
-                
+                const rocketProperties = calculateRocketProperties(
+                  rocket.rocketParams
+                );
+
                 return (
                   <Card
                     key={rocket.id}
@@ -119,7 +129,11 @@ const RocketSelectionModal: React.FC<RocketSelectionModalProps> = ({
                         <RocketVisualization
                           rocketParams={rocket.rocketParams}
                           rocketProperties={rocketProperties}
+                          targetWidth={280}
+                          targetHeight={120}
+                          referenceLength={maxLength}
                           pitchAngle={90}
+                          marginPercent={0.9}
                         />
                       </div>
                     </Card.Section>

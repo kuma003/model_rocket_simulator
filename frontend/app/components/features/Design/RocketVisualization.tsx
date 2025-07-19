@@ -12,6 +12,11 @@ import styles from "./rocketVisualization.module.scss";
  * @property {number} [pitchAngle=0] - Pitch angle in degrees
  * @property {number} [rollAngle=0] - Roll angle in degrees
  * @property {boolean} [showCenterMarkers=false] - Whether to show center markers
+ * @property {number} [targetWidth] - Target width in pixels (defaults to 500)
+ * @property {number} [targetHeight] - Target height in pixels (defaults to 800)
+ * @property {number} [referenceLength] - Reference rocket length for consistent scaling across multiple rockets
+ * @property {number} [fixedScale] - Fixed scale value to override automatic scaling
+ * @property {number} [marginPercent=0.8] - Margin percentage for automatic scaling (0.8 = 80% of container)
  */
 interface RocketVisualizationProps {
   rocketParams: RocketParams;
@@ -19,6 +24,11 @@ interface RocketVisualizationProps {
   pitchAngle?: number;
   rollAngle?: number;
   showCenterMarkers?: boolean;
+  targetWidth?: number;
+  targetHeight?: number;
+  referenceLength?: number;
+  fixedScale?: number;
+  marginPercent?: number;
 }
 
 /**
@@ -36,6 +46,11 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   pitchAngle = 0,
   rollAngle = 0,
   showCenterMarkers = false,
+  targetWidth = 500,
+  targetHeight = 800,
+  referenceLength,
+  fixedScale,
+  marginPercent = 0.8,
 }) => {
   const { nose, body, fins } = rocketParams;
 
@@ -43,27 +58,47 @@ const RocketVisualization: React.FC<RocketVisualizationProps> = ({
   const { totalHeightM, scale, svgWidth, svgHeight } = useMemo(() => {
     const totalHeightM = nose.length + body.length;
     const totalWidthM = body.diameter;
+    
+    // Use reference length for consistent scaling across multiple rockets
+    const lengthForScaling = referenceLength || totalHeightM;
 
-    // Target SVG dimensions
-    const targetHeight = 800;
-    const targetWidth = 500;
+    let calculatedScale: number;
+    
+    if (fixedScale !== undefined) {
+      // Use fixed scale if provided
+      calculatedScale = fixedScale;
+    } else {
+      // Calculate scale based on dimensions (pixels per meter)
+      const scaleByHeight = targetHeight / lengthForScaling;
+      const scaleByWidth = targetWidth / totalWidthM;
+      calculatedScale = Math.min(scaleByHeight, scaleByWidth) * marginPercent;
+    }
 
-    // Calculate scale based on dimensions (pixels per meter)
-    const scaleByHeight = targetHeight / totalHeightM;
-    const scaleByWidth = targetWidth / totalWidthM;
-    const scale = Math.min(scaleByHeight, scaleByWidth) * 0.8; // 80% to leave margin
-
-    // Calculate actual SVG dimensions
-    const svgWidth = Math.max(targetWidth, totalWidthM * scale + 40); // 40px margin
-    const svgHeight = Math.max(targetHeight, totalHeightM * scale + 40); // 40px margin
+    // Calculate actual SVG dimensions with margin
+    const marginPx = 40;
+    const rocketWidthPx = totalWidthM * calculatedScale;
+    const rocketHeightPx = totalHeightM * calculatedScale;
+    
+    const svgWidth = Math.max(targetWidth, rocketWidthPx + marginPx);
+    const svgHeight = Math.max(targetHeight, rocketHeightPx + marginPx);
 
     return {
       totalHeightM,
-      scale,
+      scale: calculatedScale,
       svgWidth,
       svgHeight,
     };
-  }, [nose.length, body.length, body.diameter, fins]);
+  }, [
+    nose.length, 
+    body.length, 
+    body.diameter, 
+    fins, 
+    targetWidth, 
+    targetHeight, 
+    referenceLength, 
+    fixedScale, 
+    marginPercent
+  ]);
 
   // ロケットを中央配置するためのオフセット計算
   const finChord =
