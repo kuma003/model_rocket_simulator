@@ -60,7 +60,7 @@ const ExhaustEffect: React.FC<ExhaustEffectProps> = ({
   useEffect(() => {
     // 音声要素の初期化（一度だけ）
     if (!audioRef.current && shouldPlaySound) {
-      audioRef.current = new Audio("/combustion.mp3");
+      audioRef.current = new Audio("./combustion.mp3");
       audioRef.current.volume = 0.7; // 適度な音量に設定
       audioRef.current.loop = false; // ループなし
     }
@@ -201,7 +201,7 @@ const ExhaustEffect: React.FC<ExhaustEffectProps> = ({
         return (
           <image
             key={p.id}
-            href="/noise.png"
+            href="./noise.png"
             x={p.x - w / 2}
             y={p.y - w / 2}
             width={w}

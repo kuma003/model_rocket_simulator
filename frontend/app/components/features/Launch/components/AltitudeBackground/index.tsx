@@ -8,35 +8,35 @@ const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
   step,
 }) => {
   const backgroundPath = [
-    "/0-50.png",
-    "/50-100.png",
-    "/100-150.png",
-    "/150-.png",
-    "/150-.png",
+    "./0-50.png",
+    "./50-100.png",
+    "./100-150.png",
+    "./150-.png",
+    "./150-.png",
   ];
   const objectsData: { path: string; altLevel: number; left: number }[] = [
-    { path: "/objects/aurora3.png", altLevel: 1.92, left: 75 },
-    { path: "/objects/aurora3.png", altLevel: 1.92, left: 10 },
-    { path: "/objects/aurora3.png", altLevel: 1.95, left: 50 },
-    { path: "/objects/aurora3.png", altLevel: 1.96, left: 90 },
-    { path: "/objects/aurora3.png", altLevel: 1.98, left: 10 },
-    { path: "/objects/aurora3.png", altLevel: 1.99, left: 75 },
-    { path: "/objects/aurora3.png", altLevel: 2.0, left: 0 },
-    { path: "/objects/aurora1.png", altLevel: 2.03, left: 50 },
-    { path: "/objects/aurora1.png", altLevel: 2.045, left: 15 },
-    { path: "/objects/aurora1.png", altLevel: 2.05, left: 0 },
-    { path: "/objects/aurora1.png", altLevel: 2.05, left: 75 },
-    { path: "/objects/aurora1.png", altLevel: 2.07, left: 80 },
-    { path: "/objects/aurora1.png", altLevel: 2.085, left: 10 },
-    { path: "/objects/aurora1.png", altLevel: 2.09, left: 50 },
-    { path: "/objects/aurora1.png", altLevel: 2.1, left: 0 },
-    { path: "/objects/aurora2.png", altLevel: 2.115, left: 90 },
-    { path: "/objects/aurora2.png", altLevel: 2.122, left: 40 },
-    { path: "/objects/aurora1.png", altLevel: 2.13, left: 85 },
-    { path: "/objects/aurora2.png", altLevel: 2.15, left: 110 },
-    { path: "/objects/aurora1.png", altLevel: 2.15, left: 25 },
-    { path: "/objects/aurora1.png", altLevel: 2.16, left: 35 },
-    { path: "/objects/aurora2.png", altLevel: 2.17, left: 5 },
+    { path: "./objects/aurora3.png", altLevel: 1.92, left: 75 },
+    { path: "./objects/aurora3.png", altLevel: 1.92, left: 10 },
+    { path: "./objects/aurora3.png", altLevel: 1.95, left: 50 },
+    { path: "./objects/aurora3.png", altLevel: 1.96, left: 90 },
+    { path: "./objects/aurora3.png", altLevel: 1.98, left: 10 },
+    { path: "./objects/aurora3.png", altLevel: 1.99, left: 75 },
+    { path: "./objects/aurora3.png", altLevel: 2.0, left: 0 },
+    { path: "./objects/aurora1.png", altLevel: 2.03, left: 50 },
+    { path: "./objects/aurora1.png", altLevel: 2.045, left: 15 },
+    { path: "./objects/aurora1.png", altLevel: 2.05, left: 0 },
+    { path: "./objects/aurora1.png", altLevel: 2.05, left: 75 },
+    { path: "./objects/aurora1.png", altLevel: 2.07, left: 80 },
+    { path: "./objects/aurora1.png", altLevel: 2.085, left: 10 },
+    { path: "./objects/aurora1.png", altLevel: 2.09, left: 50 },
+    { path: "./objects/aurora1.png", altLevel: 2.1, left: 0 },
+    { path: "./objects/aurora2.png", altLevel: 2.115, left: 90 },
+    { path: "./objects/aurora2.png", altLevel: 2.122, left: 40 },
+    { path: "./objects/aurora1.png", altLevel: 2.13, left: 85 },
+    { path: "./objects/aurora2.png", altLevel: 2.15, left: 110 },
+    { path: "./objects/aurora1.png", altLevel: 2.15, left: 25 },
+    { path: "./objects/aurora1.png", altLevel: 2.16, left: 35 },
+    { path: "./objects/aurora2.png", altLevel: 2.17, left: 5 },
     // { path: "/objects/aurora2.png", altLevel: 2.18, left: 65 },
     // { path: "/objects/aurora1.png", altLevel: 2.19, left: 20 },
     // { path: "/objects/aurora1.png", altLevel: 2.21, left: 45 },
@@ -65,7 +65,7 @@ const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
       />
       <img
         className={styles.backgroundLayer}
-        src="/ground.png"
+        src="./ground.png"
         alt="ground"
         style={{
           top: `calc(-${500 * (0.09 - clampedAltitude(altitudeLevel))}vw + 100%)`, // 画像の縦横比が1:5を利用
