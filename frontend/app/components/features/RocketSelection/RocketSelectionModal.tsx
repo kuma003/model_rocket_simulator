@@ -131,7 +131,7 @@ const RocketSelectionModal: React.FC<RocketSelectionModalProps> = ({
                           rocketProperties={rocketProperties}
                           targetWidth={350}
                           targetHeight={150}
-                          referenceLength={maxLength}
+                          referenceLength={maxLength / 2}
                           pitchAngle={90}
                           marginPercent={0.9}
                         />

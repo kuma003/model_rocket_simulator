@@ -242,7 +242,9 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
 
   // 全体の高さを計算
   const totalHeight = noseHeight + bodyHeight;
-  const totalWidth = Math.max(bodyWidth, 200);
+  // フィンの最大突出幅を考慮して全体の幅を計算
+  const finMaxWidth = finHeight * 1.5; // フィンが最大で突出する可能性のある幅
+  const totalWidth = Math.max(bodyWidth, bodyWidth + finMaxWidth);
 
   // 回転の中心点を計算
   const centerX = totalWidth / 2;

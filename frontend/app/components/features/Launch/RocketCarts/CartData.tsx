@@ -1,4 +1,4 @@
-{
+export const cartData = {
   "version": "1.0",
   "units": "SI",
   "exported": "2025-07-18T19:47:37.427Z",
@@ -42,4 +42,4 @@
       "name": "Estes C6"
     }
   }
-}
+};

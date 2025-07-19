@@ -7,7 +7,6 @@ const Title: React.FC = () => {
     <div className={styles.title}>
       <Rocket className={styles.icon} />
       <h1>Model Rocket Simulator</h1>
-      <h2>LAUNCH MISSIONS</h2>
     </div>
   );
 };

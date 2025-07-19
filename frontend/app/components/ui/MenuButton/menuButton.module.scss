@@ -5,17 +5,18 @@
   justify-content: center;
   width: 100%;
   height: auto;
-  margin: 0 auto;
+  margin: 10px auto;
   padding-top: 10px;
 }
 
 .menuButton {
   --button-radius: 999px;
-  background: linear-gradient(
-    to right,
-    rgba(249, 115, 22, 0.2),
-    rgba(219, 39, 119, 0.2)
-  );
+  // background: linear-gradient(
+  //   to right,
+  //   rgba(249, 115, 22, 0.2),
+  //   rgba(219, 39, 119, 0.2)
+  // );
+  background: #fefefe;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,11 +26,13 @@
   font-weight: 600;
   cursor: pointer;
   border: none;
-  color: #ffffff;
+  color: #525252;
   animation: slideIn 0.5s ease-out forwards;
   margin: 8px 0;
-  font-family: "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", "Hiragino Sans",
-    "Meiryo", cursive, sans-serif;
+  font-family:
+    "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo",
+    cursive, sans-serif;
+  border: 3px solid rgb(174, 174, 174);
 
   :global(.mantine-Button-section) {
     fill: #ffffff;
@@ -41,45 +44,44 @@
 
   &:hover {
     transform: scale(1.01);
-    color: whitesmoke;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 15px 15px rgba(114, 114, 114, 0.3);
     animation-duration: 2s;
   }
 }
 
-.primary {
-  background: linear-gradient(to right, rgb(249, 115, 22), rgb(219, 39, 119));
-  border: none;
-  color: #ffffff;
-  box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.1);
+// .primary {
+//   background: linear-gradient(to right, rgb(249, 115, 22), rgb(219, 39, 119));
+//   border: none;
+//   color: #ffffff;
+//   box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.1);
 
-  &:hover {
-    background: linear-gradient(to right, rgb(248, 119, 27), rgb(222, 47, 126));
-    box-shadow: 0 8px 8px -8px rgba(249, 115, 22, 0.1);
-  }
+//   &:hover {
+//     background: linear-gradient(to right, rgb(248, 119, 27), rgb(222, 47, 126));
+//     box-shadow: 0 8px 8px -8px rgba(249, 115, 22, 0.1);
+//   }
 
-  .glowEffect {
-    background: linear-gradient(
-      to right,
-      rgba(249, 115, 22, 0.2),
-      rgba(219, 39, 119, 0.2)
-    );
-  }
-}
+//   .glowEffect {
+//     background: linear-gradient(
+//       to right,
+//       rgba(249, 115, 22, 0.2),
+//       rgba(219, 39, 119, 0.2)
+//     );
+//   }
+// }
 
-.secondary {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.05);
+// .secondary {
+//   background: rgba(255, 255, 255, 0.1);
+//   backdrop-filter: blur(8px);
+//   border: 1px solid rgba(255, 255, 255, 0.2);
+//   color: #ffffff;
+//   box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.05);
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.125);
-    box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.1);
-  }
+//   &:hover {
+//     background: rgba(255, 255, 255, 0.125);
+//     box-shadow: 0 8px 8px -8px rgba(0, 0, 0, 0.1);
+//   }
 
-  .glowEffect {
-    background: rgba(255, 255, 255, 0.05);
-  }
-}
+//   .glowEffect {
+//     background: rgba(255, 255, 255, 0.05);
+//   }
+// }

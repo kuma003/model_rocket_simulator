@@ -23,13 +23,13 @@ export const Top: React.FC = () => {
       <MenuButton
         buttons={[
           {
-            label: "ゲームスタート",
+            label: "スタート",
             leftIcon: <PlayArrow />,
-            onClick: () => navigate("/", { state: { showModal: "rocketSelection" }, replace: true }),
-          },
-          {
-            label: "ランキング",
-            leftIcon: <SimpleRocket />,
+            onClick: () =>
+              navigate("/", {
+                state: { showModal: "rocketSelection" },
+                replace: true,
+              }),
           },
           {
             label: "設定",
