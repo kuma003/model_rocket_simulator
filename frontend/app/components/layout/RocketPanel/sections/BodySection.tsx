@@ -42,7 +42,7 @@ const BodySection: React.FC<BodySectionProps> = ({ params, updateParams }) => {
           })
         }
         min={0}
-        step={0.01}
+        step={0.1}
       />
       <Select
         label="材質"
