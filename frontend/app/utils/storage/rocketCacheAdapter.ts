@@ -1,8 +1,8 @@
 import type { RocketParams } from "../../components/features/Rocket/types";
-import { 
-  toSerializableRocketParams, 
+import {
+  toSerializableRocketParams,
   fromSerializableRocketParams,
-  type SerializableRocketParams 
+  type SerializableRocketParams,
 } from "../rocketSerialization";
 
 const ROCKET_PARAMS_KEY = "rocket_design_params";
@@ -35,7 +35,7 @@ export async function loadRocketParams(): Promise<RocketParams | null> {
 
     const serializableParams: SerializableRocketParams = JSON.parse(serialized);
     const fullParams = await fromSerializableRocketParams(serializableParams);
-    
+
     console.log("Rocket parameters loaded from localStorage");
     return fullParams;
   } catch (error) {

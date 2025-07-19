@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import type { RocketParams } from "../Rocket/types";
 import type { RocketProperties } from "../../../utils/calculations/simulationEngine";
 import { CenterMarker } from "../../ui/CenterMarkers";
+import ExhaustEffect from "./ExhaustEffect";
 
 /**
  * Type definition for a point in 2D coordinate system
@@ -125,15 +126,15 @@ function projectFinTo2D(
 /**
  * Calculate opacity for ghost mode based on z-order
  * @param {number} zOrder - Z-order value (-1 to 1, negative is back)
- * @param {boolean} ghostMode - Whether ghost mode is enabled
+ * @param {boolean} isGhost - Whether ghost mode is enabled
  * @returns {number} Opacity value (0-1)
  */
-function calculateGhostOpacity(zOrder: number, ghostMode: boolean): number {
-  if (!ghostMode) return 1.0;
+function calculateGhostOpacity(zOrder: number, isGhost: boolean): number {
+  if (!isGhost) return 1.0;
 
   // Base opacity for ghost mode
-  const baseOpacity = 0.4;
-  const minOpacity = 0.15;
+  const baseOpacity = 0.7;
+  const minOpacity = 0.4;
 
   // For back fins (negative zOrder), reduce opacity further
   if (zOrder < 0) {
@@ -181,7 +182,10 @@ function getColorWithOpacity(color: string, opacity: number): string {
  * @property {number} [pitchAngle=0] - Pitch angle in degrees
  * @property {number} [rollAngle=0] - Roll angle in degrees
  * @property {boolean} [showCenterMarkers=false] - Whether to show center of gravity and pressure center markers
- * @property {boolean} [ghostMode=false] - Whether to render in ghost mode (semi-transparent)
+ * @property {boolean} [showPayload=false] - Whether to show payload section
+ * @property {boolean} [isGhost=false] - Whether to render in ghost mode (semi-transparent)
+ * @property {boolean} [isCombustion=false] - Whether rocket engine is firing (for exhaust effect)
+ * @property {boolean} [shouldPlaySound=false] - Whether to play combustion sound (main rocket only)
  */
 interface RocketComponentProps {
   rocketParams: RocketParams;
@@ -190,7 +194,10 @@ interface RocketComponentProps {
   pitchAngle?: number;
   rollAngle?: number;
   showCenterMarkers?: boolean;
-  ghostMode?: boolean;
+  showPayload?: boolean;
+  isGhost?: boolean;
+  isCombustion?: boolean;
+  shouldPlaySound?: boolean;
 }
 
 /**
@@ -218,7 +225,10 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
   pitchAngle = 0,
   rollAngle = 0,
   showCenterMarkers = false,
-  ghostMode = false,
+  showPayload = false,
+  isGhost = false,
+  isCombustion = false,
+  shouldPlaySound = false,
 }) => {
   const { nose, body, fins, payload } = rocketParams;
 
@@ -242,16 +252,22 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
 
   // 全体の高さを計算
   const totalHeight = noseHeight + bodyHeight;
-  // フィンの最大突出幅を考慮して全体の幅を計算
-  const finMaxWidth = finHeight * 1.5; // フィンが最大で突出する可能性のある幅
-  const totalWidth = Math.max(bodyWidth, bodyWidth + finMaxWidth);
+
+  // フィンを考慮した全体の幅を計算
+  const finExtension =
+    fins.type === "trapozoidal" || fins.type === "elliptical"
+      ? finHeight
+      : fins.type === "freedom"
+        ? Math.max(...fins.points.map((p) => p.x)) * pixelsPerM
+        : 0;
+  const totalWidth = Math.max(bodyWidth, bodyWidth + finExtension * 2);
 
   // 回転の中心点を計算
   const centerX = totalWidth / 2;
   const centerY = totalHeight / 2;
 
   // ピッチ角による回転変換
-  const pitchTransform = `rotate(${pitchAngle}, ${centerX}, ${centerY})`;
+  const pitchTransform = `rotate(${-pitchAngle + 90}, ${centerX}, ${centerY})`;
 
   // フィンデータを事前計算し、z-order順にソート
   const { backFins, frontFins } = useMemo(() => {
@@ -334,22 +350,38 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
     return { cgPosition, cpPosition };
   }, [rocketProperties, pixelsPerM]);
 
+  // Calculate exhaust position (bottom center of rocket)
+  const exhaustX = centerX;
+  const exhaustY = totalHeight; // Bottom of the rocket
+
   return (
     <g transform={pitchTransform}>
+      {/* Exhaust effect (behind rocket) */}
+      {
+        <ExhaustEffect
+          isActive={isCombustion}
+          pitchAngle={pitchAngle}
+          exhaustX={exhaustX}
+          exhaustY={exhaustY}
+          scale={pixelsPerM * 3}
+          shouldPlaySound={shouldPlaySound}
+        />
+      }
+
       {/* ノーズコーン */}
       <g transform={`translate(${(totalWidth - noseWidth) / 2}, 0)`}>
         {nose.type === "conical" ? (
           <polygon
             points={`${noseWidth / 2},0 0,${noseHeight} ${noseWidth},${noseHeight}`}
-            fill={ghostMode ? getColorWithOpacity(nose.color, 0.4) : nose.color}
-            stroke={ghostMode ? getColorWithOpacity("#000", 0.4) : "#000"}
+            fill={isGhost ? getColorWithOpacity(nose.color, 0.9) : nose.color}
+            stroke={isGhost ? getColorWithOpacity("#000", 0.9) : "#000"}
             strokeWidth="1"
           />
         ) : nose.type === "ogive" ? (
           <path
             d={`M ${noseWidth / 2} 0 Q 0 ${noseHeight * 0.3} 0 ${noseHeight} L ${noseWidth} ${noseHeight} Q ${noseWidth} ${noseHeight * 0.3} ${noseWidth / 2} 0 Z`}
-            fill={ghostMode ? getColorWithOpacity(nose.color, 0.4) : nose.color}
-            stroke={ghostMode ? getColorWithOpacity("#000", 0.4) : "#000"}
+            fill={isGhost ? getColorWithOpacity(nose.color, 0.9) : nose.color}
+            stroke={isGhost ? getColorWithOpacity("#000", 0.9) : "#000"}
             strokeWidth="1"
           />
         ) : (
@@ -358,8 +390,8 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
             cy={noseHeight}
             rx={noseWidth / 2}
             ry={noseHeight}
-            fill={ghostMode ? getColorWithOpacity(nose.color, 0.4) : nose.color}
-            stroke={ghostMode ? getColorWithOpacity("#000", 0.4) : "#000"}
+            fill={isGhost ? getColorWithOpacity(nose.color, 0.9) : nose.color}
+            stroke={isGhost ? getColorWithOpacity("#000", 0.9) : "#000"}
             strokeWidth="1"
           />
         )}
@@ -367,7 +399,7 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
 
       {/* フィン（後方のもののみ先に描画） */}
       {backFins.map((fin) => {
-        const opacity = calculateGhostOpacity(fin.zOrder, ghostMode);
+        const opacity = calculateGhostOpacity(fin.zOrder, isGhost);
         const fillColor = getColorWithOpacity(fins.color, opacity);
         const strokeColor = "#000";
 
@@ -376,7 +408,9 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
             key={fin.index}
             points={fin.points}
             fill={fillColor}
-            stroke={strokeColor}
+            stroke={
+              isGhost ? getColorWithOpacity(strokeColor, 0.9) : strokeColor
+            }
             strokeWidth="1"
           />
         );
@@ -389,15 +423,15 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
         <rect
           width={bodyWidth}
           height={bodyHeight}
-          fill={ghostMode ? getColorWithOpacity(body.color, 0.4) : body.color}
-          stroke={ghostMode ? getColorWithOpacity("#000", 0.4) : "#000"}
+          fill={isGhost ? getColorWithOpacity(body.color, 0.9) : body.color}
+          stroke={isGhost ? getColorWithOpacity("#000", 0.9) : "#000"}
           strokeWidth="1"
         />
       </g>
 
       {/* フィン（前方のもののみ後で描画） */}
       {frontFins.map((fin) => {
-        const opacity = calculateGhostOpacity(fin.zOrder, ghostMode);
+        const opacity = calculateGhostOpacity(fin.zOrder, isGhost);
         const fillColor = getColorWithOpacity(fins.color, opacity);
         const strokeColor = "#000";
 
@@ -406,28 +440,32 @@ const RocketComponent: React.FC<RocketComponentProps> = ({
             key={fin.index}
             points={fin.points}
             fill={fillColor}
-            stroke={strokeColor}
+            stroke={
+              isGhost ? getColorWithOpacity(strokeColor, 0.9) : strokeColor
+            }
             strokeWidth="1"
           />
         );
       })}
       {/* ペイロードセクション */}
-      <g
-        transform={`translate(${(totalWidth - bodyWidth) / 2}, ${noseHeight})`}
-      >
-        <rect
-          x={(bodyWidth - payloadDiameter) / 2}
-          y={payloadOffset}
-          width={payloadDiameter}
-          height={payloadLength}
-          fill={"None"}
-          stroke={ghostMode ? getColorWithOpacity("#000", 0.8) : "#000"}
-          strokeWidth="3"
-          strokeDasharray="3.5,3.5"
-          rx="5"
-          ry="5"
-        />
-      </g>
+      {showPayload && payload.length > 0 && (
+        <g
+          transform={`translate(${(totalWidth - bodyWidth) / 2}, ${noseHeight})`}
+        >
+          <rect
+            x={(bodyWidth - payloadDiameter) / 2}
+            y={payloadOffset}
+            width={payloadDiameter}
+            height={payloadLength}
+            fill={"None"}
+            stroke={isGhost ? getColorWithOpacity("#000", 0.9) : "#000"}
+            strokeWidth="3"
+            strokeDasharray="3.5,3.5"
+            rx="5"
+            ry="5"
+          />
+        </g>
+      )}
 
       {/* 重心と圧力中心のマーカー */}
       {showCenterMarkers && (

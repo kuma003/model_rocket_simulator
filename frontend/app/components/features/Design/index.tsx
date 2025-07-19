@@ -11,6 +11,8 @@ import {
 } from "../../../utils/calculations/simulationEngine";
 import styles from "./design.module.scss";
 import { defaultMotorData } from "../../../utils/motorParser";
+import { useNavigationWarning } from "../../common/NavigationWarning/useNavigationWarning";
+import { clearRocketParams } from "../../../utils/storage/rocketStorage";
 
 const Design: React.FC = () => {
   const [rocketParams, setRocketParams] = React.useState<RocketParams>({
@@ -75,6 +77,16 @@ const Design: React.FC = () => {
     return { rocketProperties, trajectoryData };
   }, [rocketParams]);
 
+  // Clear cache when Design page mounts
+  React.useEffect(() => {
+    clearRocketParams();
+  }, []);
+
+  // Add navigation warning for unsaved progress
+  const { allowNextNavigation } = useNavigationWarning({
+    enabled: true,
+  });
+
   return (
     <div className={styles.design}>
       <RocketPanel
@@ -83,15 +95,18 @@ const Design: React.FC = () => {
       />
       <div className={styles.centerArea}>
         <RocketVisualization
+          pitchAngle={90}
           rocketParams={rocketParams}
           rocketProperties={rocketProperties}
           showCenterMarkers={true}
+          showPayload={true}
         />
       </div>
       <SimulationPanel
         rocketParams={rocketParams}
         rocketProperties={rocketProperties}
         trajectoryData={trajectoryData}
+        allowNextNavigation={allowNextNavigation}
       />
     </div>
   );

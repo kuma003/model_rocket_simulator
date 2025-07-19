@@ -35,3 +35,9 @@ $font-family-fun:
 @mixin fun-japanese-text {
   font-family: $font-family-fun;
 }
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}

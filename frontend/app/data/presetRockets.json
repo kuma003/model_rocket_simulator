@@ -40,18 +40,7 @@
         "mass": 0.05
       },
       "engine": {
-        "designation": "C6-5",
-        "manufacturer": "Estes",
-        "diameter": 18,
-        "length": 70,
-        "delay": 5,
-        "totalImpulse": 10,
-        "maxThrust": 12.15,
-        "avgThrust": 5.02,
-        "burnTime": 1.65,
-        "propMass": 0.0123,
-        "totalMass": 0.024,
-        "thrustCurve": []
+        "name": "Estes C6"
       }
     }
   },
@@ -94,18 +83,7 @@
         "mass": 0.02
       },
       "engine": {
-        "designation": "A8-3",
-        "manufacturer": "Estes",
-        "diameter": 18,
-        "length": 70,
-        "delay": 3,
-        "totalImpulse": 2.5,
-        "maxThrust": 9.5,
-        "avgThrust": 2.3,
-        "burnTime": 0.5,
-        "propMass": 0.004,
-        "totalMass": 0.008,
-        "thrustCurve": []
+        "name": "Estes C6"
       }
     }
   },
@@ -150,18 +128,7 @@
         "mass": 0.1
       },
       "engine": {
-        "designation": "D12-5",
-        "manufacturer": "Estes",
-        "diameter": 24,
-        "length": 70,
-        "delay": 5,
-        "totalImpulse": 20,
-        "maxThrust": 25.7,
-        "avgThrust": 11.5,
-        "burnTime": 1.7,
-        "propMass": 0.025,
-        "totalMass": 0.041,
-        "thrustCurve": []
+        "name": "Estes C6"
       }
     }
   },
@@ -206,18 +173,7 @@
         "mass": 0.03
       },
       "engine": {
-        "designation": "B6-4",
-        "manufacturer": "Estes",
-        "diameter": 18,
-        "length": 70,
-        "delay": 4,
-        "totalImpulse": 5,
-        "maxThrust": 8.8,
-        "avgThrust": 4.5,
-        "burnTime": 1.1,
-        "propMass": 0.007,
-        "totalMass": 0.013,
-        "thrustCurve": []
+        "name": "Estes C6"
       }
     }
   }

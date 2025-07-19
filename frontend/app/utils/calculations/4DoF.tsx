@@ -115,7 +115,7 @@ const run4DoFSimulation = (
           Math.sqrt(velocityMagnitude2) *
           spec.ref_len *
           spec.ref_len) /
-        4;
+        16;
 
       const CG = isCombusting
         ? spec.CGlen_i +

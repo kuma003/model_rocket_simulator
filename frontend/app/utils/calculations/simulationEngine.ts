@@ -38,15 +38,15 @@ export function calculateRocketProperties(
   const bodyResults = calculateBodyProperties(params);
   const finResults = calculateFinProperties(params);
 
-  console.log("Nose Results:", noseResults);
-  console.log("Body Results:", bodyResults);
-  console.log("Fin Results:", finResults);
-  console.log("Engine Data:", params.engine);
+  // console.log("Nose Results:", noseResults);
+  // console.log("Body Results:", bodyResults);
+  // console.log("Fin Results:", finResults);
+  // console.log("Engine Data:", params.engine);
 
   // ペイロード重心位置計算（ノーズ先端からの距離）
   const payloadCG =
     params.nose.length + params.payload.offset + params.payload.length / 2;
-  console.log("Payload CG:", payloadCG);
+  // console.log("Payload CG:", payloadCG);
 
   // 総重量計算
   const dryMass =
@@ -60,16 +60,6 @@ export function calculateRocketProperties(
   const refLength = params.nose.length + params.body.length;
 
   // Calculate actual center of gravity and pressure center
-  console.log(
-    (noseResults.Cg * noseResults.mass +
-      bodyResults.Cg * bodyResults.mass +
-      finResults.Cg * finResults.mass +
-      payloadCG * params.payload.mass) /
-      dryMass
-  );
-
-  console.log(refLength - params.engine.length / 2);
-
   const CG_i =
     (noseResults.Cg * noseResults.mass +
       bodyResults.Cg * bodyResults.mass +
@@ -130,8 +120,8 @@ export function calculateRocketProperties(
   // Calculate stability margin: (CP - CG) / RefLength
   const stabilityMargin = (CP - CG_i) / refLength;
 
-  console.log("Rocket Specs:", specs);
-  console.log("Stability Margin:", stabilityMargin);
+  // console.log("Rocket Specs:", specs);
+  // console.log("Stability Margin:", stabilityMargin);
   return {
     dryMass,
     inertiaMoment: totalInertiaMoment,
