@@ -366,7 +366,7 @@ const Launch: React.FC = () => {
             rocketProperties={rocketProperties}
             targetWidth={120}
             targetHeight={120}
-            referenceLength={maxLength * 2}
+            referenceLength={maxLength}
             pitchAngle={
               (trajectoryData.pitch[
                 Math.min(currentIndex, trajectoryData.pitch.length - 1)
@@ -418,7 +418,7 @@ const Launch: React.FC = () => {
                   rocketProperties={rivalProperties}
                   targetWidth={100}
                   targetHeight={100}
-                  referenceLength={maxLength * 2}
+                  referenceLength={maxLength}
                   pitchAngle={
                     (rivalTrajectory.pitch[rivalCurrentIndex] * 180) / Math.PI
                   }
