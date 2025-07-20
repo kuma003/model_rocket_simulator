@@ -56,10 +56,10 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
             {/* 重量セクション */}
             <Card shadow="sm" padding="md" radius="md">
               <Group justify="space-between">
-                <Text size="sm" c="white">
+                <Text size="sm" c="dark">
                   乾燥重量
                 </Text>
-                <Text size="sm" c="white" fw={600}>
+                <Text size="sm" c="dark" fw={600}>
                   {(rocketProperties.dryMass / G_TO_KG).toFixed(1) + " "}g
                 </Text>
               </Group>
@@ -70,10 +70,10 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
             {/* 性能セクション */}
             <Card shadow="sm" padding="md" radius="md">
               <Group justify="space-between">
-                <Text size="sm" c="white">
+                <Text size="sm" c="dark">
                   機体全長
                 </Text>
-                <Text size="sm" c="white" fw={600}>
+                <Text size="sm" c="dark" fw={600}>
                   {(rocketProperties.specs.ref_len / CM_TO_M).toFixed(1) + " "}
                   cm
                 </Text>
@@ -82,10 +82,10 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
 
             <Card shadow="sm" padding="md" radius="md">
               <Group justify="space-between">
-                <Text size="sm" c="white">
+                <Text size="sm" c="dark">
                   飛行時間
                 </Text>
-                <Text size="sm" c="white" fw={600}>
+                <Text size="sm" c="dark" fw={600}>
                   {trajectoryData.flightTime.toFixed(1) + " "}秒
                 </Text>
               </Group>
@@ -93,10 +93,10 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
 
             <Card shadow="sm" padding="md" radius="md">
               <Group justify="space-between">
-                <Text size="sm" c="white">
+                <Text size="sm" c="dark">
                   最高高度
                 </Text>
-                <Text size="sm" c="white" fw={600}>
+                <Text size="sm" c="dark" fw={600}>
                   {trajectoryData.maxAltitude.toFixed(1) + " "}m
                 </Text>
               </Group>
@@ -104,12 +104,12 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
 
             <Card shadow="sm" padding="md" radius="md">
               <Group justify="space-between">
-                <Text size="sm" c="white">
+                <Text size="sm" c="dark">
                   安定比
                 </Text>
                 <Text
                   size="sm"
-                  c={rocketProperties.stabilityMargin > 0 ? "white" : "red"}
+                  c={rocketProperties.stabilityMargin > 0 ? "dark" : "red"}
                   fw={600}
                 >
                   {(rocketProperties.stabilityMargin * 100).toFixed(1) + " "}%
@@ -121,7 +121,7 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
 
             {/* 軌道グラフ */}
             <Card shadow="sm" padding="md" radius="md">
-              <Text size="sm" c="white" mb="sm">
+              <Text size="sm" c="dark" mb="sm">
                 高度-時間履歴
               </Text>
               <div style={{ height: 200, width: "100%" }}>
@@ -129,25 +129,25 @@ const SimulationPanel: React.FC<SimulationPanelProps> = ({
                   <LineChart data={trajectoryData.altitudeData}>
                     <CartesianGrid
                       strokeDasharray="3 3"
-                      stroke="rgba(255,255,255,0.1)"
+                      stroke="rgba(0,0,0,0.1)"
                     />
                     <XAxis
                       dataKey="time"
-                      tick={{ fill: "white", fontSize: 10 }}
-                      axisLine={{ stroke: "rgba(255,255,255,0.3)" }}
+                      tick={{ fill: "#333", fontSize: 10 }}
+                      axisLine={{ stroke: "rgba(0,0,0,0.3)" }}
                       tickCount={5}
                       tickFormatter={(value) => value.toFixed(0)}
                     />
                     <YAxis
-                      tick={{ fill: "white", fontSize: 10 }}
-                      axisLine={{ stroke: "rgba(255,255,255,0.3)" }}
+                      tick={{ fill: "#333", fontSize: 10 }}
+                      axisLine={{ stroke: "rgba(0,0,0,0.3)" }}
                       tickFormatter={(value) => value.toFixed(0)}
                       domain={[0, "dataMax"]}
                     />
                     <Line
                       type="monotone"
                       dataKey="altitude"
-                      stroke="white"
+                      stroke="#4f9cf9"
                       strokeWidth={2}
                       dot={false}
                       name="altitude"
