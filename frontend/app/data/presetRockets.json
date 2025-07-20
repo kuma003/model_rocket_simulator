@@ -1,7 +1,7 @@
 [
   {
-    "id": "200m-rocket",
-    "displayName": "200mとぶまん",
+    "id": "heighest-rocket",
+    "displayName": "いっぱいとぶまん",
     "description": "高く飛ぶロケット",
     "rocketParams": {
       "name": "200mとぶまん",
