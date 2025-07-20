@@ -122,10 +122,10 @@ const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
         alt="moon"
         className={styles.skyObject}
         style={{
-          left: "70%",
+          left: "90%",
           transform: "translateX(-50%)",
-          width: "600px",
-          height: "600px",
+          width: "800px",
+          height: "800px",
           top: `calc(100% - ${500 * (2.5 - clampedAltitude(altitudeLevel))}vw)`,
           borderRadius: "50%",
           objectFit: "cover",
@@ -138,7 +138,7 @@ const AltitudeBackground: React.FC<AltitudeBackgroundProps> = ({
         alt="jupter"
         className={styles.skyObject}
         style={{
-          left: "70%",
+          left: "40%",
           transform: "translateX(-50%)",
           width: "600px",
           height: "600px",

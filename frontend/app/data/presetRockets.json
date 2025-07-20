@@ -46,11 +46,11 @@
   },
   {
     "id": "A-type",
-    "displayName": "Aがたロケット",
-    "description": "一番安い！",
+    "displayName": "スタンダードロケット",
+    "description": "シンプルなロケット. Simple is Best!",
     "rocketParams": {
-      "name": "Aがた",
-      "designer": "Rocket Man",
+      "name": "Aがた改(Bスタンダード)",
+      "designer": "ろけにゃん",
       "nose": {
         "length": 0.15,
         "diameter": 0.04,
@@ -60,7 +60,7 @@
         "type": "conical"
       },
       "body": {
-        "length": 0.2,
+        "length": 0.25,
         "diameter": 0.04,
         "thickness": 0.001,
         "material": "cardboard",
@@ -70,12 +70,12 @@
         "thickness": 0.001,
         "material": "balsa",
         "color": "#0000FF",
-        "count": 6,
+        "count": 4,
         "offset": 0,
         "type": "trapozoidal",
-        "rootChord": 0.05,
+        "rootChord": 0.06,
         "tipChord": 0.005,
-        "sweepLength": 0.045,
+        "sweepLength": 0.055,
         "height": 0.04
       },
       "payload": {
@@ -85,7 +85,7 @@
         "mass": 0.01
       },
       "engine": {
-        "name": "Estes A10"
+        "name": "Estes B4"
       }
     }
   },
@@ -137,9 +137,9 @@
   {
     "id": "fin-middle",
     "displayName": "ふぃんをとちゅうにつけるまん",
-    "description": "羽を途中につけたロケット",
+    "description": "羽を途中につけたロケット.",
     "rocketParams": {
-      "name": "ふぃんをとちゅうにつけるまん",
+      "name": "ふぃんをとちゅうにつけるまん改(100m)",
       "designer": "Rocket Man",
       "nose": {
         "length": 0.15,
@@ -172,7 +172,7 @@
         "offset": 0,
         "diameter": 0.022000000000000002,
         "length": 0.03,
-        "mass": 0.03
+        "mass": 0.02
       },
       "engine": {
         "name": "Estes B4"
